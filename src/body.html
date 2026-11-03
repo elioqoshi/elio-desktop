@@ -150,6 +150,13 @@
           <svg class="fm-spk" width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true" style="margin-left: 4px; flex: none"><path d="M0 2h2v4H0zM2 1h1v6H2zM3 0h1v8H3zM6 2h1v4H6zM8 1h1v6H8z"></path></svg>
           <input type="range" aria-label="Volume" min="0" max="100" step="1" value="80" id="fm-vol" style="flex: 1; min-width: 0">
         </div>
+        <div class="field-row" style="gap: 4px">
+          <button type="button" aria-label="Shuffle" aria-pressed="false" title="shuffle" id="fm-shuffle" style="min-width: 0; padding: 0 6px"><svg width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 1h3v1H0zM3 2h1v1H3zM4 3h1v1H4zM5 4h1v1H5zM6 5h1v1H6zM7 6h1v1H7zM8 5h1v3H8zM9 6h1v1H9zM0 6h3v1H0zM3 5h1v1H3zM4 4h1v1H4zM5 3h1v1H5zM6 2h1v1H6zM7 1h1v1H7zM8 0h1v3H8zM9 1h1v1H9z"></path></svg></button>
+          <button type="button" aria-label="Repeat: off" aria-pressed="false" title="repeat: off" id="fm-repeat" style="min-width: 0; padding: 0 6px; display: inline-flex; align-items: center"><svg width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 1h7v1H1zM6 0h1v3H6zM8 1h1v1H8zM1 2h1v3H1zM8 3h1v3H8zM2 6h7v1H2zM3 5h1v3H3zM1 6h1v1H1z"></path></svg><svg id="fm-ic-one" width="3" height="5" viewBox="0 0 3 5" shape-rendering="crispEdges" aria-hidden="true" style="display: none; margin-left: 2px"><path d="M1 0h1v5H1zM0 1h1v1H0zM0 4h3v1H0z"></path></svg></button>
+          <span style="flex: 1"></span>
+          <button type="button" aria-label="Playlist" aria-expanded="false" aria-controls="fm-list" title="playlist" id="fm-pl" style="min-width: 0; padding: 0 6px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 1h8v1H0zM0 4h8v1H0zM0 7h8v1H0z"></path></svg></button>
+        </div>
+        <div class="sunken-panel" role="list" aria-label="Playlist" id="fm-list" style="position: relative; width: auto; height: auto; max-height: 86px" hidden></div>
       </div>
       <div class="status-bar">
         <p class="status-bar-field"><a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener">CC BY-NC-SA 3.0</a></p>

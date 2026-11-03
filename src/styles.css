@@ -44,6 +44,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 .prow{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:6px;width:100%;min-width:0;min-height:0;padding:1px 4px;text-align:left;background:#fff;box-shadow:none;cursor:pointer}
 .root98 .prow:focus,.root98 .prow:not(:disabled):active{box-shadow:none;text-shadow:none;outline:1px dotted #000;outline-offset:-1px}
 .root98 .prow.sel{background:#000080;color:#fff}
+.root98 .prow.fm-row{grid-template-columns:minmax(0,1fr) auto}
 .root98 .prow .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .root98 .mbtn,.root98 .prow,.root98 .icon{color:#000;text-shadow:none}
 .root98 button svg path{fill:#222}
@@ -88,6 +89,9 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 .fm-now p{margin:0}
 .root98 .fm-title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fm-spk path{fill:#222}
+/* toggled-on buttons (shuffle, repeat, playlist): pushed in with the checkered Windows 98 fill */
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.pthumb)[aria-pressed="true"]{background:#E4E4E4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E") 0 0/2px 2px;box-shadow:inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #F4F4F4,inset 2px 2px #A0A0A0}
+.root98.dark button[aria-pressed="true"]:not(.mbtn){background:#3A3A3A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2' shape-rendering='crispEdges'%3E%3Cpath fill='%23505050' d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E") 0 0/2px 2px;box-shadow:inset -1px -1px #6A6A6A,inset 1px 1px #000,inset -2px -2px #505050,inset 2px 2px #222}
 .root98.dark .fm-spk path{fill:#E6E6E6}
 .root98 input[type=range]{height:16px}
 .fm-widget{position:absolute;width:1px;height:1px;left:0;top:0;border:0;opacity:0;pointer-events:none}

@@ -415,7 +415,10 @@
 
   /* ---------- winamp (SoundCloud widget) ---------- */
   var SET = 'https://soundcloud.com/dominic-gagn-1/sets/nine-inch-nails-ghosts-i-iv';
-  var fm = { ready: false, playing: false, time: 0, dur: 0, vol: 80, seeking: false };
+  var saved = store.get('fm') || {};
+  var fm = { ready: false, playing: false, time: 0, dur: 0, vol: 80, seeking: false,
+    sounds: [], idx: 0, shuffle: !!saved.shuffle, repeat: saved.repeat || 'off', list: !!saved.list };
+  function saveFm() { store.set('fm', { shuffle: fm.shuffle, repeat: fm.repeat, list: fm.list }); }
   function scCall(method, value) {
     var f = q('#sc-widget');
     if (!f || !f.contentWindow) return;
@@ -429,6 +432,45 @@
     q('#fm-ic-play').style.display = fm.playing ? 'none' : '';
     q('#fm-ic-pause').style.display = fm.playing ? '' : 'none';
     q('#fm-toggle').setAttribute('aria-label', fm.playing ? 'Pause' : 'Play');
+    var sh = q('#fm-shuffle'), rp = q('#fm-repeat'), pl = q('#fm-pl');
+    sh.setAttribute('aria-pressed', fm.shuffle ? 'true' : 'false'); sh.title = fm.shuffle ? 'shuffle: on' : 'shuffle: off';
+    rp.setAttribute('aria-pressed', fm.repeat === 'off' ? 'false' : 'true');
+    rp.setAttribute('aria-label', 'Repeat: ' + fm.repeat); rp.title = 'repeat: ' + fm.repeat;
+    q('#fm-ic-one').style.display = fm.repeat === 'one' ? '' : 'none';
+    pl.setAttribute('aria-expanded', fm.list ? 'true' : 'false'); pl.setAttribute('aria-pressed', fm.list ? 'true' : 'false');
+    pl.title = fm.list ? 'hide playlist' : 'show playlist';
+    q('#fm-list').hidden = !fm.list;
+    qa('#fm-list .prow').forEach(function (b, i) {
+      b.classList.toggle('sel', i === fm.idx); b.setAttribute('aria-current', i === fm.idx ? 'true' : 'false');
+    });
+  }
+  function renderPlaylist() {
+    var list = q('#fm-list'); list.innerHTML = '';
+    fm.sounds.forEach(function (s, i) {
+      var li = document.createElement('div'); li.setAttribute('role', 'listitem');
+      // SoundCloud titles already carry the track number ("5 Ghosts I"), so no number column
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'prow fm-row';
+      b.innerHTML = '<span class="t"></span><span></span>';
+      b.children[0].textContent = s.title || 'track ' + (i + 1); b.children[1].textContent = s.duration ? fmt(s.duration / 1000) : '';
+      b.addEventListener('click', function () { scCall('skip', i); });
+      li.appendChild(b); list.appendChild(li);
+    });
+  }
+  // keep the playing track in view inside the list, without scrolling the page
+  function showCurrent() {
+    var L = q('#fm-list'), row = qa('#fm-list .prow')[fm.idx];
+    if (!row || L.hidden) return;
+    var top = row.parentNode.offsetTop;
+    if (top < L.scrollTop || top + row.offsetHeight > L.scrollTop + L.clientHeight) L.scrollTop = top - L.clientHeight / 2;
+  }
+  // the widget only knows next/prev; shuffle and repeat pick the index themselves
+  function pickNext(auto) {
+    var n = fm.sounds.length;
+    if (!n) return null;
+    if (auto && fm.repeat === 'one') return fm.idx;
+    if (fm.shuffle && n > 1) { var r; do { r = Math.floor(Math.random() * n); } while (r === fm.idx); return r; }
+    if (fm.idx + 1 < n) return fm.idx + 1;
+    return fm.repeat === 'all' || !auto ? 0 : null;
   }
   function ensureRadio() {
     if (q('#sc-widget')) return;
@@ -448,12 +490,23 @@
     if (d.method === 'ready') {
       fm.ready = true;
       ['play', 'pause', 'finish', 'playProgress'].forEach(function (ev) { scCall('addEventListener', ev); });
-      scCall('setVolume', fm.vol); scCall('getCurrentSound');
+      scCall('setVolume', fm.vol); scCall('getCurrentSound'); scCall('getSounds');
       q('#fm-sub').textContent = 'Nine Inch Nails, Ghosts I–IV';
     } else if (d.method === 'play') {
-      fm.playing = true; scCall('getCurrentSound'); if (ytPlaying()) { ytSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
-    } else if (d.method === 'pause' || d.method === 'finish') {
+      // the widget fills in track details lazily, so ask for the list again whenever a track starts
+      fm.playing = true; scCall('getCurrentSound'); scCall('getCurrentSoundIndex'); scCall('getSounds'); if (ytPlaying()) { ytSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
+    } else if (d.method === 'pause') {
       fm.playing = false;
+    } else if (d.method === 'finish') {
+      fm.playing = false;
+      var nx = pickNext(true);
+      // plain order is what the widget does on its own; anything else overrides it
+      if (nx !== null && !(nx === fm.idx + 1 && !fm.shuffle)) scCall('skip', nx);
+    } else if (d.method === 'getSounds' && Array.isArray(d.value)) {
+      var key = function (list) { return list.map(function (s) { return (s.title || '') + s.duration; }).join('|'); };
+      if (key(d.value) !== key(fm.sounds)) { fm.sounds = d.value; renderPlaylist(); renderFm(); showCurrent(); }
+    } else if (d.method === 'getCurrentSoundIndex' && typeof d.value === 'number') {
+      fm.idx = d.value; renderFm(); showCurrent();
     } else if (d.method === 'playProgress' && d.value) {
       fm.time = (d.value.currentPosition || 0) / 1000;
     } else if (d.method === 'getCurrentSound' && d.value) {
@@ -465,7 +518,12 @@
   });
   q('#fm-toggle').addEventListener('click', function () { scCall(fm.playing ? 'pause' : 'play'); });
   q('#fm-prev').addEventListener('click', function () { scCall('prev'); });
-  q('#fm-next').addEventListener('click', function () { scCall('next'); });
+  q('#fm-next').addEventListener('click', function () { var nx = pickNext(false); if (nx === null) scCall('next'); else scCall('skip', nx); });
+  q('#fm-shuffle').addEventListener('click', function () { fm.shuffle = !fm.shuffle; saveFm(); renderFm(); });
+  q('#fm-repeat').addEventListener('click', function () {
+    fm.repeat = { off: 'all', all: 'one', one: 'off' }[fm.repeat]; saveFm(); renderFm();
+  });
+  q('#fm-pl').addEventListener('click', function () { fm.list = !fm.list; saveFm(); renderFm(); showCurrent(); });
   var seek = q('#fm-seek');
   seek.addEventListener('input', function () { fm.seeking = true; q('#fm-time').textContent = fmt(Number(seek.value)); });
   seek.addEventListener('change', function () { fm.seeking = false; fm.time = Number(seek.value); scCall('seekTo', fm.time * 1000); renderFm(); });
