@@ -3,11 +3,12 @@
 
 Every asset referenced as url(assets/...) in CSS or src="assets/..." in HTML is
 inlined as a data URI, so the output is one file with no outside requests except
-the YouTube and SoundCloud embeds.
+the YouTube and SoundCloud embeds and the
+photos in photos/, which are listed but loaded as separate files.
 
 Usage: python3 build.py   (writes index.html next to this script)
 """
-import base64, mimetypes, pathlib, re
+import base64, json, mimetypes, pathlib, re, urllib.parse
 
 ROOT = pathlib.Path(__file__).parent
 MIME = {'.woff2': 'font/woff2', '.png': 'image/png', '.jpg': 'image/jpeg'}
@@ -25,6 +26,11 @@ css98 = (ROOT / 'vendor/98.css').read_text()
 css = inline((ROOT / 'src/styles.css').read_text())
 body = inline((ROOT / 'src/body.html').read_text())
 js = (ROOT / 'src/app.js').read_text()
+
+# photos/ is not inlined: the page lists the files and loads them next to index.html
+PHOTO_EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+photos = sorted(p.name for p in (ROOT / 'photos').iterdir() if p.suffix.lower() in PHOTO_EXT) if (ROOT / 'photos').is_dir() else []
+js = 'window.PHOTOS = %s;\n' % json.dumps(['photos/' + urllib.parse.quote(n) for n in photos]) + js
 
 html = f'''<!doctype html>
 <html lang="en">
@@ -50,4 +56,4 @@ html = f'''<!doctype html>
 </html>
 '''
 (ROOT / 'index.html').write_text(html)
-print('wrote index.html (%d KB)' % (len(html) // 1024))
+print('wrote index.html (%d KB, %d photos)' % (len(html) // 1024, len(photos)))

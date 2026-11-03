@@ -17,16 +17,23 @@ python3 -m http.server 8000      # then open http://localhost:8000
 ```
 
 `build.py` inlines all CSS, JS, fonts and images as data URIs, so `index.html`
-is a single self-contained file. Opening it straight from disk works too, but
+is a single self-contained file (apart from `photos/`). Opening it straight from disk works too, but
 the YouTube and SoundCloud embeds need to be served over http.
 
 `index.html` is generated and not committed. Edit `src/`, `vendor/` and
 `assets/` instead. See `CLAUDE.md` for the design rules.
 
+## Photos
+
+Put `.jpg`, `.png`, `.gif` or `.webp` files in `photos/` and rebuild. They
+appear in the photos folder on the desktop, sorted by file name, with the file
+name as the label. Unlike everything else they are not inlined into
+`index.html`, so keep them web-sized.
+
 ## Deploying
 
 Every push to `main` runs `.github/workflows/pages.yml`. It builds the page
-and publishes `index.html` and `LICENSES/` to GitHub Pages.
+and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 
 ## Project layout
 
@@ -37,6 +44,7 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 | `src/app.js` | Windows, icons, menus, clock, media player, radio, theme |
 | `vendor/98.css` | 98.css, lightly modified (see below) |
 | `assets/` | Font, icons, wallpaper, cursor, portrait |
+| `photos/` | Photos for the desktop photos folder (see below) |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |
 

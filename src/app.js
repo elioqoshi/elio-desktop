@@ -33,7 +33,7 @@
   var W = {
     about: { open: true, x: 170, y: 18, z: 2, w: 290 },
     portrait: { open: true, x: 430, y: 46, z: 3, w: 170 },
-    talks: { w: 340 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 210 }, imprint: { w: 300 }
+    talks: { w: 340 }, photos: { w: 300 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 210 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
   function winEl(k) { return q('[data-win="' + k + '"]'); }
@@ -99,6 +99,7 @@
     { id: 'clock', label: 'clock.exe', ico: 'ico-clock', kind: 'app' },
     { id: 'contact', label: 'help', ico: 'ico-help', kind: 'app' },
     { id: 'radio', label: 'winamp', ico: 'ico-winamp', kind: 'app' },
+    { id: 'photos', label: 'photos', ico: 'ico-folder', kind: 'app' },
     { id: 'ura', label: 'Ura Design', ico: 'ico-browser', kind: 'link', href: 'https://ura.design', dock: 2 },
     { id: 'linkedin', label: 'LinkedIn', ico: 'ico-network', kind: 'ph', title: 'coming soon!!', dock: 1 },
     { id: 'github', label: 'GitHub', ico: 'ico-git', kind: 'ph', title: 'coming soon!!', dock: 0 }
@@ -382,6 +383,35 @@
   }
   q('#talk-toggle').addEventListener('click', function () { player(ytPlaying() ? 'pauseVideo' : 'playVideo'); });
   q('#talk-stop').addEventListener('click', function () { player('stopVideo'); });
+
+  /* ---------- photos ---------- */
+  // build.py fills window.PHOTOS from the photos/ folder
+  var photos = window.PHOTOS || [], pi = 0;
+  function photoName(src) { return decodeURIComponent(src.split('/').pop()); }
+  function showPhoto(i) {
+    pi = (i + photos.length) % photos.length;
+    var src = photos[pi], name = photoName(src), img = q('#photo-img');
+    img.src = src; img.alt = name;
+    q('#photo-t').textContent = name; q('#photo-name').textContent = name;
+    q('#photo-pos').textContent = (pi + 1) + '/' + photos.length;
+    q('#photo-full').href = src;
+    q('#photo-prev').disabled = q('#photo-next').disabled = photos.length < 2;
+  }
+  (function renderPhotos() {
+    var grid = q('#photo-grid');
+    if (!photos.length) grid.innerHTML = '<p class="muted" style="margin: 0; padding: 8px">this folder is empty :(</p>';
+    photos.forEach(function (src, i) {
+      var li = document.createElement('div'); li.setAttribute('role', 'listitem');
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'pthumb';
+      b.innerHTML = '<img alt="" loading="lazy"><span class="pname"></span>';
+      b.firstChild.src = src; b.lastChild.textContent = photoName(src);
+      b.addEventListener('click', function () { showPhoto(i); openWin('photo'); });
+      li.appendChild(b); grid.appendChild(li);
+    });
+    q('#photo-count').textContent = photos.length + (photos.length === 1 ? ' object' : ' objects');
+  })();
+  q('#photo-prev').addEventListener('click', function () { showPhoto(pi - 1); });
+  q('#photo-next').addEventListener('click', function () { showPhoto(pi + 1); });
 
   /* ---------- winamp (SoundCloud widget) ---------- */
   var SET = 'https://soundcloud.com/dominic-gagn-1/sets/nine-inch-nails-ghosts-i-iv';

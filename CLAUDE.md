@@ -9,8 +9,8 @@ windows. It is a business card, not a sales page.
 - `python3 build.py` writes `index.html`, a single self-contained file with all
   CSS, JS, fonts and images inlined as data URIs. Always rebuild after editing.
 - Open `index.html` in a browser to test. No server or dependencies needed.
-- Edit only the files in `src/`, `vendor/` and `assets/`. `index.html` is
-  generated.
+- Edit only the files in `src/`, `vendor/`, `assets/` and `photos/`.
+  `index.html` is generated.
 
 ## Files
 
@@ -20,6 +20,9 @@ windows. It is a business card, not a sales page.
   media player, SoundCloud radio, theme)
 - `vendor/98.css`: 98.css, modified so `a.btn98` links get button styling via
   `:is(button,a.btn98)`; its MS Sans Serif @font-face rules were removed
+- `photos/`: photos for the desktop photos folder. `build.py` lists them in
+  `window.PHOTOS` but does not inline them; they are served next to
+  `index.html` (the Pages workflow copies the folder)
 - `assets/`: Ari-W9500 font (subset, plus the full .otf), SerenityOS icon sprite,
   wallpaper, wait cursor, dithered portrait (and the original photo)
 
@@ -65,6 +68,11 @@ plain and descriptive.
 
 ## Open items
 
+- [ ] Try dithering in the browser: an SVG filter (`feImage` with a 4x4 Bayer
+  tile plus `feComponentTransfer` `type="discrete"`) applied with
+  `filter: url(#dither)`. Useful for photos in `photos/` and maybe the YouTube
+  video, which can't be pre-dithered. Compare against the pre-dithered
+  wallpaper and portrait before using it anywhere.
 - LinkedIn and GitHub icons are placeholders ("coming soon!!"); add real URLs.
 - Client links in the clients menu point to homepages and are unverified.
 - Music is Nine Inch Nails, Ghosts I–IV (CC BY-NC-SA 3.0, non-commercial),

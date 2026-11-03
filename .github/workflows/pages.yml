@@ -25,11 +25,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      # index.html is self-contained; LICENSES ships alongside the inlined font
+      # index.html inlines everything but photos/; LICENSES ships alongside the inlined font
       - run: |
           python3 build.py
           mkdir _site
-          cp -r index.html LICENSES _site/
+          cp -r index.html LICENSES photos _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

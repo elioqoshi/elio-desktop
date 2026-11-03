@@ -50,6 +50,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 :is(button,a.btn98,input,label,legend,select,textarea,ul.tree-view,.window,.title-bar){font-family:"Ari-W9500",ui-monospace,monospace;font-size:11px}
 .root98 .sunbtn{padding:2px 6px}
 .root98 .sunbtn svg path{fill:#000}
+.root98:not(.dark) .sunbtn:hover svg path,.root98:not(.dark) .sunbtn:focus-visible svg path{fill:#fff}
 .root98.dark{color:#E6E6E6}
 .root98.dark .menubar{background:#2E2E2E;box-shadow:inset 0 1px #4A4A4A,inset 0 -1px #1A1A1A,0 1px #000}
 .root98.dark .window{background:#3A3A3A;box-shadow:inset -1px -1px #000,inset 1px 1px #5A5A5A,inset -2px -2px #222,inset 2px 2px #6A6A6A;color:#E6E6E6}
@@ -91,10 +92,10 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .ck-gfill{fill:#5BA7B5}.ck-hi{fill:#fff}.ck-gsh{fill:#123C44}.ck-min{fill:#5BA7B5}.ck-mindk{fill:#40757F}.ck-hour{fill:#1A4F59}.ck-hourdk{fill:#12373E}.ck-sec{fill:#0a0a0a}
 .root98.dark .ck-hi{fill:#9FD4DE}.root98.dark .ck-sec{fill:#E6E6E6}.root98.dark .ck-hour{fill:#7FC4D1}.root98.dark .ck-hourdk{fill:#4E8A95}
 .root98:not(.dark) .window{background:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
-.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow){background-color:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
-.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow).default{box-shadow:inset -2px -2px #0a0a0a,inset 1px 1px #0a0a0a,inset 2px 2px #fff,inset -3px -3px #A0A0A0,inset 3px 3px #F4F4F4}
-.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(:disabled):active{box-shadow:inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #F4F4F4,inset 2px 2px #A0A0A0}
-.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow).default:not(:disabled):active{box-shadow:inset 2px 2px #0a0a0a,inset -1px -1px #0a0a0a,inset -2px -2px #fff,inset 3px 3px #A0A0A0,inset -3px -3px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.pthumb){background-color:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.pthumb).default{box-shadow:inset -2px -2px #0a0a0a,inset 1px 1px #0a0a0a,inset 2px 2px #fff,inset -3px -3px #A0A0A0,inset 3px 3px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.pthumb):not(:disabled):active{box-shadow:inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #F4F4F4,inset 2px 2px #A0A0A0}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.pthumb).default:not(:disabled):active{box-shadow:inset 2px 2px #0a0a0a,inset -1px -1px #0a0a0a,inset -2px -2px #fff,inset 3px 3px #A0A0A0,inset -3px -3px #F4F4F4}
 .root98:not(.dark) .status-bar-field{box-shadow:inset -1px -1px #F4F4F4,inset 1px 1px #A0A0A0}
 .root98:not(.dark) .menubar{background:#E4E4E4;box-shadow:inset 0 1px #fff,inset 0 -1px #A0A0A0,0 1px #0a0a0a}
 .menuwrap{position:relative;display:inline-flex}
@@ -111,6 +112,14 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .helpbtn svg path.help-bg{fill:#9DB0FF}
 .root98.dark .helpbtn svg path.help-fg{fill:#000}
 .root98.busy,.root98.busy *{cursor:url(assets/cursor-wait.png) 16 16,wait !important}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:4px;padding:4px}
+.root98 button.pthumb{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;min-width:0;min-height:0;padding:2px;background:transparent;box-shadow:none;color:#000;text-shadow:none;cursor:pointer}
+.root98 button.pthumb img{display:block;width:56px;height:42px;object-fit:cover;box-shadow:0 0 0 1px #808080}
+.root98 button.pthumb .pname{max-width:100%;padding:0 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.root98 button.pthumb:focus,.root98 button.pthumb:not(:disabled):active{outline:none;box-shadow:none;text-shadow:none}
+.root98 button.pthumb:hover .pname,.root98 button.pthumb:focus-visible .pname{background:#000080;color:#fff}
+.root98 button.pthumb:focus-visible .pname{outline:1px dotted #fff}
+.root98.dark button.pthumb{background:transparent;box-shadow:none;color:#E6E6E6}
 @media (max-width:760px){
   html{background-attachment:scroll;background-position:60% top;background-size:auto 100vh}
   .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}
