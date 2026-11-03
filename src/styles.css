@@ -1,0 +1,120 @@
+/* Page basics */
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:#C7CCD4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){background:#1F2630;color-scheme:dark}}
+:root[data-theme="dark"]{background:#1F2630;color-scheme:dark}
+body{margin:0;min-height:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20000;background:#E4E4E4}
+.menubar{top:env(safe-area-inset-top,0px)}
+[hidden]{display:none !important}
+
+/* Desktop */
+body{margin:0}
+/* Ari-W9500, Copyright (c) 2023-2026 Catterio Sylt, licensed under the SIL Open Font License 1.1: https://openfontlicense.org */
+@font-face{font-family:"Ari-W9500";src:url(assets/ari-w9500.woff2) format("woff2");font-weight:400;font-display:swap}
+a{color:#000080}a:hover{color:#0000FF}
+.root98{zoom:2;font-synthesis:none;min-height:50vh;color:#000;-webkit-font-smoothing:none}
+.root98,.root98 *{font-family:"Ari-W9500",ui-monospace,monospace}
+.root98 .window,.root98 button,.root98 a.btn98,.root98 input,.root98 label,.root98 legend,.root98 ul.tree-view,.root98 p,.root98 li,.root98 .title-bar-text,.root98 .status-bar-field{font-size:11px;line-height:14px}
+.root98 .title-bar-text{font-weight:700;color:#000}
+.root98 .title-bar{cursor:grab;touch-action:none;user-select:none}
+.root98 a.btn98{display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:transparent;box-sizing:border-box}
+.wp-slate{background-color:#C7CCD4;background-image:url(assets/wallpaper-light.png);background-size:64px 64px;image-rendering:pixelated}
+.menubar{position:sticky;top:0;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 12px;padding:1px 4px;background:silver;box-shadow:inset 0 1px #fff,inset 0 -1px #808080,0 1px #0a0a0a}
+.root98 .mbtn{box-shadow:none;background:transparent;min-width:0;min-height:0;padding:2px 6px;display:inline-flex;align-items:center;gap:4px}
+.root98 .mbtn:hover,.root98 .mbtn:focus-visible{background:#000080;color:#fff;outline:none}
+.root98 .mbtn:focus,.root98 .mbtn:not(:disabled):active{outline:none;box-shadow:none;text-shadow:none}
+.desk-area{position:relative;min-height:calc(50vh - 18px);overflow:hidden}
+.deskicons{position:absolute;inset:0;z-index:1;pointer-events:none}
+.dicon{position:absolute;width:72px;pointer-events:auto;touch-action:none;user-select:none}
+.dicon.dragging{opacity:.75}
+.root98 .icon{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:2px;width:100%;min-width:0;min-height:0;background:transparent;box-shadow:none;cursor:pointer}
+.root98 .icon:focus,.root98 .icon:not(:disabled):active{outline:none;box-shadow:none;text-shadow:none}
+.root98 .lbl{padding:0 2px;font-size:11px;line-height:14px;white-space:nowrap;color:#fff}
+.root98 .icon:hover .lbl,.root98 .icon:focus-visible .lbl{background:#000080;color:#fff;outline:1px dotted #fff}
+.ico{display:block;flex:none;width:32px;height:32px;background-image:url(assets/icons.png);background-size:448px 32px;background-repeat:no-repeat;image-rendering:pixelated}
+.ico-winamp{background-position:-416px 0}.ico-text{background-position:0 0}.ico-image{background-position:-32px 0}.ico-folder{background-position:-64px 0}.ico-presenter{background-position:-96px 0}.ico-users{background-position:-128px 0}.ico-browser{background-position:-160px 0}.ico-charmap{background-position:-192px 0}.ico-clock{background-position:-224px 0}.ico-mail{background-position:-256px 0}.ico-network{background-position:-288px 0}.ico-git{background-position:-320px 0}.ico-speaker{background-position:-352px 0}.ico-help{background-position:-384px 0}
+.root98 a.icon{text-decoration:none}
+.root98 .icon.is-ph{cursor:not-allowed}
+.root98 .icon.is-ph .lbl{outline:1px dashed currentColor;outline-offset:-1px}
+.win{position:absolute;max-width:calc(100% - 16px)}
+.root98 .prow{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:6px;width:100%;min-width:0;min-height:0;padding:1px 4px;text-align:left;background:#fff;box-shadow:none;cursor:pointer}
+.root98 .prow:focus,.root98 .prow:not(:disabled):active{box-shadow:none;text-shadow:none;outline:1px dotted #000;outline-offset:-1px}
+.root98 .prow.sel{background:#000080;color:#fff}
+.root98 .prow .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.root98 .mbtn,.root98 .prow,.root98 .icon{color:#000;text-shadow:none}
+.root98 button svg path{fill:#222}
+.root98 button:disabled svg path{fill:grey}
+.root98 button:disabled svg{filter:drop-shadow(1px 1px 0 #fff)}
+.root98 :is(button,a.btn98,input,label,legend,select,textarea,ul.tree-view,.window,.title-bar){font-family:"Ari-W9500",ui-monospace,monospace;font-size:11px}
+.root98 .sunbtn{padding:2px 6px}
+.root98 .sunbtn svg path{fill:#000}
+.wp-slate.dark{background-color:#1F2630;background-image:url(assets/wallpaper-dark.png)}
+.root98.dark{color:#E6E6E6}
+.root98.dark .menubar{background:#2E2E2E;box-shadow:inset 0 1px #4A4A4A,inset 0 -1px #1A1A1A,0 1px #000}
+.root98.dark .window{background:#3A3A3A;box-shadow:inset -1px -1px #000,inset 1px 1px #5A5A5A,inset -2px -2px #222,inset 2px 2px #6A6A6A;color:#E6E6E6}
+.root98.dark button,.root98.dark a.btn98{background:#3A3A3A;text-shadow:0 0 #E6E6E6;box-shadow:inset -1px -1px #000,inset 1px 1px #6A6A6A,inset -2px -2px #222,inset 2px 2px #505050}
+.root98.dark button.default,.root98.dark a.btn98.default{box-shadow:inset -2px -2px #000,inset 1px 1px #000,inset 2px 2px #6A6A6A,inset -3px -3px #222,inset 3px 3px #505050}
+.root98.dark button:not(:disabled):active,.root98.dark a.btn98:active{box-shadow:inset -1px -1px #6A6A6A,inset 1px 1px #000,inset -2px -2px #505050,inset 2px 2px #222;text-shadow:1px 1px #E6E6E6}
+.root98.dark button:disabled{color:#777;text-shadow:none}
+.root98.dark button svg path{fill:#E6E6E6}
+.root98.dark button:disabled svg path{fill:#777}
+.root98.dark button:disabled svg{filter:none}
+.root98 .tb-blue{background:#A8DDE6}
+.root98.dark .tb-blue{background:#2E6E7A}
+.root98.dark .title-bar-text{color:#fff}
+.root98.dark .title-bar-controls button{filter:invert(1);background-color:#C5C5C5;box-shadow:inset -1px -1px #fff,inset 1px 1px #959595,inset -2px -2px #ddd,inset 2px 2px #afafaf}
+.root98.dark .title-bar-controls button:not(:disabled):active{box-shadow:inset -1px -1px #959595,inset 1px 1px #fff,inset -2px -2px #afafaf,inset 2px 2px #ddd}
+.root98.dark .mbtn,.root98.dark .icon{background:transparent;box-shadow:none;color:#E6E6E6}
+.root98.dark .icon .lbl{color:#fff}
+.root98.wp-slate .lbl{color:#000}
+.root98.wp-slate.dark .lbl{color:#fff}
+.root98.wp-slate .icon:hover .lbl,.root98.wp-slate .icon:focus-visible .lbl{color:#fff}
+.root98.dark .mbtn:hover,.root98.dark .mbtn:focus-visible{background:#000080;color:#fff}
+.root98.dark .sunbtn svg path{fill:#FFE08A}
+.root98.dark .prow{background:#1F1F1F;box-shadow:none;color:#E6E6E6}
+.root98.dark .prow.sel{background:#000080;color:#fff}
+.root98.dark .sunken-panel{background-color:#1F1F1F}
+.root98.dark ul.tree-view{background:#1F1F1F;color:#E6E6E6;box-shadow:inset -1px -1px #5A5A5A,inset 1px 1px #000,inset -2px -2px #3A3A3A,inset 2px 2px #111}
+.root98.dark ul.tree-view a,.root98.dark a:not(.btn98){color:#C9D3FF}
+.root98.dark .status-bar-field{box-shadow:inset -1px -1px #5A5A5A,inset 1px 1px #000}
+.root98.dark legend{background:#3A3A3A}
+.root98.dark .muted,.root98.dark .ph{color:#B0B0B0}
+.ph{border:1px dashed #808080;padding:0 2px;color:#444}
+.muted{color:#444}
+.fm-now{padding:4px 6px;background:#fff}
+.root98 .fm-now p{margin:0}
+.root98 .fm-title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-spk path{fill:#222}
+.root98.dark .fm-spk path{fill:#E6E6E6}
+.root98 input[type=range]{height:16px}
+.fm-widget{position:absolute;width:1px;height:1px;left:0;top:0;border:0;opacity:0;pointer-events:none}
+.ck-gfill{fill:#5BA7B5}.ck-hi{fill:#fff}.ck-gsh{fill:#123C44}.ck-min{fill:#5BA7B5}.ck-mindk{fill:#40757F}.ck-hour{fill:#1A4F59}.ck-hourdk{fill:#12373E}.ck-sec{fill:#0a0a0a}
+.root98.dark .ck-hi{fill:#9FD4DE}.root98.dark .ck-sec{fill:#E6E6E6}.root98.dark .ck-hour{fill:#7FC4D1}.root98.dark .ck-hourdk{fill:#4E8A95}
+.root98:not(.dark) .window{background:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow){background-color:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow).default{box-shadow:inset -2px -2px #0a0a0a,inset 1px 1px #0a0a0a,inset 2px 2px #fff,inset -3px -3px #A0A0A0,inset 3px 3px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(:disabled):active{box-shadow:inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #F4F4F4,inset 2px 2px #A0A0A0}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow).default:not(:disabled):active{box-shadow:inset 2px 2px #0a0a0a,inset -1px -1px #0a0a0a,inset -2px -2px #fff,inset 3px 3px #A0A0A0,inset -3px -3px #F4F4F4}
+.root98:not(.dark) .status-bar-field{box-shadow:inset -1px -1px #F4F4F4,inset 1px 1px #A0A0A0}
+.root98:not(.dark) .menubar{background:#E4E4E4;box-shadow:inset 0 1px #fff,inset 0 -1px #A0A0A0,0 1px #0a0a0a}
+.menuwrap{position:relative;display:inline-flex}
+.menu-scrim{position:fixed;inset:0;z-index:10000}
+.menu98{position:absolute;left:0;top:100%;z-index:10001;min-width:170px;padding:2px;display:flex;flex-direction:column;background:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4,2px 2px 0 rgba(0,0,0,.25)}
+.root98 .menuitem98{display:block;padding:2px 20px 2px 16px;color:#000;text-decoration:none;white-space:nowrap}
+.root98 .menuitem98:hover,.root98 .menuitem98:focus{background:#000080;color:#fff;outline:none}
+.root98.dark .menu98{background:#3A3A3A;box-shadow:inset -1px -1px #000,inset 1px 1px #6A6A6A,inset -2px -2px #222,inset 2px 2px #505050,2px 2px 0 rgba(0,0,0,.4)}
+.root98.dark .menuitem98{color:#E6E6E6}
+.root98.dark .menuitem98:hover,.root98.dark .menuitem98:focus{background:#000080;color:#fff}
+.root98 .helpbtn{padding:2px 4px}
+.root98 .helpbtn svg path.help-bg{fill:#000080}
+.root98 .helpbtn svg path.help-fg{fill:#fff}
+.root98.dark .helpbtn svg path.help-bg{fill:#9DB0FF}
+.root98.dark .helpbtn svg path.help-fg{fill:#000}
+.root98.busy,.root98.busy *{cursor:url(assets/cursor-wait.png) 16 16,wait !important}
+@media (max-width:760px){
+  .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}
+  .deskicons{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));pointer-events:auto}
+  .dicon{position:static !important;width:auto}
+  .win{position:relative !important;left:auto !important;top:auto !important;width:auto !important;max-width:none}
+}

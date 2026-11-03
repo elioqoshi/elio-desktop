@@ -1,0 +1,165 @@
+<div id="root98" class="root98 wp-slate">
+
+  <header class="menubar">
+    <nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center">
+      <button class="mbtn sunbtn" type="button" id="dark-btn" aria-pressed="false" aria-label="Dark theme" title="lights off"><svg width="12" height="12" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><path d="M4 3h4v1H4zM3 4h6v4H3zM4 8h4v1H4zM5 0h2v2H5zM5 10h2v2H5zM0 5h2v2H0zM10 5h2v2h-2zM1 1h1v1H1zM2 2h1v1H2zM10 1h1v1h-1zM9 2h1v1H9zM1 10h1v1H1zM2 9h1v1H2zM10 10h1v1h-1zM9 9h1v1H9z"></path></svg></button>
+      <button class="mbtn" type="button" data-open="about" style="font-weight: 700">Elio Qoshi</button>
+      <button class="mbtn" type="button" data-open="talks">talks</button>
+      <span class="menuwrap">
+        <button class="mbtn" type="button" id="clients-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="clients-menu">clients</button>
+        <div class="menu-scrim" id="menu-scrim" hidden></div>
+        <div class="menu98" id="clients-menu" role="menu" aria-labelledby="clients-btn" hidden></div>
+      </span>
+      <button class="mbtn" type="button" data-open="imprint">imprint</button>
+    </nav>
+    <span style="display: inline-flex; align-items: center">
+      <button class="mbtn helpbtn" type="button" data-open="contact" aria-label="Help" title="help!"><svg width="12" height="12" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><path class="help-bg" d="M4 0h4v1H4zM2 1h8v1H2zM1 2h10v2H1zM0 4h12v4H0zM1 8h10v2H1zM2 10h8v1H2zM4 11h4v1H4z"></path><path class="help-fg" d="M4 2h4v1H4zM3 3h2v1H3zM7 3h2v2H7zM6 5h2v1H6zM5 6h2v2H5zM5 9h2v1H5z"></path></svg></button>
+      <p style="margin: 0; padding: 2px 6px; font-variant-numeric: tabular-nums" id="menu-time"></p>
+    </span>
+  </header>
+
+  <main class="desk-area">
+
+    <div class="deskicons" role="list" aria-label="Desktop" id="icons"></div>
+
+    <section class="window win" data-win="about" aria-labelledby="about-p" style="width: 290px">
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">about.txt</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 12px">
+        <p style="margin: 0 0 8px">hi! i’m Elio :-)</p>
+        <h1 id="about-p" style="margin: 0 0 8px; font-size: 22px; line-height: 28px; font-weight: 700">you surfed to the right edge of the web</h1>
+        <p style="margin: 0 0 12px">i design things for open source, privacy and security software, mostly at Ura Design, my studio in Berlin. before that: Canonical, Mozilla, Tor Project.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <a class="btn98 default" href="mailto:elio@ura.design">write me</a>
+          <a class="btn98" href="https://ura.design" target="_blank" rel="noopener">ura.design</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="window win" data-win="portrait" aria-label="Portrait" style="width: 170px">
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">portrait.jpg</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 4px">
+        <div class="sunken-panel" style="width: auto; height: auto; overflow: hidden"><img src="assets/portrait-dither.png" alt="Portrait of Elio Qoshi" width="152" height="203" style="display: block; width: 100%; height: auto; image-rendering: pixelated"></div>
+      </div>
+    </section>
+
+    <section class="window win" data-win="talks" aria-labelledby="talks-p" style="width: 340px" hidden>
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">Media Player</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 6px; display: flex; flex-direction: column; gap: 6px">
+        <div class="sunken-panel" id="talk-screen" style="width: auto; height: auto; aspect-ratio: 16 / 9; background: #000; overflow: hidden"></div>
+        <div>
+          <h2 id="talks-p" style="margin: 0; font-size: 11px; line-height: 14px; font-weight: 700"></h2>
+          <p class="muted" style="margin: 0" id="talk-meta"></p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px">
+          <button type="button" aria-label="Previous" id="talk-prev" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h1v8H0zM6 0h1v8H6zM5 1h1v6H5zM4 2h1v4H4zM3 3h1v2H3z"></path></svg></button>
+          <button type="button" aria-label="Play" id="talk-play" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h1v8H1zM2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4z"></path></svg></button>
+          <button type="button" aria-label="Pause" id="talk-pause" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h2v8H1zM5 0h2v8H5z"></path></svg></button>
+          <button type="button" aria-label="Stop" id="talk-stop" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 1h6v6H1z"></path></svg></button>
+          <button type="button" aria-label="Next" id="talk-next" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M7 0h1v8H7zM1 0h1v8H1zM2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4z"></path></svg></button>
+          <span style="flex: 1"></span>
+          <a class="btn98" id="talk-open" href="#" target="_blank" rel="noopener"></a>
+        </div>
+        <div class="sunken-panel" role="list" aria-label="Playlist" id="talk-list" style="width: auto; height: auto; max-height: 72px"></div>
+      </div>
+      <div class="status-bar"><p class="status-bar-field" id="talk-count"></p><p class="status-bar-field" id="talk-status"></p></div>
+    </section>
+
+    <section class="window win" data-win="clock" aria-label="Local time" style="width: 194px" hidden>
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">clock.exe</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 8px">
+        <p style="margin: 0 0 4px">berlin time, right now:</p>
+        <svg id="clock-svg" width="170" height="170" viewBox="0 0 170 170" shape-rendering="crispEdges" role="img" aria-label="Analog clock" style="display: block; margin: 0 auto"><path class="ck-gfill" data-k="gfill"></path><path class="ck-hi" data-k="ghi"></path><path class="ck-gsh" data-k="gsh"></path><path class="ck-min" data-k="minFill"></path><path class="ck-mindk" data-k="minDark"></path><path class="ck-hi" data-k="minHi"></path><path class="ck-hour" data-k="hourFill"></path><path class="ck-hourdk" data-k="hourDark"></path><path class="ck-hi" data-k="hourHi"></path><path class="ck-sec" data-k="sec"></path></svg>
+        <p class="muted" style="margin: 4px 0 0" id="clock-caption"></p>
+      </div>
+    </section>
+
+    <section class="window win" data-win="contact" aria-labelledby="contact-p" style="width: 270px" hidden>
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">help.txt</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 12px; display: flex; gap: 10px; align-items: flex-start">
+        <span class="ico ico-help" aria-hidden="true"></span>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px">
+          <h2 id="contact-p" style="margin: 0; font-size: 22px; line-height: 28px; font-weight: 700">got a question?</h2>
+          <p style="margin: 0">need help with a project, or just want to talk about UX? Hit me up!</p>
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px">
+            <button type="button" data-close="contact">later</button>
+            <a class="btn98 default" href="mailto:elio@ura.design">write me</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="window win" data-win="radio" aria-label="Winamp" style="width: 210px" hidden>
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">winamp</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 6px; display: flex; flex-direction: column; gap: 6px">
+        <div class="sunken-panel fm-now" style="width: auto; height: auto" role="status" aria-live="polite">
+          <p class="fm-title" id="fm-title">tuning in...</p>
+          <p class="muted" style="margin: 0" id="fm-sub">Nine Inch Nails, Ghosts I–IV</p>
+        </div>
+        <div class="field-row" style="gap: 4px">
+          <span style="font-variant-numeric: tabular-nums" id="fm-time">00:00</span>
+          <input type="range" aria-label="Seek" min="0" max="1" step="1" value="0" id="fm-seek" style="flex: 1; min-width: 0">
+        </div>
+        <div class="field-row" style="gap: 4px">
+          <button type="button" aria-label="Previous track" id="fm-prev" style="min-width: 0; padding: 0 6px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h1v8H0zM6 0h1v8H6zM5 1h1v6H5zM4 2h1v4H4zM3 3h1v2H3z"></path></svg></button>
+          <button type="button" class="default" aria-label="Play" id="fm-toggle" style="min-width: 0; padding: 0 10px"><svg id="fm-ic-play" width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h1v8H1zM2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4z"></path></svg><svg id="fm-ic-pause" width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true" style="display: none"><path d="M1 0h2v8H1zM5 0h2v8H5z"></path></svg></button>
+          <button type="button" aria-label="Next track" id="fm-next" style="min-width: 0; padding: 0 6px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M7 0h1v8H7zM1 0h1v8H1zM2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4z"></path></svg></button>
+          <svg class="fm-spk" width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true" style="margin-left: 4px; flex: none"><path d="M0 2h2v4H0zM2 1h1v6H2zM3 0h1v8H3zM6 2h1v4H6zM8 1h1v6H8z"></path></svg>
+          <input type="range" aria-label="Volume" min="0" max="100" step="1" value="80" id="fm-vol" style="flex: 1; min-width: 0">
+        </div>
+      </div>
+      <div class="status-bar">
+        <p class="status-bar-field"><a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener">CC BY-NC-SA 3.0</a></p>
+        <p class="status-bar-field"><a id="fm-link" href="https://soundcloud.com/dominic-gagn-1/sets/nine-inch-nails-ghosts-i-iv" target="_blank" rel="noopener">SoundCloud</a></p>
+      </div>
+    </section>
+
+    <section class="window win" data-win="imprint" aria-labelledby="imprint-p" style="width: 300px" hidden>
+      <div class="title-bar tb-blue">
+        <div class="title-bar-text">imprint.txt</div>
+        <div class="title-bar-controls"><button aria-label="Close"></button></div>
+      </div>
+      <div class="window-body" style="margin: 10px; display: flex; flex-direction: column; gap: 10px">
+        <fieldset>
+          <legend id="imprint-p">Impressum</legend>
+          <p style="margin: 0 0 4px" class="muted">Angaben gemäß § 5 DDG</p>
+          <p style="margin: 0">Elio Qoshi</p>
+          <p style="margin: 0">c/o Cultivation Space</p>
+          <p style="margin: 0">Gottschedstr. 4</p>
+          <p style="margin: 0">13357 Berlin</p>
+          <p style="margin: 0 0 4px">Germany</p>
+          <p style="margin: 0">email: <a href="mailto:elio@ura.design">elio@ura.design</a></p>
+        </fieldset>
+        <fieldset>
+          <legend>credits</legend>
+          <ul class="tree-view" style="margin: 0">
+            <li>windows and buttons: <a href="https://github.com/jdan/98.css" target="_blank" rel="noopener">98.css</a> by Jordan Scales, MIT License</li>
+            <li>font: <a href="https://fontstruct.com/fontstructions/show/2368522/ari-w9500" target="_blank" rel="noopener">Ari-W9500</a> by Catterio Sylt, <a href="https://openfontlicense.org" target="_blank" rel="noopener">SIL Open Font License 1.1</a></li>
+            <li>icons and the clock: <a href="https://github.com/SerenityOS/serenity" target="_blank" rel="noopener">SerenityOS</a>, © the SerenityOS developers (clock by Erlend Høier), <a href="https://github.com/SerenityOS/serenity/blob/master/LICENSE" target="_blank" rel="noopener">BSD 2-Clause License</a></li>
+            <li>music: Nine Inch Nails, Ghosts I–IV, <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener">CC BY-NC-SA 3.0</a>, streamed via SoundCloud</li>
+            <li>Winamp logo: a trademark of its owner, used as a nod</li>
+            <li>everything else: Elio, with a little help</li>
+          </ul>
+        </fieldset>
+      </div>
+    </section>
+
+  </main>
+</div>
