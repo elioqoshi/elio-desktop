@@ -53,7 +53,7 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 | Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, via a SoundCloud set | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
 | Wallpapers | `assets/wallpaper-light.png`, `assets/wallpaper-dark.png` | Made for this site (ordered dither) | Elio Qoshi |
-| Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio, dithered for this site | Elio Qoshi |
+| Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 
 ### Changes to 98.css
@@ -69,5 +69,8 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 - *Ghosts I–IV* is licensed for non-commercial use only.
 - The imprint window on the site lists the same credits. Keep both in sync.
 
-The site's own code and artwork have no open source license yet, so all rights
-are reserved by default.
+## License
+
+The site's own code is released under the [MIT License](LICENSE). Third-party
+assets keep the licenses listed above, and the portrait photo remains
+© Jeremie Pontin.
