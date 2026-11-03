@@ -318,7 +318,8 @@
           (location.protocol.indexOf('http') === 0 ? '&origin=' + encodeURIComponent(location.origin) : '');
         f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
         f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
-        f.style.cssText = 'display: block; width: 100%; height: 100%; border: 0';
+        // twice the size, scaled to half: cancels .root98's zoom:2 so YouTube draws at its normal size
+        f.style.cssText = 'display: block; width: 200%; height: 200%; border: 0; transform: scale(0.5); transform-origin: 0 0; pointer-events: none';
         // keep asking for player events until YouTube answers, like its own iframe API does
         f.addEventListener('load', function () {
           var tries = 0, ask = setInterval(function () {
@@ -326,12 +327,13 @@
             f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'talk-video' }), '*');
           }, 250);
         });
-        // the thumbnail covers YouTube's title and big play button until the tape runs
+        // the poster sits over the video and takes every click, so the mouse never wakes
+        // YouTube's overlays; it shows the thumbnail until the tape runs, then goes clear
         var poster = document.createElement('button');
         poster.type = 'button'; poster.className = 'talk-poster'; poster.setAttribute('aria-label', 'Play ' + t.title);
         poster.innerHTML = '<img alt="">';
         poster.firstChild.src = 'https://i.ytimg.com/vi/' + t.video + '/hqdefault.jpg';
-        poster.addEventListener('click', function () { player('playVideo'); });
+        poster.addEventListener('click', function () { player(ytPlaying ? 'pauseVideo' : 'playVideo'); });
         screen.appendChild(f); screen.appendChild(poster);
         ytStarted = false; ytReady = false; ytQueued = null;
       }
@@ -367,9 +369,18 @@
   }
   // if the browser blocks remote play (some phones), show YouTube's own tap target
   function armFallback() {
-    if (ytReady) ytWait = setTimeout(function () { if (!ytStarted) setPoster(false); }, 4000);
+    if (ytReady) ytWait = setTimeout(function () {
+      if (ytStarted) return;
+      var p = q('#talk-screen .talk-poster'), f = q('#talk-video');
+      if (p) p.hidden = true; if (f) f.style.pointerEvents = 'auto';
+    }, 4000);
   }
-  function setPoster(on) { var p = q('#talk-screen .talk-poster'); if (p) p.hidden = !on; }
+  function setPoster(on) {
+    var p = q('#talk-screen .talk-poster');
+    if (!p) return;
+    p.classList.toggle('clear', !on);
+    p.setAttribute('aria-label', (on ? 'Play ' : 'Pause ') + talks[ti].title);
+  }
   window.addEventListener('message', function (e) {
     if (!/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin)) return;
     var d = e.data;
@@ -381,7 +392,7 @@
     }
     var s = d.event === 'onStateChange' ? d.info : d.info && d.info.playerState;
     if (typeof s !== 'number') return;
-    // 1 playing, 2 paused, 0 ended; the poster hides YouTube's overlays whenever it is not playing
+    // 1 playing, 2 paused, 0 ended; the thumbnail hides YouTube's overlays whenever it is not playing
     if (s === 1) { ytStarted = true; ytPlaying = true; setPoster(false); scCall('pause'); }
     else if (s === 2) { ytPlaying = false; setPoster(true); }
     else if (s === 0) { ytPlaying = false; ytStarted = false; setPoster(true); }
