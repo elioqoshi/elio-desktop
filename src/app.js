@@ -298,7 +298,7 @@
     { title: 'Identifying and Addressing Usability Vulnerabilities', meta: 'FOSS Backstage 2026, Berlin', where: 'Berlin', video: 'vctZaoDzq2k', url: 'https://www.youtube.com/watch?v=vctZaoDzq2k', openLabel: 'watch on youtube' },
     { title: 'Speaker at FOSDEM 2026', meta: 'FOSDEM 2026, Brussels', where: 'Brussels', url: 'https://fosdem.org/2026/schedule/speaker/elio_qoshi', openLabel: 'go there' }
   ];
-  var ti = 0, ytPlaying = false, ytStarted = false, ytReady = false, ytQueued = null, ytWait = 0;
+  var ti = 0, ytPlaying = false, ytStarted = false, ytReady = false, ytQueued = null, ytWait = 0, ytReveal = 0;
   function ytSend(func) {
     // commands sent before YouTube answers are dropped, so hold the latest one
     if (!ytReady) { ytQueued = func; return; }
@@ -377,6 +377,7 @@
   }
   function setPoster(on) {
     var p = q('#talk-screen .talk-poster');
+    clearTimeout(ytReveal); ytReveal = 0;
     if (!p) return;
     p.classList.toggle('clear', !on);
     p.setAttribute('aria-label', (on ? 'Play ' : 'Pause ') + talks[ti].title);
@@ -393,7 +394,14 @@
     var s = d.event === 'onStateChange' ? d.info : d.info && d.info.playerState;
     if (typeof s !== 'number') return;
     // 1 playing, 2 paused, 0 ended; the thumbnail hides YouTube's overlays whenever it is not playing
-    if (s === 1) { ytStarted = true; ytPlaying = true; setPoster(false); scCall('pause'); }
+    if (s === 1) {
+      ytStarted = true; ytPlaying = true; scCall('pause');
+      // YouTube flashes its title and buttons for ~3s whenever playback starts; keep the thumbnail up meanwhile
+      var p = q('#talk-screen .talk-poster');
+      if (p && !p.classList.contains('clear') && !ytReveal) {
+        ytReveal = setTimeout(function () { ytReveal = 0; if (ytPlaying) setPoster(false); }, 3000);
+      }
+    }
     else if (s === 2) { ytPlaying = false; setPoster(true); }
     else if (s === 0) { ytPlaying = false; ytStarted = false; setPoster(true); }
     else return;
