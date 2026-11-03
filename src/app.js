@@ -101,8 +101,8 @@
     { id: 'radio', label: 'winamp', ico: 'ico-winamp', kind: 'app' },
     { id: 'photos', label: 'photos', ico: 'ico-folder', kind: 'app' },
     { id: 'ura', label: 'Ura Design', ico: 'ico-browser', kind: 'link', href: 'https://ura.design', dock: 2 },
-    { id: 'linkedin', label: 'LinkedIn', ico: 'ico-network', kind: 'ph', title: 'coming soon!!', dock: 1 },
-    { id: 'github', label: 'GitHub', ico: 'ico-git', kind: 'ph', title: 'coming soon!!', dock: 0 }
+    { id: 'linkedin', label: 'LinkedIn', ico: 'ico-network', kind: 'link', href: 'https://www.linkedin.com/in/elioqoshi/', dock: 1 },
+    { id: 'github', label: 'GitHub', ico: 'ico-git', kind: 'link', href: 'https://github.com/elioqoshi/', dock: 0 }
   ];
   var iconPos = store.get('icons') || {};
   var justDragged = false;
@@ -386,25 +386,25 @@
 
   /* ---------- photos ---------- */
   // build.py fills window.PHOTOS from the photos/ folder
+  // each entry: { name, src (dithered), thumb (dithered), full (original) }
   var photos = window.PHOTOS || [], pi = 0;
-  function photoName(src) { return decodeURIComponent(src.split('/').pop()); }
   function showPhoto(i) {
     pi = (i + photos.length) % photos.length;
-    var src = photos[pi], name = photoName(src), img = q('#photo-img');
-    img.src = src; img.alt = name;
-    q('#photo-t').textContent = name; q('#photo-name').textContent = name;
+    var p = photos[pi], img = q('#photo-img');
+    img.src = p.src; img.alt = p.name;
+    q('#photo-t').textContent = p.name; q('#photo-name').textContent = p.name;
     q('#photo-pos').textContent = (pi + 1) + '/' + photos.length;
-    q('#photo-full').href = src;
+    q('#photo-full').href = p.full;
     q('#photo-prev').disabled = q('#photo-next').disabled = photos.length < 2;
   }
   (function renderPhotos() {
     var grid = q('#photo-grid');
     if (!photos.length) grid.innerHTML = '<p class="muted" style="margin: 0; padding: 8px">this folder is empty :(</p>';
-    photos.forEach(function (src, i) {
+    photos.forEach(function (p, i) {
       var li = document.createElement('div'); li.setAttribute('role', 'listitem');
       var b = document.createElement('button'); b.type = 'button'; b.className = 'pthumb';
       b.innerHTML = '<img alt="" loading="lazy"><span class="pname"></span>';
-      b.firstChild.src = src; b.lastChild.textContent = photoName(src);
+      b.firstChild.src = p.thumb; b.lastChild.textContent = p.name;
       b.addEventListener('click', function () { showPhoto(i); openWin('photo'); });
       li.appendChild(b); grid.appendChild(li);
     });

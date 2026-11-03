@@ -25,8 +25,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      # index.html inlines everything but photos/; LICENSES ships alongside the inlined font
+      # index.html inlines everything but photos/; LICENSES ships alongside the inlined font.
+      # dither.py only redoes photos that were added without being dithered locally
       - run: |
+          pip install -r requirements.txt
+          python3 tools/dither.py
           python3 build.py
           mkdir _site
           cp -r index.html LICENSES photos _site/

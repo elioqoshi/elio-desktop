@@ -25,10 +25,20 @@ the YouTube and SoundCloud embeds need to be served over http.
 
 ## Photos
 
-Put `.jpg`, `.png`, `.gif` or `.webp` files in `photos/` and rebuild. They
-appear in the photos folder on the desktop, sorted by file name, with the file
-name as the label. Unlike everything else they are not inlined into
-`index.html`, so keep them web-sized.
+Put `.jpg`, `.png`, `.gif` or `.webp` files in `photos/originals/`, then
+dither and rebuild:
+
+```
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # once
+.venv/bin/python tools/dither.py
+python3 build.py
+```
+
+`tools/dither.py` gives each new or changed photo a 16-colour ordered dither,
+like the wallpaper, at the exact size it is shown at: `photos/<name>.png` for
+the viewer and `photos/thumbs/<name>.png` for the folder. The desktop shows
+the dithered versions; "full size" opens the original. Photos are sorted by
+file name, which is also the label. They are not inlined into `index.html`.
 
 ## Deploying
 
@@ -45,6 +55,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | `vendor/98.css` | 98.css, lightly modified (see below) |
 | `assets/` | Font, icons, wallpaper, cursor, portrait |
 | `photos/` | Photos for the desktop photos folder (see below) |
+| `tools/dither.py` | Dithers the photos |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |
 
@@ -62,7 +73,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
 | Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
-| Sample photos | `photos/brandenburg-gate.jpg`, `photos/tv-tower.jpg`, `photos/u-bahn.jpg` | Unsplash: [Brandenburg Gate](https://unsplash.com/photos/uFGi0_YciE0), [TV tower](https://unsplash.com/photos/g8DI2ZZFt8I), [U-Bahn](https://unsplash.com/photos/Y_aNcALhqZw) | [Unsplash License](https://unsplash.com/license) |
+| Sample photos | `photos/originals/` (dithered copies in `photos/`) | Unsplash: [Brandenburg Gate](https://unsplash.com/photos/uFGi0_YciE0), [TV tower](https://unsplash.com/photos/g8DI2ZZFt8I), [U-Bahn](https://unsplash.com/photos/Y_aNcALhqZw) | [Unsplash License](https://unsplash.com/license) |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 
 ### Changes to 98.css

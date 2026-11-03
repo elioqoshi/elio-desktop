@@ -20,9 +20,12 @@ windows. It is a business card, not a sales page.
   media player, SoundCloud radio, theme)
 - `vendor/98.css`: 98.css, modified so `a.btn98` links get button styling via
   `:is(button,a.btn98)`; its MS Sans Serif @font-face rules were removed
-- `photos/`: photos for the desktop photos folder. `build.py` lists them in
-  `window.PHOTOS` but does not inline them; they are served next to
-  `index.html` (the Pages workflow copies the folder)
+- `photos/`: the desktop photos folder. Originals go in `photos/originals/`;
+  `tools/dither.py` (Pillow, see `requirements.txt`) writes dithered
+  `photos/<name>.png` (viewer, 308x230 max) and `photos/thumbs/<name>.png`
+  (56x42) for new or changed ones. `build.py` lists them in `window.PHOTOS`
+  without inlining; the original is the "full size" link. The Pages workflow
+  runs dither.py too and ships the whole folder
 - `assets/`: Ari-W9500 font (subset, plus the full .otf), SerenityOS icon sprite,
   wallpaper, wait cursor, dithered portrait (and the original photo)
 
@@ -30,9 +33,11 @@ windows. It is a business card, not a sales page.
 
 - Everything is drawn at native 1x pixel sizes and the whole page is scaled with
   `.root98{zoom:2}`. Desktop layout math in app.js divides pointer movement by 2.
-- Font: Ari-W9500 only. Its grid is 11px: use 11px (line-height 14px) for text
-  and 22px (line-height 28px) for headings. Other sizes blur. There is no bold
-  file, and `font-synthesis:none` prevents fake bold.
+- Font: Ari-W9500 only, at 11px (line-height 14px) for everything. Other
+  sizes blur. No big headings: like Windows 98, structure comes from spacing
+  and bold. There is no bold file and `font-synthesis:none` prevents fake bold,
+  so bold is a 1px double strike (`text-shadow:1px 0 currentColor`) on
+  `strong`, `b`, headings, title bars and `.bold`.
 - Icons: only the SerenityOS 32x32 icon set (`assets/icons.png` sprite, 32px
   cells, see `.ico-*` classes) plus the user-supplied Winamp icon. Do not draw
   or add icons from elsewhere. The wait cursor is SerenityOS's 16x16 timer icon
@@ -73,7 +78,6 @@ plain and descriptive.
   `filter: url(#dither)`. Useful for photos in `photos/` and maybe the YouTube
   video, which can't be pre-dithered. Compare against the pre-dithered
   wallpaper and portrait before using it anywhere.
-- LinkedIn and GitHub icons are placeholders ("coming soon!!"); add real URLs.
 - Client links in the clients menu point to homepages and are unverified.
 - Music is Nine Inch Nails, Ghosts I–IV (CC BY-NC-SA 3.0, non-commercial),
   streamed from a fan's SoundCloud set. Consider self-hosting from an official

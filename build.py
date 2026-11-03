@@ -4,7 +4,8 @@
 Every asset referenced as url(assets/...) in CSS or src="assets/..." in HTML is
 inlined as a data URI, so the output is one file with no outside requests except
 the YouTube and SoundCloud embeds and the
-photos in photos/, which are listed but loaded as separate files.
+photos in photos/ (dithered by tools/dither.py), which are listed but loaded
+as separate files.
 
 Usage: python3 build.py   (writes index.html next to this script)
 """
@@ -27,10 +28,22 @@ css = inline((ROOT / 'src/styles.css').read_text())
 body = inline((ROOT / 'src/body.html').read_text())
 js = (ROOT / 'src/app.js').read_text()
 
-# photos/ is not inlined: the page lists the files and loads them next to index.html
+# photos/ is not inlined: the page lists the dithered files from tools/dither.py
+# and loads them next to index.html; the original is the full-size link
 PHOTO_EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
-photos = sorted(p.name for p in (ROOT / 'photos').iterdir() if p.suffix.lower() in PHOTO_EXT) if (ROOT / 'photos').is_dir() else []
-js = 'window.PHOTOS = %s;\n' % json.dumps(['photos/' + urllib.parse.quote(n) for n in photos]) + js
+src_dir = ROOT / 'photos' / 'originals'
+originals = sorted(p for p in src_dir.iterdir() if p.suffix.lower() in PHOTO_EXT) if src_dir.is_dir() else []
+photos, stale = [], []
+for p in originals:
+    view, thumb = ROOT / 'photos' / (p.stem + '.png'), ROOT / 'photos' / 'thumbs' / (p.stem + '.png')
+    if not (view.exists() and thumb.exists()):
+        stale.append(p.name); continue
+    q = urllib.parse.quote
+    photos.append({'name': p.name, 'src': 'photos/' + q(view.name), 'thumb': 'photos/thumbs/' + q(thumb.name),
+                   'full': 'photos/originals/' + q(p.name)})
+if stale:
+    print('not dithered yet, run python3 tools/dither.py: ' + ', '.join(stale))
+js = 'window.PHOTOS = %s;\n' % json.dumps(photos) + js
 
 html = f'''<!doctype html>
 <html lang="en">
