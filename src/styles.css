@@ -91,7 +91,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .ck-gfill{fill:#5BA7B5}.ck-hi{fill:#fff}.ck-gsh{fill:#123C44}.ck-min{fill:#5BA7B5}.ck-mindk{fill:#40757F}.ck-hour{fill:#1A4F59}.ck-hourdk{fill:#12373E}.ck-sec{fill:#0a0a0a}
 .root98.dark .ck-hi{fill:#9FD4DE}.root98.dark .ck-sec{fill:#E6E6E6}.root98.dark .ck-hour{fill:#7FC4D1}.root98.dark .ck-hourdk{fill:#4E8A95}
 .root98:not(.dark) .window{background:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
-.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.talk-poster){background-color:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
+.root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow){background-color:#E4E4E4;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px #A0A0A0,inset 2px 2px #F4F4F4}
 .root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow).default{box-shadow:inset -2px -2px #0a0a0a,inset 1px 1px #0a0a0a,inset 2px 2px #fff,inset -3px -3px #A0A0A0,inset 3px 3px #F4F4F4}
 .root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(:disabled):active{box-shadow:inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #F4F4F4,inset 2px 2px #A0A0A0}
 .root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow).default:not(:disabled):active{box-shadow:inset 2px 2px #0a0a0a,inset -1px -1px #0a0a0a,inset -2px -2px #fff,inset 3px 3px #A0A0A0,inset -3px -3px #F4F4F4}
@@ -111,13 +111,6 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .helpbtn svg path.help-bg{fill:#9DB0FF}
 .root98.dark .helpbtn svg path.help-fg{fill:#000}
 .root98.busy,.root98.busy *{cursor:url(assets/cursor-wait.png) 16 16,wait !important}
-#talk-screen{position:relative}
-.root98 button.talk-poster{position:absolute;inset:0;width:100%;height:100%;min-width:0;min-height:0;padding:0;border:0;background:#000;box-shadow:none;cursor:pointer}
-.root98 button.talk-poster[hidden]{display:none}
-.root98 button.talk-poster img{display:block;width:100%;height:100%;object-fit:cover}
-.root98 button.talk-poster.clear{background:transparent}
-.root98 button.talk-poster:focus:not(:focus-visible){outline:none}
-.root98 button.talk-poster.clear img{visibility:hidden}
 @media (max-width:760px){
   html{background-attachment:scroll;background-position:60% top;background-size:auto 100vh}
   .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}
