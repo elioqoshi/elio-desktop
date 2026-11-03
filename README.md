@@ -62,6 +62,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
 | Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
+| Sample photos | `photos/brandenburg-gate.jpg`, `photos/tv-tower.jpg`, `photos/u-bahn.jpg` | Unsplash: [Brandenburg Gate](https://unsplash.com/photos/uFGi0_YciE0), [TV tower](https://unsplash.com/photos/g8DI2ZZFt8I), [U-Bahn](https://unsplash.com/photos/Y_aNcALhqZw) | [Unsplash License](https://unsplash.com/license) |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 
 ### Changes to 98.css
