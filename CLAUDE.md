@@ -19,24 +19,25 @@ windows. It is a business card, not a sales page.
 - `src/app.js`: plain JavaScript, no framework (windows, icons, menus, clock,
   media player, SoundCloud radio, theme)
 - `vendor/98.css`: 98.css, modified so `a.btn98` links get button styling via
-  `:is(button,a.btn98)`; its MS Sans Serif @font-face rules were removed
+  `:is(button,a.btn98)`; its MS Sans Serif @font-face rules were moved to
+  `src/styles.css` (pointing at `assets/`) so the fonts get inlined
 - `photos/`: the desktop photos folder. Originals go in `photos/originals/`;
   `tools/dither.py` (Pillow, see `requirements.txt`) writes dithered
   `photos/<name>.png` (viewer, 308x230 max) and `photos/thumbs/<name>.png`
   (56x42) for new or changed ones. `build.py` lists them in `window.PHOTOS`
   without inlining; the original is the "full size" link. The Pages workflow
   runs dither.py too and ships the whole folder
-- `assets/`: Ari-W9500 font (subset, plus the full .otf), SerenityOS icon sprite,
+- `assets/`: MS Sans Serif regular and bold (98.css's fonts), SerenityOS icon sprite,
   wallpaper, wait cursor, dithered portrait (and the original photo)
 
 ## Design rules (keep these)
 
 - Everything is drawn at native 1x pixel sizes and the whole page is scaled with
   `.root98{zoom:2}`. Desktop layout math in app.js divides pointer movement by 2.
-- Font: Ari-W9500 only, at 11px (line-height 14px) for everything. Other
-  sizes blur. No big headings: like Windows 98, structure comes from spacing.
-  There is no bold file and `font-synthesis:none` prevents fake bold; don't
-  fake it with text-shadow either (tried, it looked off).
+- Font: Pixelated MS Sans Serif (98.css's font) only, at 11px (line-height
+  14px) for everything. Other sizes blur. It has a real bold weight (700), so
+  use bold freely; `font-synthesis:none` stays on so nothing is faked. No big
+  headings: like Windows 98, structure comes from bold and spacing.
 - Icons: only the SerenityOS 32x32 icon set (`assets/icons.png` sprite, 32px
   cells, see `.ico-*` classes) plus the user-supplied Winamp icon. Do not draw
   or add icons from elsewhere. The wait cursor is SerenityOS's 16x16 timer icon
@@ -87,9 +88,9 @@ plain and descriptive.
 ## Licenses and credits
 
 The imprint window credits everything. Keep these in sync with `LICENSES/`:
-98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), Ari-W9500 font
-by Catterio Sylt (SIL OFL 1.1, notice also in styles.css), Ghosts I–IV music
+98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), MS Sans Serif
+and MS Sans Serif Bold by lou (CC BY-SA 3.0, notice also in styles.css), Ghosts I–IV music
 and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
 (https://www.jeremiepontin.com/, not covered by the MIT license). The site's
 own code is MIT (`LICENSE`). The Winamp logo is a trademark of its owner. If the font
-files are redistributed, ship `LICENSES/Ari-W9500-*` with them.
+files are redistributed, ship `LICENSES/MS-Sans-Serif-*` with them.

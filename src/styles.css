@@ -10,11 +10,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* Desktop */
 body{margin:0}
-/* Ari-W9500, Copyright (c) 2023-2026 Catterio Sylt, licensed under the SIL Open Font License 1.1: https://openfontlicense.org */
-@font-face{font-family:"Ari-W9500";src:url(assets/ari-w9500.woff2) format("woff2");font-weight:400;font-display:swap}
+/* MS Sans Serif and MS Sans Serif Bold, FontStructions by "lou" (via 98.css), licensed CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/ */
+@font-face{font-family:"Pixelated MS Sans Serif";src:url(assets/ms-sans-serif.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Pixelated MS Sans Serif";src:url(assets/ms-sans-serif-bold.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
 a{color:#000080}a:hover{color:#0000FF}
 .root98{zoom:2;font-synthesis:none;min-height:50vh;color:#000;-webkit-font-smoothing:none}
-.root98,.root98 *{font-family:"Ari-W9500",ui-monospace,monospace}
+.root98,.root98 *{font-family:"Pixelated MS Sans Serif",Arial,sans-serif}
 .root98 .window,.root98 button,.root98 a.btn98,.root98 input,.root98 label,.root98 legend,.root98 ul.tree-view,.root98 p,.root98 li,.root98 .title-bar-text,.root98 .status-bar-field{font-size:11px;line-height:14px}
 .root98 .title-bar-text{font-weight:700;color:#000}
 .root98 .title-bar{cursor:grab;touch-action:none;user-select:none}
@@ -50,7 +51,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 button svg path{fill:#222}
 .root98 button:disabled svg path{fill:grey}
 .root98 button:disabled svg{filter:drop-shadow(1px 1px 0 #fff)}
-.root98 :is(button,a.btn98,input,label,legend,select,textarea,ul.tree-view,.window,.title-bar){font-family:"Ari-W9500",ui-monospace,monospace;font-size:11px}
+.root98 :is(button,a.btn98,input,label,legend,select,textarea,ul.tree-view,.window,.title-bar){font-family:"Pixelated MS Sans Serif",Arial,sans-serif;font-size:11px}
 .root98 .sunbtn{padding:2px 6px}
 .root98 .sunbtn svg path{fill:#000}
 .root98:not(.dark) .sunbtn:hover svg path,.root98:not(.dark) .sunbtn:focus-visible svg path{fill:#fff}

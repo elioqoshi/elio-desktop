@@ -64,7 +64,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Asset | Files | Source | License |
 | --- | --- | --- | --- |
 | 98.css (windows, buttons, controls) | `vendor/98.css` | [jdan/98.css](https://github.com/jdan/98.css) by Jordan Scales | MIT, [`LICENSES/98.css-MIT.txt`](LICENSES/98.css-MIT.txt) |
-| Ari-W9500 font | `assets/ari-w9500.woff2` (subset), `assets/ari-w9500-full.otf` | [Ari-W9500](https://fontstruct.com/fontstructions/show/2368522/ari-w9500) by Catterio Sylt, made with FontStruct | SIL OFL 1.1, [`LICENSES/Ari-W9500-OFL.txt`](LICENSES/Ari-W9500-OFL.txt) and [`LICENSES/Ari-W9500-readme.txt`](LICENSES/Ari-W9500-readme.txt) |
+| MS Sans Serif font (regular and bold) | `assets/ms-sans-serif.woff2`, `assets/ms-sans-serif-bold.woff2` | [MS Sans Serif](https://fontstruct.com/fontstructions/show/1384746) and [MS Sans Serif Bold](https://fontstruct.com/fontstructions/show/1384862) by lou, made with FontStruct, as shipped with 98.css 0.1.21 | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), [`LICENSES/MS-Sans-Serif-*`](LICENSES/) |
 | Desktop icons (32x32) | `assets/icons.png` (sprite) | [SerenityOS](https://github.com/SerenityOS/serenity), © the SerenityOS developers | BSD 2-Clause, [`LICENSES/SerenityOS-BSD-2-Clause.txt`](LICENSES/SerenityOS-BSD-2-Clause.txt) |
 | Pixel clock | `src/app.js` (`Clock`) | Ported from SerenityOS AnalogClock, © 2021 Erlend Høier | BSD 2-Clause |
 | Wait cursor | `assets/cursor-wait.png` | SerenityOS 16x16 timer icon, drawn at 2x | BSD 2-Clause |
@@ -79,12 +79,13 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 ### Changes to 98.css
 
 - `a.btn98` links get button styling via `:is(button,a.btn98)`.
-- The MS Sans Serif `@font-face` rules were removed. The site uses Ari-W9500.
+- The MS Sans Serif `@font-face` rules were removed from `vendor/98.css`; the
+  same fonts are declared in `src/styles.css` so `build.py` can inline them.
 
 ### Redistribution notes
 
-- The Ari-W9500 license requires `LICENSES/Ari-W9500-*` to ship with the font
-  files. The Pages workflow copies `LICENSES/` next to `index.html` for this
+- The MS Sans Serif readme requires its license and readme
+  (`LICENSES/MS-Sans-Serif-*`) to ship with the font files. The Pages workflow copies `LICENSES/` next to `index.html` for this
   reason.
 - *Ghosts I–IV* (music and artwork) is licensed for non-commercial use only.
   The dithered wallpaper is a derivative, so it is shared under the same
