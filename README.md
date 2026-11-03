@@ -52,7 +52,7 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 | Winamp icon | in `assets/icons.png` | Supplied by Elio | Winamp logo is a trademark of its owner, used as a nod |
 | Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, via a SoundCloud set | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
-| Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
+| Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 

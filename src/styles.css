@@ -111,6 +111,10 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .helpbtn svg path.help-bg{fill:#9DB0FF}
 .root98.dark .helpbtn svg path.help-fg{fill:#000}
 .root98.busy,.root98.busy *{cursor:url(assets/cursor-wait.png) 16 16,wait !important}
+#talk-screen{position:relative}
+.root98 .talk-poster{position:absolute;inset:0;width:100%;height:100%;min-width:0;min-height:0;padding:0;border:0;background:#000;box-shadow:none;cursor:pointer}
+.root98 .talk-poster[hidden]{display:none}
+.root98 .talk-poster img{display:block;width:100%;height:100%;object-fit:cover}
 @media (max-width:760px){
   html{background-attachment:scroll;background-position:60% top;background-size:auto 100vh}
   .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}

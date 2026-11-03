@@ -298,8 +298,10 @@
     { title: 'Identifying and Addressing Usability Vulnerabilities', meta: 'FOSS Backstage 2026, Berlin', where: 'Berlin', video: 'vctZaoDzq2k', url: 'https://www.youtube.com/watch?v=vctZaoDzq2k', openLabel: 'watch on youtube' },
     { title: 'Speaker at FOSDEM 2026', meta: 'FOSDEM 2026, Brussels', where: 'Brussels', url: 'https://fosdem.org/2026/schedule/speaker/elio_qoshi', openLabel: 'go there' }
   ];
-  var ti = 0, ytPlaying = false;
+  var ti = 0, ytPlaying = false, ytStarted = false, ytReady = false, ytQueued = null, ytWait = 0;
   function ytSend(func) {
+    // commands sent before YouTube answers are dropped, so hold the latest one
+    if (!ytReady) { ytQueued = func; return; }
     var f = q('#talk-video');
     if (f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), '*');
   }
@@ -311,11 +313,27 @@
         screen.innerHTML = '';
         f = document.createElement('iframe');
         f.id = 'talk-video'; f.setAttribute('data-id', t.video); f.title = t.title;
-        f.src = 'https://www.youtube.com/embed/' + t.video + '?enablejsapi=1&rel=0';
+        // controls=0 hides YouTube's own bar; the player buttons below drive it instead
+        f.src = 'https://www.youtube.com/embed/' + t.video + '?enablejsapi=1&rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&playsinline=1' +
+          (location.protocol.indexOf('http') === 0 ? '&origin=' + encodeURIComponent(location.origin) : '');
         f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
         f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
         f.style.cssText = 'display: block; width: 100%; height: 100%; border: 0';
-        screen.appendChild(f);
+        // keep asking for player events until YouTube answers, like its own iframe API does
+        f.addEventListener('load', function () {
+          var tries = 0, ask = setInterval(function () {
+            if (ytReady || ++tries > 40 || !f.isConnected) return clearInterval(ask);
+            f.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'talk-video' }), '*');
+          }, 250);
+        });
+        // the thumbnail covers YouTube's title and big play button until the tape runs
+        var poster = document.createElement('button');
+        poster.type = 'button'; poster.className = 'talk-poster'; poster.setAttribute('aria-label', 'Play ' + t.title);
+        poster.innerHTML = '<img alt="">';
+        poster.firstChild.src = 'https://i.ytimg.com/vi/' + t.video + '/hqdefault.jpg';
+        poster.addEventListener('click', function () { player('playVideo'); });
+        screen.appendChild(f); screen.appendChild(poster);
+        ytStarted = false; ytReady = false; ytQueued = null;
       }
     } else {
       screen.innerHTML = '<div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; text-align: center; color: #fff"><span class="ico ico-presenter" aria-hidden="true"></span><p style="margin: 0">no tape for this one :(</p><a class="btn98" target="_blank" rel="noopener">go there</a></div>';
@@ -340,7 +358,36 @@
   function pickTalk(i) { ti = (i + talks.length) % talks.length; ytPlaying = false; renderTalk(); }
   q('#talk-prev').addEventListener('click', function () { pickTalk(ti - 1); });
   q('#talk-next').addEventListener('click', function () { pickTalk(ti + 1); });
-  function player(func) { ytSend(func); ytPlaying = func === 'playVideo'; if (ytPlaying) scCall('pause'); renderTalkStatus(); }
+  function player(func) {
+    ytSend(func); ytPlaying = func === 'playVideo'; if (ytPlaying) scCall('pause');
+    clearTimeout(ytWait);
+    if (ytPlaying) armFallback();
+    if (func === 'stopVideo') { ytStarted = false; setPoster(true); }
+    renderTalkStatus();
+  }
+  // if the browser blocks remote play (some phones), show YouTube's own tap target
+  function armFallback() {
+    if (ytReady) ytWait = setTimeout(function () { if (!ytStarted) setPoster(false); }, 4000);
+  }
+  function setPoster(on) { var p = q('#talk-screen .talk-poster'); if (p) p.hidden = !on; }
+  window.addEventListener('message', function (e) {
+    if (!/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin)) return;
+    var d = e.data;
+    try { if (typeof d === 'string') d = JSON.parse(d); } catch (err) { return; }
+    if (!d || !d.event) return;
+    if (!ytReady) {
+      ytReady = true;
+      if (ytQueued) { var c = ytQueued; ytQueued = null; ytSend(c); if (c === 'playVideo') { clearTimeout(ytWait); armFallback(); } }
+    }
+    var s = d.event === 'onStateChange' ? d.info : d.info && d.info.playerState;
+    if (typeof s !== 'number') return;
+    // 1 playing, 2 paused, 0 ended; the poster hides YouTube's overlays whenever it is not playing
+    if (s === 1) { ytStarted = true; ytPlaying = true; setPoster(false); scCall('pause'); }
+    else if (s === 2) { ytPlaying = false; setPoster(true); }
+    else if (s === 0) { ytPlaying = false; ytStarted = false; setPoster(true); }
+    else return;
+    renderTalkStatus();
+  });
   function renderTalkStatus() { q('#talk-status').textContent = talks[ti].video ? (ytPlaying ? 'playing...' : 'ready.') : 'no tape'; }
   q('#talk-play').addEventListener('click', function () { player('playVideo'); });
   q('#talk-pause').addEventListener('click', function () { player('pauseVideo'); });

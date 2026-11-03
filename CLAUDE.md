@@ -78,7 +78,7 @@ plain and descriptive.
 The imprint window credits everything. Keep these in sync with `LICENSES/`:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), Ari-W9500 font
 by Catterio Sylt (SIL OFL 1.1, notice also in styles.css), Ghosts I–IV music
-and wallpaper artwork (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
+and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
 (https://www.jeremiepontin.com/, not covered by the MIT license). The site's
 own code is MIT (`LICENSE`). The Winamp logo is a trademark of its owner. If the font
 files are redistributed, ship `LICENSES/Ari-W9500-*` with them.
