@@ -34,10 +34,9 @@ windows. It is a business card, not a sales page.
 - Everything is drawn at native 1x pixel sizes and the whole page is scaled with
   `.root98{zoom:2}`. Desktop layout math in app.js divides pointer movement by 2.
 - Font: Ari-W9500 only, at 11px (line-height 14px) for everything. Other
-  sizes blur. No big headings: like Windows 98, structure comes from spacing
-  and bold. There is no bold file and `font-synthesis:none` prevents fake bold,
-  so bold is a 1px double strike (`text-shadow:1px 0 currentColor`) on
-  `strong`, `b`, headings, title bars and `.bold`.
+  sizes blur. No big headings: like Windows 98, structure comes from spacing.
+  There is no bold file and `font-synthesis:none` prevents fake bold; don't
+  fake it with text-shadow either (tried, it looked off).
 - Icons: only the SerenityOS 32x32 icon set (`assets/icons.png` sprite, 32px
   cells, see `.ico-*` classes) plus the user-supplied Winamp icon. Do not draw
   or add icons from elsewhere. The wait cursor is SerenityOS's 16x16 timer icon

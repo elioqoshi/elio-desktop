@@ -16,15 +16,14 @@ a{color:#000080}a:hover{color:#0000FF}
 .root98{zoom:2;font-synthesis:none;min-height:50vh;color:#000;-webkit-font-smoothing:none}
 .root98,.root98 *{font-family:"Ari-W9500",ui-monospace,monospace}
 .root98 .window,.root98 button,.root98 a.btn98,.root98 input,.root98 label,.root98 legend,.root98 ul.tree-view,.root98 p,.root98 li,.root98 .title-bar-text,.root98 .status-bar-field{font-size:11px;line-height:14px}
-.root98 .title-bar-text{color:#000}
+.root98 .title-bar-text{font-weight:700;color:#000}
 .root98 .title-bar{cursor:grab;touch-action:none;user-select:none}
 .root98 a.btn98{display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:transparent;box-sizing:border-box}
 /* Wallpaper sits on html, outside .root98, so zoom:2 does not scale it a second time */
 html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-repeat fixed;image-rendering:pixelated}
 .menubar{position:sticky;top:0;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 12px;padding:1px 4px;background:silver;box-shadow:inset 0 1px #fff,inset 0 -1px #808080,0 1px #0a0a0a}
-/* Ari-W9500 has no bold: bold is a 1px double strike, which stays on the pixel grid. No big headings, just bold and spacing */
+/* No big headings: like Windows 98, structure comes from spacing */
 .root98 :is(h1,h2,h3){font-size:11px;line-height:14px}
-.root98 :is(strong,b,h1,h2,h3,.title-bar-text,.fm-title,.bold){font-weight:400;text-shadow:1px 0 currentColor}
 .root98 .mbtn{box-shadow:none;background:transparent;min-width:0;min-height:0;padding:2px 6px;display:inline-flex;align-items:center;gap:4px}
 .root98 .mbtn:hover,.root98 .mbtn:focus-visible{background:#000080;color:#fff;outline:none}
 .root98 .mbtn:focus,.root98 .mbtn:not(:disabled):active{outline:none;box-shadow:none;text-shadow:none}
@@ -87,7 +86,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .muted{color:#444}
 .fm-now{padding:4px 6px;background:#fff}
 .root98 .fm-now p{margin:0}
-.root98 .fm-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.root98 .fm-title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fm-spk path{fill:#222}
 .root98.dark .fm-spk path{fill:#E6E6E6}
 .root98 input[type=range]{height:16px}
@@ -110,7 +109,6 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .menu98{background:#3A3A3A;box-shadow:inset -1px -1px #000,inset 1px 1px #6A6A6A,inset -2px -2px #222,inset 2px 2px #505050,2px 2px 0 rgba(0,0,0,.4)}
 .root98.dark .menuitem98{color:#E6E6E6}
 .root98.dark .menuitem98:hover,.root98.dark .menuitem98:focus{background:#000080;color:#fff}
-.root98 .mbtn.bold,.root98 .mbtn.bold:focus,.root98 .mbtn.bold:not(:disabled):active{text-shadow:1px 0 currentColor}
 .root98 .helpbtn{padding:2px 4px}
 .root98 .helpbtn svg path.help-bg{fill:#000080}
 .root98 .helpbtn svg path.help-fg{fill:#fff}
