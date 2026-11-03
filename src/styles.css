@@ -128,6 +128,13 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 button.pthumb:hover .pname,.root98 button.pthumb:focus-visible .pname{background:#000080;color:#fff}
 .root98 button.pthumb:focus-visible .pname{outline:1px dotted #fff}
 .root98.dark button.pthumb{background:transparent;box-shadow:none;color:#E6E6E6}
+/* a desktop doesn't scroll: the page is exactly one screen and the desk fills what the menu bar leaves */
+@media (min-width:761px){
+  html,body{height:100%;overflow:hidden}
+  .root98{display:flex;flex-direction:column;height:50vh;min-height:0}
+  .menubar{flex:none}
+  .desk-area{flex:1;min-height:0}
+}
 @media (max-width:760px){
   html{background-attachment:scroll;background-position:60% top;background-size:auto 100vh}
   .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}

@@ -7,6 +7,7 @@
     set: function (k, v) { try { localStorage.setItem('elio98:' + k, JSON.stringify(v)); } catch (e) {} }
   };
   function q(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(v, Math.max(lo, hi))); }
   function qa(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
   /* ---------- theme ---------- */
@@ -82,8 +83,10 @@
     });
     bar.addEventListener('pointermove', function (ev) {
       if (!drag) return;
-      W[k].x = Math.max(0, Math.round(drag.ox + (ev.clientX - drag.sx) / Z));
-      W[k].y = Math.max(0, Math.round(drag.oy + (ev.clientY - drag.sy) / Z));
+      // keep at least part of the title bar on the desk so the window can always be grabbed again
+      var desk = q('.desk-area');
+      W[k].x = clamp(Math.round(drag.ox + (ev.clientX - drag.sx) / Z), 0, desk.clientWidth - 48);
+      W[k].y = clamp(Math.round(drag.oy + (ev.clientY - drag.sy) / Z), 0, desk.clientHeight - 20);
       apply(k);
     });
     function end() { drag = null; }
@@ -139,9 +142,10 @@
         d.moved = true; wrap.classList.add('dragging'); wrap.style.zIndex = 2;
         try { wrap.setPointerCapture(d.id); } catch (err) {}
       }
+      var mx = iconBox.clientWidth - wrap.offsetWidth, my = iconBox.clientHeight - wrap.offsetHeight;
       iconPos[def.id] = d.p.r !== undefined
-        ? { r: Math.max(0, Math.round(d.p.r - dx)), b: Math.max(0, Math.round(d.p.b - dy)) }
-        : { x: Math.max(0, Math.round(d.p.x + dx)), y: Math.max(0, Math.round(d.p.y + dy)) };
+        ? { r: clamp(Math.round(d.p.r - dx), 0, mx), b: clamp(Math.round(d.p.b - dy), 0, my) }
+        : { x: clamp(Math.round(d.p.x + dx), 0, mx), y: clamp(Math.round(d.p.y + dy), 0, my) };
       place();
     });
     function up() {
