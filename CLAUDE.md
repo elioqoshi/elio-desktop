@@ -21,7 +21,7 @@ windows. It is a business card, not a sales page.
 - `vendor/98.css`: 98.css, modified so `a.btn98` links get button styling via
   `:is(button,a.btn98)`; its MS Sans Serif @font-face rules were removed
 - `assets/`: Ari-W9500 font (subset, plus the full .otf), SerenityOS icon sprite,
-  wallpapers, wait cursor, dithered portrait (and the original photo)
+  wallpaper, wait cursor, dithered portrait (and the original photo)
 
 ## Design rules (keep these)
 
@@ -37,7 +37,10 @@ windows. It is a business card, not a sales page.
 - Windows: 98.css components. Title bars are one light blue (#A8DDE6; dark
   mode #2E6E7A). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
-- Wallpaper: subtle ordered dither, light #C7CCD4 and dark #1F2630.
+- Wallpaper: Ghosts I–IV album artwork (CC BY-NC-SA 3.0), 4x4 ordered
+  dither to 16 colours at 716x422 (`assets/wallpaper-ghosts.png`). Same in
+  both themes. It sits on `html`, not `.root98`, so `zoom:2` does not scale it
+  twice; it covers the viewport with `image-rendering:pixelated`.
 - Dark theme: the sun button in the menu bar; defaults to the system setting
   and remembers the visitor's choice in localStorage.
 - Opening a window waits 1 second with the wait cursor, like an old PC.
@@ -74,8 +77,8 @@ plain and descriptive.
 
 The imprint window credits everything. Keep these in sync with `LICENSES/`:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), Ari-W9500 font
-by Catterio Sylt (SIL OFL 1.1, notice also in styles.css), Ghosts I–IV
-(CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
+by Catterio Sylt (SIL OFL 1.1, notice also in styles.css), Ghosts I–IV music
+and wallpaper artwork (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
 (https://www.jeremiepontin.com/, not covered by the MIT license). The site's
 own code is MIT (`LICENSE`). The Winamp logo is a trademark of its owner. If the font
 files are redistributed, ship `LICENSES/Ari-W9500-*` with them.

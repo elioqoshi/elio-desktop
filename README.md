@@ -36,7 +36,7 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 | `src/styles.css` | Desktop styling and dark mode |
 | `src/app.js` | Windows, icons, menus, clock, media player, radio, theme |
 | `vendor/98.css` | 98.css, lightly modified (see below) |
-| `assets/` | Font, icons, wallpapers, cursor, portrait |
+| `assets/` | Font, icons, wallpaper, cursor, portrait |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |
 
@@ -52,7 +52,7 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 | Winamp icon | in `assets/icons.png` | Supplied by Elio | Winamp logo is a trademark of its owner, used as a nod |
 | Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, via a SoundCloud set | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
-| Wallpapers | `assets/wallpaper-light.png`, `assets/wallpaper-dark.png` | Made for this site (ordered dither) | Elio Qoshi |
+| Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 
@@ -66,7 +66,9 @@ and publishes `index.html` and `LICENSES/` to GitHub Pages.
 - The Ari-W9500 license requires `LICENSES/Ari-W9500-*` to ship with the font
   files. The Pages workflow copies `LICENSES/` next to `index.html` for this
   reason.
-- *Ghosts I–IV* is licensed for non-commercial use only.
+- *Ghosts I–IV* (music and artwork) is licensed for non-commercial use only.
+  The dithered wallpaper is a derivative, so it is shared under the same
+  CC BY-NC-SA 3.0 license.
 - The imprint window on the site lists the same credits. Keep both in sync.
 
 ## License
