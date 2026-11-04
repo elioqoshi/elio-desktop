@@ -54,6 +54,12 @@ windows. It is a business card, not a sales page.
 - Opening a window waits 1 second with the wait cursor, like an old PC.
   Windows open at random spots that stay fully inside the desktop.
 - Phones (<=760px): icons become a grid and windows stack.
+- Right-click menus (Windows 98 style, `.ctx98`) on the desktop (arrange, line
+  up, refresh, lights, restore wallpaper), icons (open, copy link), title bars
+  (the system menu: restore, maximize, close, close all) and photos (open,
+  full size, set as wallpaper). Everything else keeps the browser's own menu.
+  Shift+F10 / the menu key and Alt+Space open them from the keyboard, a long
+  press on phones. Double-clicking a title bar maximizes.
 
 ## Copy voice
 

@@ -7,6 +7,7 @@
     set: function (k, v) { try { localStorage.setItem('elio98:' + k, JSON.stringify(v)); } catch (e) {} }
   };
   function q(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function phone() { return window.matchMedia('(max-width: 760px)').matches; }
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(v, Math.max(lo, hi))); }
   function qa(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
@@ -65,7 +66,29 @@
     s.y = Math.round(8 + Math.random() * (maxY - 8));
     apply(k);
   }
+  // maximize fills the desk; the old spot and size come back on restore
+  function maximize(k, on) {
+    var s = W[k], e = winEl(k), desk = q('.desk-area'), body = q('.window-body', e);
+    if (on === !!s.max) return;
+    if (on) {
+      s.max = { x: s.x, y: s.y, width: e.style.width, mh: body.style.maxHeight, ov: body.style.overflow };
+      s.x = 0; s.y = 0; body.style.maxHeight = ''; body.style.overflow = '';
+      e.classList.add('max'); fitMax(k);
+    } else {
+      s.x = s.max.x; s.y = s.max.y; e.style.width = s.max.width; e.style.height = '';
+      body.style.maxHeight = s.max.mh; body.style.overflow = s.max.ov;
+      e.classList.remove('max'); s.max = null;
+    }
+    focusWin(k); apply(k);
+  }
+  function fitMax(k) {
+    var e = winEl(k), desk = q('.desk-area');
+    // .window has 3px padding on each side around its content box
+    e.style.width = (desk.clientWidth - 6) + 'px'; e.style.height = (desk.clientHeight - 6) + 'px';
+  }
+  window.addEventListener('resize', function () { Object.keys(W).forEach(function (k) { if (W[k].max) fitMax(k); }); });
   function closeWin(k) {
+    if (W[k].max) maximize(k, false);
     W[k].open = false; apply(k);
     if (k === 'talks') ytSend('pauseVideo');
     if (k === 'radio') scCall('pause');
@@ -76,8 +99,9 @@
     q('.title-bar-controls button', e).addEventListener('click', function () { closeWin(k); });
     var bar = q('.title-bar', e), drag = null;
     bar.style.touchAction = 'none';
+    bar.addEventListener('dblclick', function (ev) { if (!ev.target.closest('button') && !phone()) maximize(k, !W[k].max); });
     bar.addEventListener('pointerdown', function (ev) {
-      if (ev.button !== 0 || ev.target.closest('button')) return;
+      if (ev.button !== 0 || ev.target.closest('button') || W[k].max) return;
       drag = { sx: ev.clientX, sy: ev.clientY, ox: W[k].x, oy: W[k].y };
       try { bar.setPointerCapture(ev.pointerId); } catch (err) {}
     });
@@ -109,7 +133,7 @@
   ];
   var iconPos = store.get('icons') || {};
   var justDragged = false;
-  var iconBox = q('#icons');
+  var iconBox = q('#icons'), iconEls = [];
   icons.forEach(function (def, idx) {
     var wrap = document.createElement('div');
     wrap.className = 'dicon'; wrap.setAttribute('role', 'listitem');
@@ -132,6 +156,7 @@
       else { wrap.style.right = 'auto'; wrap.style.bottom = 'auto'; wrap.style.left = p.x + 'px'; wrap.style.top = p.y + 'px'; }
     }
     place();
+    iconEls.push({ def: def, idx: idx, wrap: wrap, inner: inner, place: place });
     var d = null;
     wrap.addEventListener('pointerdown', function (ev) { if (ev.button !== 0) return; d = { sx: ev.clientX, sy: ev.clientY, p: pos(), moved: false, id: ev.pointerId }; });
     wrap.addEventListener('pointermove', function (ev) {
@@ -533,4 +558,185 @@
   seek.addEventListener('change', function () { fm.seeking = false; fm.time = Number(seek.value); scCall('seekTo', fm.time * 1000); renderFm(); });
   q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); scCall('setVolume', fm.vol); });
   renderFm();
+
+  /* ---------- right-click menus ---------- */
+  var ctx = document.createElement('div'), ctxFrom = null, ctxItems = [];
+  ctx.className = 'menu98 ctx98'; ctx.setAttribute('role', 'menu'); ctx.hidden = true;
+  root.appendChild(ctx);
+  // entries: { label, run, bold, disabled } or '-' for a separator
+  function openMenu(entries, x, y, from) {
+    ctx.innerHTML = ''; ctxItems = []; ctxFrom = from || null;
+    entries.forEach(function (it) {
+      if (it === '-') { var sep = document.createElement('div'); sep.className = 'sep98'; sep.setAttribute('role', 'separator'); ctx.appendChild(sep); return; }
+      var m = document.createElement('div');
+      m.className = 'menuitem98' + (it.bold ? ' default' : ''); m.setAttribute('role', 'menuitem'); m.tabIndex = -1; m.textContent = it.label;
+      if (it.disabled) m.setAttribute('aria-disabled', 'true');
+      else { ctxItems.push(m); m.addEventListener('click', function () { closeMenu(true); it.run(); }); }
+      ctx.appendChild(m);
+    });
+    ctx.hidden = false;
+    // page coordinates are 2x the zoomed ones; keep the whole menu on screen
+    var vw = window.innerWidth / Z, vh = window.innerHeight / Z;
+    ctx.style.left = Math.max(0, Math.min(x / Z, vw - ctx.offsetWidth - 2)) + 'px';
+    ctx.style.top = Math.max(0, Math.min(y / Z, vh - ctx.offsetHeight - 2)) + 'px';
+    if (ctxItems[0]) ctxItems[0].focus();
+  }
+  function closeMenu(keepFocus) {
+    if (ctx.hidden) return;
+    ctx.hidden = true;
+    if (!keepFocus && ctxFrom && ctxFrom.focus) ctxFrom.focus();
+  }
+  ctx.addEventListener('keydown', function (e) {
+    var i = ctxItems.indexOf(document.activeElement), n = ctxItems.length;
+    if (e.key === 'ArrowDown') { e.preventDefault(); ctxItems[(i + 1) % n].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); ctxItems[(i - 1 + n) % n].focus(); }
+    else if (e.key === 'Home') { e.preventDefault(); ctxItems[0].focus(); }
+    else if (e.key === 'End') { e.preventDefault(); ctxItems[n - 1].focus(); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (i >= 0) ctxItems[i].click(); }
+    else if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
+    else if (e.key === 'Tab') { e.preventDefault(); closeMenu(); }
+  });
+  document.addEventListener('pointerdown', function (e) { if (!ctx.hidden && !ctx.contains(e.target)) closeMenu(true); }, true);
+  window.addEventListener('blur', function () { closeMenu(true); });
+  window.addEventListener('resize', function () { closeMenu(true); });
+
+  // desktop: arrange, line up, refresh and the rest
+  function arrangeIcons() { iconPos = {}; store.set('icons', iconPos); iconEls.forEach(function (ic) { ic.place(); }); }
+  function lineUpIcons() {
+    var taken = {}, dh = q('.desk-area').clientHeight, rows = Math.max(1, Math.floor((dh - 12) / 64));
+    function cellOf(ic) {
+      var p = iconPos[ic.def.id];
+      if (!p) return ic.def.dock !== undefined ? { s: 'R', c: 0, r: ic.def.dock } : { s: 'L', c: Math.floor(ic.idx / 5), r: ic.idx % 5 };
+      return p.r !== undefined ? { s: 'R', c: Math.round((p.r - 12) / 76), r: Math.round((p.b - 12) / 64) }
+                               : { s: 'L', c: Math.round((p.x - 12) / 76), r: Math.round((p.y - 12) / 64) };
+    }
+    // icons still in their default spot keep it; moved ones snap to the nearest free cell
+    iconEls.filter(function (ic) { return !iconPos[ic.def.id]; }).forEach(function (ic) { var c = cellOf(ic); taken[c.s + c.c + ',' + c.r] = 1; });
+    iconEls.filter(function (ic) { return iconPos[ic.def.id]; }).forEach(function (ic) {
+      var c = cellOf(ic); c.c = Math.max(0, c.c); c.r = Math.min(Math.max(0, c.r), rows - 1);
+      while (taken[c.s + c.c + ',' + c.r]) { c.r++; if (c.r >= rows) { c.r = 0; c.c++; } }
+      taken[c.s + c.c + ',' + c.r] = 1;
+      iconPos[ic.def.id] = c.s === 'R' ? { r: 12 + c.c * 76, b: 12 + c.r * 64 } : { x: 12 + c.c * 76, y: 12 + c.r * 64 };
+      ic.place();
+    });
+    store.set('icons', iconPos);
+  }
+  function refreshDesk() {
+    setBusy(1); iconBox.style.visibility = 'hidden';
+    setTimeout(function () { iconBox.style.visibility = ''; setBusy(-1); }, 400);
+  }
+  function desktopMenu(x, y, from) {
+    var dark = root.classList.contains('dark'), phoneMode = phone();
+    openMenu([
+      { label: 'Arrange Icons', run: arrangeIcons, disabled: phoneMode },
+      { label: 'Line up Icons', run: lineUpIcons, disabled: phoneMode },
+      '-',
+      { label: 'Refresh', run: refreshDesk },
+      '-',
+      { label: 'New Folder', disabled: true },
+      '-',
+      { label: dark ? 'Lights On' : 'Lights Off', run: function () { q('#dark-btn').click(); } },
+      { label: 'Restore Wallpaper', run: function () { setWallpaper(null); }, disabled: !wallpaper }
+    ], x, y, from);
+  }
+
+  // icons: open, plus link actions for the ones that go elsewhere
+  function iconMenu(ic, x, y) {
+    var d = ic.def, list = [{ label: 'Open', bold: true, run: function () { ic.inner.click(); } }];
+    if (d.kind === 'link') list.push('-', { label: 'Copy Link Address', run: function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(d.href).catch(function () {});
+    } });
+    openMenu(list, x, y, ic.inner);
+  }
+
+  // title bars: the Windows 98 system menu
+  function windowMenu(k, x, y) {
+    var s = W[k], phoneMode = phone();
+    openMenu([
+      { label: 'Restore', run: function () { maximize(k, false); }, disabled: !s.max },
+      { label: 'Minimize', disabled: true },
+      { label: 'Maximize', run: function () { maximize(k, true); }, disabled: !!s.max || phoneMode },
+      '-',
+      { label: 'Close', bold: true, run: function () { closeWin(k); } },
+      { label: 'Close All Windows', run: function () { Object.keys(W).forEach(function (w) { if (W[w].open) closeWin(w); }); } }
+    ], x, y, q('.title-bar-controls button', winEl(k)));
+  }
+
+  // photos: open, full size, and set as wallpaper
+  var wallpaper = null;
+  function setWallpaper(src) {
+    wallpaper = src;
+    document.documentElement.style.backgroundImage = src ? 'url("' + src + '")' : '';
+    document.documentElement.style.backgroundPosition = src ? 'center' : '';
+    store.set('wallpaper', src);
+  }
+  (function () {
+    var w = store.get('wallpaper');
+    if (w && photos.some(function (p) { return p.src === w; })) setWallpaper(w);
+  })();
+  function photoMenu(i, x, y, from, inViewer) {
+    var p = photos[i], list = [];
+    if (!inViewer) list.push({ label: 'Open', bold: true, run: function () { showPhoto(i); openWin('photo'); } });
+    list.push({ label: 'View Full Size', run: function () { window.open(p.full, '_blank', 'noopener'); } }, '-',
+              { label: 'Set as Wallpaper', run: function () { setWallpaper(p.src); } });
+    openMenu(list, x, y, from);
+  }
+
+  // work out which menu a spot on the page gets; null keeps the browser's own menu
+  function menuFor(t, x, y) {
+    var thumb = t.closest('.pthumb');
+    if (thumb) { var ti = qa('#photo-grid .pthumb').indexOf(thumb); return function () { photoMenu(ti, x, y, thumb); }; }
+    if (t.closest('#photo-img') && photos.length) return function () { photoMenu(pi, x, y, null, true); };
+    var di = t.closest('.dicon');
+    if (di) { var ic = iconEls.filter(function (c) { return c.wrap === di; })[0]; return function () { iconMenu(ic, x, y); }; }
+    var bar = t.closest('.title-bar');
+    if (bar && !t.closest('.title-bar-controls')) { var k = bar.closest('[data-win]').getAttribute('data-win'); return function () { windowMenu(k, x, y); }; }
+    if (t.closest('.desk-area') && !t.closest('.win')) return function () { desktopMenu(x, y, null); };
+    return null;
+  }
+  document.addEventListener('contextmenu', function (e) {
+    var x = e.clientX, y = e.clientY, t = e.target;
+    // from the keyboard (menu key, Shift+F10) there is no pointer: use the focused element
+    if (!x && !y && t.getBoundingClientRect) { var r = t.getBoundingClientRect(); x = r.left + 8; y = r.bottom; }
+    var show = menuFor(t, x, y);
+    if (!show) return;
+    e.preventDefault(); show();
+  });
+  // keyboard, like in Windows: Shift+F10 or the menu key for whatever has focus (the desktop
+  // when nothing does), Alt+Space for the system menu of the focused window
+  document.addEventListener('keydown', function (e) {
+    var a = document.activeElement || document.body;
+    if (e.altKey && e.code === 'Space') {
+      var w = a.closest && a.closest('[data-win]');
+      if (!w) return;
+      e.preventDefault();
+      var wr = w.querySelector('.title-bar').getBoundingClientRect();
+      windowMenu(w.getAttribute('data-win'), wr.left + 4, wr.bottom);
+    } else if (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')) {
+      if (!ctx.hidden) return;
+      var nothing = a === document.body || a === document.documentElement;
+      var r = (nothing ? q('.desk-area') : a).getBoundingClientRect();
+      var show = menuFor(nothing ? q('.desk-area') : a, r.left + 8, nothing ? r.top + 8 : r.bottom);
+      if (!show) return;
+      e.preventDefault(); show();
+    }
+  });
+  // iOS has no contextmenu event, so a long press opens the menu there; other phones fire contextmenu first
+  var press = null, eatClick = false;
+  document.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch' || !menuFor(e.target, 0, 0)) return;
+    var x = e.clientX, y = e.clientY, t = e.target;
+    press = { x: x, y: y, timer: setTimeout(function () {
+      press = null;
+      if (!ctx.hidden) return;
+      var show = menuFor(t, x, y); if (show) { eatClick = true; show(); }
+    }, 550) };
+  });
+  function cancelPress(e) {
+    if (!press) return;
+    if (e.type === 'pointermove' && Math.abs(e.clientX - press.x) < 8 && Math.abs(e.clientY - press.y) < 8) return;
+    clearTimeout(press.timer); press = null;
+  }
+  ['pointermove', 'pointerup', 'pointercancel'].forEach(function (ev) { document.addEventListener(ev, cancelPress); });
+  document.addEventListener('click', function (e) { if (eatClick) { eatClick = false; e.preventDefault(); e.stopPropagation(); } }, true);
 })();

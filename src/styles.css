@@ -114,6 +114,18 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .menu98{background:#3A3A3A;box-shadow:inset -1px -1px #000,inset 1px 1px #6A6A6A,inset -2px -2px #222,inset 2px 2px #505050,2px 2px 0 rgba(0,0,0,.4)}
 .root98.dark .menuitem98{color:#E6E6E6}
 .root98.dark .menuitem98:hover,.root98.dark .menuitem98:focus{background:#000080;color:#fff}
+/* right-click menus: same look as the clients menu, placed at the pointer */
+.menu98.ctx98{position:fixed;top:0;left:0;z-index:10002;min-width:140px}
+.root98 .ctx98 .menuitem98{cursor:default;user-select:none}
+.root98 .ctx98 .menuitem98.default{font-weight:700}
+.root98 .ctx98 .menuitem98[aria-disabled="true"]{color:#808080;text-shadow:1px 1px #fff}
+.root98 .ctx98 .menuitem98[aria-disabled="true"]:hover,.root98 .ctx98 .menuitem98[aria-disabled="true"]:focus{background:transparent;color:#808080}
+.root98.dark .ctx98 .menuitem98[aria-disabled="true"],.root98.dark .ctx98 .menuitem98[aria-disabled="true"]:hover{color:#777;text-shadow:none}
+.sep98{margin:3px 1px;border-top:1px solid #808080;border-bottom:1px solid #fff}
+.root98.dark .sep98{border-top-color:#222;border-bottom-color:#5A5A5A}
+.win.max{display:flex;flex-direction:column}
+.win.max>.window-body{flex:1;min-height:0;overflow:auto}
+.desk-area img{-webkit-touch-callout:none}
 .root98 .helpbtn{padding:2px 4px}
 .root98 .helpbtn svg path.help-bg{fill:#000080}
 .root98 .helpbtn svg path.help-fg{fill:#fff}
