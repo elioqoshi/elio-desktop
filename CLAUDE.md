@@ -33,7 +33,8 @@ windows. It is a business card, not a sales page.
 ## Design rules (keep these)
 
 - Everything is drawn at native 1x pixel sizes and the whole page is scaled with
-  `.root98{zoom:2}`. Desktop layout math in app.js divides pointer movement by 2.
+  `.root98{zoom:2}`, except on phones (<=760px), which get zoom 1. Pointer math
+  in app.js divides by `Z`, which follows the same breakpoint.
 - Font: Pixelated MS Sans Serif (98.css's font) only, at 11px (line-height
   14px) for everything. Other sizes blur. It has a real bold weight (700), so
   use bold freely; `font-synthesis:none` stays on so nothing is faked. No big
@@ -53,7 +54,8 @@ windows. It is a business card, not a sales page.
   and remembers the visitor's choice in localStorage.
 - Opening a window waits 1 second with the wait cursor, like an old PC.
   Windows open at random spots that stay fully inside the desktop.
-- Phones (<=760px): icons become a grid and windows stack.
+- Phones (<=760px): 1x zoom, icons become a grid and windows stack, centred at
+  their own width.
 - Files and folders: every desktop item (apps, links, photos, the photos
   folder, the trash, visitor folders) is an item in a folder tree (`ITEMS`
   in app.js). One click selects, a double-click opens (Enter and a tap on

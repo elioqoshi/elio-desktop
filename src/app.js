@@ -1,6 +1,12 @@
 (function () {
   'use strict';
+  // the page is drawn at 1x and zoomed 2x (1x on phones, see styles.css); pointer math divides by it
   var Z = 2;
+  (function () {
+    var mq = window.matchMedia('(max-width: 760px)');
+    function setZ() { Z = mq.matches ? 1 : 2; }
+    setZ(); if (mq.addEventListener) mq.addEventListener('change', setZ);
+  })();
   var root = document.getElementById('root98');
   var store = {
     get: function (k) { try { return JSON.parse(localStorage.getItem('elio98:' + k)); } catch (e) { return null; } },

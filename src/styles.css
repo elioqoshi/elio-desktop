@@ -163,9 +163,13 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
   .desk-area{flex:1;min-height:0}
 }
 @media (max-width:760px){
+  /* phones get the true 1x size: 2x made everything twice as big as a phone needs */
+  .root98{zoom:1;min-height:100vh}
+  .desk-area{min-height:calc(100vh - 36px)}
   html{background-attachment:scroll;background-position:60% top;background-size:auto 100vh}
   .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}
   .deskicons{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));pointer-events:auto}
   .dicon{position:static !important;width:auto}
-  .win{position:relative !important;left:auto !important;top:auto !important;width:auto !important;max-width:none}
+  /* windows keep their own width at 1x, centred and never wider than the screen */
+  .win{position:relative !important;left:auto !important;top:auto !important;align-self:center;max-width:calc(100% - 6px)}
 }
