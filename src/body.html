@@ -71,16 +71,19 @@
       <div class="status-bar"><p class="status-bar-field" id="talk-count"></p><p class="status-bar-field" id="talk-status"></p></div>
     </section>
 
-    <section class="window win" data-win="photos" aria-label="Photos folder" style="width: 300px" hidden>
-      <div class="title-bar tb-blue">
-        <div class="title-bar-text">photos</div>
-        <div class="title-bar-controls"><button aria-label="Close"></button></div>
-      </div>
-      <div class="window-body" style="margin: 4px">
-        <div class="sunken-panel photo-grid" role="list" aria-label="Photos" id="photo-grid" style="width: auto; height: auto; max-height: 220px"></div>
-      </div>
-      <div class="status-bar"><p class="status-bar-field" id="photo-count"></p></div>
-    </section>
+    <template id="folder-tpl">
+      <section class="window win" style="width: 300px" hidden>
+        <div class="title-bar tb-blue">
+          <div class="title-bar-text folder-t">folder</div>
+          <div class="title-bar-controls"><button aria-label="Close"></button></div>
+        </div>
+        <div class="window-body" style="margin: 4px">
+          <div class="sunken-panel photo-grid folder-grid" role="list" aria-label="Folder contents" style="width: auto; height: auto; min-height: 60px; max-height: 220px"></div>
+        </div>
+        <div class="status-bar"><p class="status-bar-field folder-count"></p></div>
+        <div class="grip98" aria-hidden="true"></div>
+      </section>
+    </template>
 
     <section class="window win" data-win="photo" aria-labelledby="photo-t" style="width: 320px" hidden>
       <div class="title-bar tb-blue">

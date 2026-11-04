@@ -35,7 +35,7 @@
   var W = {
     about: { open: true, x: 170, y: 18, z: 2, w: 290 },
     portrait: { open: true, x: 430, y: 46, z: 3, w: 170 },
-    talks: { w: 340 }, photos: { w: 300 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 210 }, imprint: { w: 300 }
+    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 210 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
   function winEl(k) { return q('[data-win="' + k + '"]'); }
@@ -56,6 +56,7 @@
     if (k === 'talks') renderTalk();
     if (k === 'clock') tick();
     if (k === 'radio') ensureRadio();
+    if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
     var dw = desk.clientWidth, dh = desk.clientHeight, h = e.offsetHeight;
     var over = h - (dh - 16);
     if (over > 0) {
@@ -93,7 +94,8 @@
     if (k === 'talks') ytSend('pauseVideo');
     if (k === 'radio') scCall('pause');
   }
-  Object.keys(W).forEach(function (k) {
+  // folder windows are added later, so setup is a function they can call too
+  function setupWin(k) {
     var e = winEl(k); apply(k);
     e.addEventListener('pointerdown', function () { focusWin(k); });
     q('.title-bar-controls button', e).addEventListener('click', function () { closeWin(k); });
@@ -115,78 +117,10 @@
     });
     function end() { drag = null; }
     bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
-  });
+  }
+  Object.keys(W).forEach(setupWin);
   qa('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openWin(b.getAttribute('data-open')); }); });
   qa('[data-close]').forEach(function (b) { b.addEventListener('click', function () { closeWin(b.getAttribute('data-close')); }); });
-
-  /* ---------- desktop icons ---------- */
-  var icons = [
-    { id: 'portrait', label: 'portrait.jpg', ico: 'ico-image', kind: 'app' },
-    { id: 'talks', label: 'talks', ico: 'ico-presenter', kind: 'app' },
-    { id: 'clock', label: 'clock.exe', ico: 'ico-clock', kind: 'app' },
-    { id: 'contact', label: 'help', ico: 'ico-help', kind: 'app' },
-    { id: 'radio', label: 'winamp', ico: 'ico-winamp', kind: 'app' },
-    { id: 'photos', label: 'photos', ico: 'ico-folder', kind: 'app' },
-    { id: 'ura', label: 'Ura Design', ico: 'ico-browser', kind: 'link', href: 'https://ura.design', dock: 2 },
-    { id: 'linkedin', label: 'LinkedIn', ico: 'ico-network', kind: 'link', href: 'https://www.linkedin.com/in/elioqoshi/', dock: 1 },
-    { id: 'github', label: 'GitHub', ico: 'ico-git', kind: 'link', href: 'https://github.com/elioqoshi/', dock: 0 }
-  ];
-  var iconPos = store.get('icons') || {};
-  var justDragged = false;
-  var iconBox = q('#icons'), iconEls = [];
-  icons.forEach(function (def, idx) {
-    var wrap = document.createElement('div');
-    wrap.className = 'dicon'; wrap.setAttribute('role', 'listitem');
-    var inner;
-    if (def.kind === 'app') { inner = document.createElement('button'); inner.type = 'button'; }
-    else if (def.kind === 'link') { inner = document.createElement('a'); inner.href = def.href; inner.target = '_blank'; inner.rel = 'noopener'; inner.draggable = false; }
-    else { inner = document.createElement('span'); inner.setAttribute('role', 'link'); inner.setAttribute('aria-disabled', 'true'); inner.title = def.title; }
-    inner.className = 'icon' + (def.kind === 'ph' ? ' is-ph' : '');
-    inner.innerHTML = '<span class="ico ' + def.ico + '" aria-hidden="true"></span><span class="lbl"></span>';
-    q('.lbl', inner).textContent = def.label;
-    wrap.appendChild(inner); iconBox.appendChild(wrap);
-    function pos() {
-      if (iconPos[def.id]) return iconPos[def.id];
-      if (def.dock !== undefined) return { r: 12, b: 12 + def.dock * 64 };
-      return { x: 12 + Math.floor(idx / 5) * 76, y: 12 + (idx % 5) * 64 };
-    }
-    function place() {
-      var p = pos();
-      if (p.r !== undefined) { wrap.style.left = 'auto'; wrap.style.top = 'auto'; wrap.style.right = p.r + 'px'; wrap.style.bottom = p.b + 'px'; }
-      else { wrap.style.right = 'auto'; wrap.style.bottom = 'auto'; wrap.style.left = p.x + 'px'; wrap.style.top = p.y + 'px'; }
-    }
-    place();
-    iconEls.push({ def: def, idx: idx, wrap: wrap, inner: inner, place: place });
-    var d = null;
-    wrap.addEventListener('pointerdown', function (ev) { if (ev.button !== 0) return; d = { sx: ev.clientX, sy: ev.clientY, p: pos(), moved: false, id: ev.pointerId }; });
-    wrap.addEventListener('pointermove', function (ev) {
-      if (!d) return;
-      var dx = (ev.clientX - d.sx) / Z, dy = (ev.clientY - d.sy) / Z;
-      if (!d.moved) {
-        if (Math.abs(dx) < 3 && Math.abs(dy) < 3) return;
-        d.moved = true; wrap.classList.add('dragging'); wrap.style.zIndex = 2;
-        try { wrap.setPointerCapture(d.id); } catch (err) {}
-      }
-      var mx = iconBox.clientWidth - wrap.offsetWidth, my = iconBox.clientHeight - wrap.offsetHeight;
-      iconPos[def.id] = d.p.r !== undefined
-        ? { r: clamp(Math.round(d.p.r - dx), 0, mx), b: clamp(Math.round(d.p.b - dy), 0, my) }
-        : { x: clamp(Math.round(d.p.x + dx), 0, mx), y: clamp(Math.round(d.p.y + dy), 0, my) };
-      place();
-    });
-    function up() {
-      if (d && d.moved) {
-        justDragged = true; setTimeout(function () { justDragged = false; }, 0);
-        wrap.classList.remove('dragging'); wrap.style.zIndex = '';
-        store.set('icons', iconPos);
-      }
-      d = null;
-    }
-    wrap.addEventListener('pointerup', up); wrap.addEventListener('pointercancel', up);
-    inner.addEventListener('click', function (ev) {
-      if (justDragged) { ev.preventDefault(); return; }
-      if (def.kind === 'app') openWin(def.id);
-    });
-  });
 
   /* ---------- clients menu ---------- */
   var clients = [
@@ -426,21 +360,337 @@
     q('#photo-full').href = p.full;
     q('#photo-prev').disabled = q('#photo-next').disabled = photos.length < 2;
   }
-  (function renderPhotos() {
-    var grid = q('#photo-grid');
-    if (!photos.length) grid.innerHTML = '<p class="muted" style="margin: 0; padding: 8px">this folder is empty :(</p>';
-    photos.forEach(function (p, i) {
-      var li = document.createElement('div'); li.setAttribute('role', 'listitem');
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'pthumb';
-      b.innerHTML = '<img alt="" loading="lazy"><span class="pname"></span>';
-      b.firstChild.src = p.thumb; b.lastChild.textContent = p.name;
-      b.addEventListener('click', function () { showPhoto(i); openWin('photo'); });
-      li.appendChild(b); grid.appendChild(li);
-    });
-    q('#photo-count').textContent = photos.length + (photos.length === 1 ? ' object' : ' objects');
-  })();
   q('#photo-prev').addEventListener('click', function () { showPhoto(pi - 1); });
   q('#photo-next').addEventListener('click', function () { showPhoto(pi + 1); });
+
+  /* ---------- files and folders ---------- */
+  // Everything on the desktop is an item in a small folder tree. Visitors can make, rename,
+  // delete and move folders and move any item between folders. Their changes only live in
+  // their own browser: 'fs' holds the tree, 'icons' the spots of desktop icons.
+  var ITEMS = {}, ORDER = [];
+  function addItem(it) { ITEMS[it.id] = it; ORDER.push(it.id); }
+  [
+    { id: 'portrait', name: 'portrait.jpg', ico: 'ico-image', kind: 'app' },
+    { id: 'talks', name: 'talks', ico: 'ico-presenter', kind: 'app' },
+    { id: 'clock', name: 'clock.exe', ico: 'ico-clock', kind: 'app' },
+    { id: 'contact', name: 'help', ico: 'ico-help', kind: 'app' },
+    { id: 'radio', name: 'winamp', ico: 'ico-winamp', kind: 'app' },
+    { id: 'photos', name: 'photos', ico: 'ico-folder', kind: 'folder' },
+    { id: 'ura', name: 'Ura Design', ico: 'ico-browser', kind: 'link', href: 'https://ura.design', dock: 2 },
+    { id: 'linkedin', name: 'LinkedIn', ico: 'ico-network', kind: 'link', href: 'https://www.linkedin.com/in/elioqoshi/', dock: 1 },
+    { id: 'github', name: 'GitHub', ico: 'ico-git', kind: 'link', href: 'https://github.com/elioqoshi/', dock: 0 }
+  ].forEach(function (it) { it.home = 'desktop'; addItem(it); });
+  photos.forEach(function (p, i) { addItem({ id: 'photo:' + p.name, name: p.name, ico: 'ico-image', kind: 'photo', photo: i, home: 'photos' }); });
+  var fs = store.get('fs') || {};
+  fs.folders = fs.folders || []; fs.parent = fs.parent || {};
+  fs.folders.forEach(function (f) { addItem({ id: f.id, name: f.name, ico: 'ico-folder', kind: 'folder', own: true, home: 'desktop' }); });
+  // forget moves of items or into folders that no longer exist (a photo removed from the repo, say)
+  Object.keys(fs.parent).forEach(function (id) {
+    var p = fs.parent[id];
+    if (!ITEMS[id] || (p !== 'desktop' && !(ITEMS[p] && ITEMS[p].kind === 'folder'))) delete fs.parent[id];
+  });
+  var iconPos = store.get('icons') || {};
+  function saveFs() { store.set('fs', fs); store.set('icons', iconPos); }
+  function parentOf(id) { return fs.parent[id] || ITEMS[id].home; }
+  function childrenOf(fid) { return ORDER.filter(function (id) { return ITEMS[id] && parentOf(id) === fid; }); }
+  // true when folder fid is id itself or sits somewhere inside it
+  function inside(id, fid) {
+    for (var f = fid, n = 0; f && f !== 'desktop' && n < 64; f = parentOf(f), n++) if (f === id) return true;
+    return false;
+  }
+  // like Windows 98 without auto arrange, icons stay put when one leaves the desk; Arrange Icons tidies up
+  function pinDesk() {
+    var spots = layoutDesk();
+    childrenOf('desktop').forEach(function (id) { if (!iconPos[id]) iconPos[id] = spots[id]; });
+  }
+  function moveItem(id, fid, at) {
+    if (!ITEMS[id] || (fid !== 'desktop' && inside(id, fid))) return false;
+    if (cut === id) cut = null;
+    if (parentOf(id) === 'desktop' && fid !== 'desktop') pinDesk();
+    fs.parent[id] = fid;
+    if (fid === 'desktop' && at) iconPos[id] = at; else delete iconPos[id];
+    saveFs(); refreshAll();
+    return true;
+  }
+  function refreshAll() {
+    renderDesk();
+    Object.keys(W).forEach(function (k) { if (k.indexOf('f:') === 0) renderFolder(k.slice(2)); });
+  }
+
+  // selection: one click selects (the label turns navy), a double-click opens
+  var selEl = null, lastPointer = 'mouse', justDragged = false, cut = null;
+  function select(el) { if (selEl && selEl !== el) selEl.classList.remove('sel'); selEl = el; if (el) el.classList.add('sel'); }
+  document.addEventListener('pointerdown', function (e) { if (!e.target.closest('.icon, .pthumb, .ctx98')) select(null); }, true);
+  function openItem(it) {
+    if (it.kind === 'app') openWin(it.id);
+    else if (it.kind === 'folder') openFolder(it.id);
+    else if (it.kind === 'photo') { showPhoto(it.photo); openWin('photo'); }
+    else if (it.kind === 'link') window.open(it.href, '_blank', 'noopener');
+  }
+  function wireItem(el, it) {
+    el.addEventListener('pointerdown', function (e) { lastPointer = e.pointerType; });
+    el.addEventListener('click', function (e) {
+      if (it.kind === 'link') e.preventDefault();
+      if (justDragged) return;
+      // the keyboard (Enter, detail 0) and a tap on a phone open right away
+      if (e.detail === 0 || lastPointer === 'touch') openItem(it); else select(el);
+    });
+    el.addEventListener('dblclick', function () { if (lastPointer !== 'touch') openItem(it); });
+    el.addEventListener('focus', function () { select(el); });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'F2' && it.own) { e.preventDefault(); rename(it.id); }
+      else if (e.key === 'Delete' && it.own) { e.preventDefault(); removeFolder(it.id); }
+    });
+  }
+
+  // where a dragged item would land: a folder icon, an open folder window, or the desk
+  var hl = null;
+  function dropAt(x, y, id) {
+    var els = document.elementsFromPoint(x, y);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i], t = null;
+      if (el.closest('.dragging')) continue;
+      var host = el.closest('[data-id]'), fw = el.closest('[data-folder]');
+      if (host && ITEMS[host.getAttribute('data-id')].kind === 'folder' && host.getAttribute('data-id') !== id) t = { fid: host.getAttribute('data-id'), el: host };
+      else if (fw) t = { fid: fw.getAttribute('data-folder'), el: fw };
+      else if (el.closest('.win')) return null;
+      else if (el.closest('.desk-area')) return { fid: 'desktop' };
+      else return null;
+      return t.fid !== 'desktop' && inside(id, t.fid) ? null : t;
+    }
+    return null;
+  }
+  function highlight(t) {
+    if (hl) hl.classList.remove('drop98');
+    hl = t && t.el ? t.el : null;
+    if (hl) hl.classList.add('drop98');
+  }
+
+  // desktop icons: saved spots first, the rest fill free grid cells top to bottom
+  var iconBox = q('#icons');
+  function cellOf(p) { return p.r !== undefined ? 'R' + Math.round((p.r - 12) / 76) + ',' + Math.round((p.b - 12) / 64) : 'L' + Math.round((p.x - 12) / 76) + ',' + Math.round((p.y - 12) / 64); }
+  function deskRows(all) { var n = Math.max(1, Math.floor((iconBox.clientHeight - 68) / 64) + 1); return all ? n : Math.min(5, n); }
+  function layoutDesk() {
+    var ids = childrenOf('desktop'), taken = {}, spots = {}, rows = deskRows();
+    ids.forEach(function (id) { if (iconPos[id]) { spots[id] = iconPos[id]; taken[cellOf(iconPos[id])] = 1; } });
+    ids.forEach(function (id) {
+      if (spots[id]) return;
+      var it = ITEMS[id];
+      if (it.dock !== undefined && !taken['R0,' + it.dock]) { spots[id] = { r: 12, b: 12 + it.dock * 64 }; taken['R0,' + it.dock] = 1; return; }
+      for (var c = 0; ; c++) for (var r = 0; r < rows; r++) {
+        if (!taken['L' + c + ',' + r]) { taken['L' + c + ',' + r] = 1; spots[id] = { x: 12 + c * 76, y: 12 + r * 64 }; return; }
+      }
+    });
+    return spots;
+  }
+  function place(wrap, p) {
+    if (p.r !== undefined) { wrap.style.left = 'auto'; wrap.style.top = 'auto'; wrap.style.right = p.r + 'px'; wrap.style.bottom = p.b + 'px'; }
+    else { wrap.style.right = 'auto'; wrap.style.bottom = 'auto'; wrap.style.left = p.x + 'px'; wrap.style.top = p.y + 'px'; }
+  }
+  function renderDesk() {
+    var spots = layoutDesk();
+    iconBox.innerHTML = '';
+    childrenOf('desktop').forEach(function (id) { iconBox.appendChild(deskIcon(ITEMS[id], spots[id])); });
+  }
+  function deskIcon(it, p) {
+    var wrap = document.createElement('div');
+    wrap.className = 'dicon' + (cut === it.id ? ' cut98' : ''); wrap.setAttribute('role', 'listitem'); wrap.setAttribute('data-id', it.id);
+    var inner = document.createElement(it.kind === 'link' ? 'a' : 'button');
+    if (it.kind === 'link') { inner.href = it.href; inner.target = '_blank'; inner.rel = 'noopener'; inner.draggable = false; } else inner.type = 'button';
+    inner.className = 'icon';
+    inner.innerHTML = '<span class="ico ' + it.ico + '" aria-hidden="true"></span><span class="lbl"></span>';
+    q('.lbl', inner).textContent = it.name;
+    wrap.appendChild(inner); place(wrap, p); wireItem(inner, it);
+    // drag to move it on the desk, or drop it onto a folder
+    var d = null;
+    wrap.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0 || ev.target.closest('.rename98')) return;
+      d = { sx: ev.clientX, sy: ev.clientY, p: p, np: p, moved: false };
+      // capture right away so a fast flick doesn't lose the icon; on the inner element so its click still fires
+      try { inner.setPointerCapture(ev.pointerId); } catch (err) {}
+    });
+    wrap.addEventListener('pointermove', function (ev) {
+      if (!d) return;
+      var dx = (ev.clientX - d.sx) / Z, dy = (ev.clientY - d.sy) / Z;
+      if (!d.moved) {
+        if (Math.abs(dx) < 3 && Math.abs(dy) < 3) return;
+        d.moved = true; wrap.classList.add('dragging'); wrap.style.zIndex = 2;
+      }
+      var mx = iconBox.clientWidth - wrap.offsetWidth, my = iconBox.clientHeight - wrap.offsetHeight;
+      d.np = d.p.r !== undefined
+        ? { r: clamp(Math.round(d.p.r - dx), 0, mx), b: clamp(Math.round(d.p.b - dy), 0, my) }
+        : { x: clamp(Math.round(d.p.x + dx), 0, mx), y: clamp(Math.round(d.p.y + dy), 0, my) };
+      place(wrap, d.np);
+      highlight(dropAt(ev.clientX, ev.clientY, it.id));
+    });
+    wrap.addEventListener('pointerup', function (ev) {
+      if (d && d.moved) {
+        justDragged = true; setTimeout(function () { justDragged = false; }, 0);
+        wrap.classList.remove('dragging'); wrap.style.zIndex = '';
+        var t = dropAt(ev.clientX, ev.clientY, it.id); highlight(null);
+        if (t && t.fid !== 'desktop') { if (!moveItem(it.id, t.fid)) place(wrap, d.p); }
+        else { iconPos[it.id] = d.np; p = d.np; saveFs(); }
+      }
+      d = null;
+    });
+    wrap.addEventListener('pointercancel', function () {
+      if (d && d.moved) { wrap.classList.remove('dragging'); wrap.style.zIndex = ''; place(wrap, d.p); highlight(null); }
+      d = null;
+    });
+    return wrap;
+  }
+
+  // folder windows are made from a template the first time a folder opens
+  function folderKey(fid) { return 'f:' + fid; }
+  function openFolder(fid) {
+    var k = folderKey(fid);
+    if (!W[k]) {
+      var e = q('#folder-tpl').content.firstElementChild.cloneNode(true);
+      e.setAttribute('data-win', k); e.setAttribute('data-folder', fid);
+      q('.desk-area').appendChild(e);
+      W[k] = { w: 300, open: false, x: 0, y: 0, z: 0 };
+      setupWin(k); sizeGrip(k);
+    }
+    openWin(k);
+  }
+  // the size grip in the bottom-right corner resizes a folder window, like in Windows 98
+  function sizeGrip(k) {
+    var e = winEl(k), grip = q('.grip98', e), grid = q('.folder-grid', e), body = q('.window-body', e), d = null;
+    grip.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0 || W[k].max) return;
+      ev.preventDefault(); ev.stopPropagation();
+      d = { sx: ev.clientX, sy: ev.clientY, w: parseFloat(e.style.width) || e.clientWidth, h: grid.offsetHeight };
+      try { grip.setPointerCapture(ev.pointerId); } catch (err) {}
+    });
+    grip.addEventListener('pointermove', function (ev) {
+      if (!d) return;
+      var desk = q('.desk-area'), s = W[k];
+      var w = clamp(Math.round(d.w + (ev.clientX - d.sx) / Z), 160, desk.clientWidth - s.x - 6);
+      var h = clamp(Math.round(d.h + (ev.clientY - d.sy) / Z), 60, desk.clientHeight - s.y - (e.offsetHeight - grid.offsetHeight) - 4);
+      s.w = w; e.style.width = w + 'px';
+      grid.style.maxHeight = 'none'; grid.style.height = h + 'px';
+      body.style.maxHeight = ''; body.style.overflow = '';
+    });
+    function end() { d = null; }
+    grip.addEventListener('pointerup', end); grip.addEventListener('pointercancel', end);
+  }
+  function renderFolder(fid) {
+    var e = winEl(folderKey(fid)), it = ITEMS[fid];
+    if (!e || !it) return;
+    var grid = q('.folder-grid', e), kids = childrenOf(fid);
+    q('.folder-t', e).textContent = it.name; e.setAttribute('aria-label', it.name + ' folder');
+    grid.innerHTML = '';
+    if (!kids.length) grid.innerHTML = '<p class="muted" style="margin: 0; padding: 8px">this folder is empty :(</p>';
+    kids.forEach(function (id) { grid.appendChild(folderItem(ITEMS[id])); });
+    q('.folder-count', e).textContent = kids.length + (kids.length === 1 ? ' object' : ' objects');
+  }
+  function folderItem(it) {
+    var li = document.createElement('div');
+    li.className = 'fitem' + (cut === it.id ? ' cut98' : ''); li.setAttribute('role', 'listitem'); li.setAttribute('data-id', it.id);
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'pthumb';
+    if (it.kind === 'photo') { b.innerHTML = '<img alt="" loading="lazy"><span class="pname"></span>'; b.firstChild.src = photos[it.photo].thumb; }
+    else b.innerHTML = '<span class="pico"><span class="ico ' + it.ico + '" aria-hidden="true"></span></span><span class="pname"></span>';
+    b.lastChild.textContent = it.name;
+    li.appendChild(b); wireItem(b, it);
+    // drag a copy of it around; dropping it moves the item. The browser's own image drag would cancel ours
+    qa('img', b).forEach(function (img) { img.draggable = false; });
+    b.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    var d = null, ghost = null;
+    b.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0) return;
+      d = { sx: ev.clientX, sy: ev.clientY };
+      try { b.setPointerCapture(ev.pointerId); } catch (err) {}
+    });
+    b.addEventListener('pointermove', function (ev) {
+      if (!d) return;
+      if (!ghost) {
+        if (Math.abs(ev.clientX - d.sx) < 6 && Math.abs(ev.clientY - d.sy) < 6) return;
+        ghost = b.cloneNode(true); ghost.className = 'pthumb ghost98'; root.appendChild(ghost); li.classList.add('dragging');
+      }
+      ghost.style.left = (ev.clientX / Z - 34) + 'px'; ghost.style.top = (ev.clientY / Z - 24) + 'px';
+      highlight(dropAt(ev.clientX, ev.clientY, it.id));
+    });
+    function stop() { if (ghost) { ghost.remove(); ghost = null; li.classList.remove('dragging'); highlight(null); } d = null; }
+    b.addEventListener('pointerup', function (ev) {
+      if (ghost) {
+        var t = dropAt(ev.clientX, ev.clientY, it.id);
+        justDragged = true; setTimeout(function () { justDragged = false; }, 0);
+        stop();
+        if (t && t.fid !== parentOf(it.id)) moveItem(it.id, t.fid, t.fid === 'desktop' ? deskPoint(ev.clientX, ev.clientY) : null);
+      }
+      d = null;
+    });
+    b.addEventListener('pointercancel', stop);
+    return li;
+  }
+  // a point on the page as a desktop icon spot (icons are about 72x50)
+  function deskPoint(x, y) {
+    var r = iconBox.getBoundingClientRect();
+    return { x: clamp(Math.round((x - r.left) / Z - 36), 0, iconBox.clientWidth - 72), y: clamp(Math.round((y - r.top) / Z - 16), 0, iconBox.clientHeight - 50) };
+  }
+
+  // new folders, renaming, deleting, cut and paste
+  function uniqueName(fid, base) {
+    var names = childrenOf(fid).map(function (id) { return ITEMS[id].name.toLowerCase(); }), n = base, i = 2;
+    while (names.indexOf(n.toLowerCase()) >= 0) n = base + ' (' + i++ + ')';
+    return n;
+  }
+  function newFolder(fid, at) {
+    var id = 'f' + Date.now().toString(36), name = uniqueName(fid, 'New Folder');
+    fs.folders.push({ id: id, name: name });
+    addItem({ id: id, name: name, ico: 'ico-folder', kind: 'folder', own: true, home: 'desktop' });
+    fs.parent[id] = fid;
+    if (fid === 'desktop' && at) iconPos[id] = at;
+    saveFs(); refreshAll(); rename(id);
+  }
+  // the element showing an item right now: its desktop icon, or its spot in its open folder window
+  function itemEl(id) {
+    var p = parentOf(id), k = folderKey(p);
+    var box = p === 'desktop' ? iconBox : (W[k] && W[k].open ? q('.folder-grid', winEl(k)) : null);
+    return box ? box.querySelector('[data-id="' + CSS.escape(id) + '"]') : null;
+  }
+  function rename(id) {
+    var it = ITEMS[id], host = itemEl(id);
+    if (!it || !it.own || !host) return;
+    var lbl = q('.lbl, .pname', host), input = document.createElement('input'), done = false;
+    input.type = 'text'; input.className = 'rename98'; input.value = it.name; input.maxLength = 40; input.setAttribute('aria-label', 'Folder name');
+    lbl.style.visibility = 'hidden'; host.appendChild(input); input.focus(); input.select();
+    function finish(save) {
+      if (done) return;
+      done = true;
+      var v = input.value.trim();
+      if (save && v && v !== it.name) { it.name = v; fs.folders.forEach(function (f) { if (f.id === id) f.name = v; }); saveFs(); }
+      refreshAll();
+      var el = itemEl(id); if (el) q('.icon, .pthumb', el).focus();
+    }
+    input.addEventListener('keydown', function (e) {
+      e.stopPropagation();
+      if (e.key === 'Enter') { e.preventDefault(); finish(true); } else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+    });
+    input.addEventListener('blur', function () { finish(true); });
+    ['pointerdown', 'click', 'dblclick', 'contextmenu'].forEach(function (ev) { input.addEventListener(ev, function (e) { e.stopPropagation(); }); });
+  }
+  // deleting a folder never loses anything: what was inside moves up one level
+  function removeFolder(id) {
+    var it = ITEMS[id];
+    if (!it || !it.own) return;
+    var up = parentOf(id);
+    if (up === 'desktop') pinDesk();
+    childrenOf(id).forEach(function (c) { fs.parent[c] = up; delete iconPos[c]; });
+    fs.folders = fs.folders.filter(function (f) { return f.id !== id; });
+    delete fs.parent[id]; delete iconPos[id]; delete ITEMS[id]; ORDER.splice(ORDER.indexOf(id), 1);
+    if (cut === id) cut = null;
+    var k = folderKey(id);
+    if (W[k]) { closeWin(k); winEl(k).remove(); delete W[k]; }
+    saveFs(); refreshAll();
+  }
+  function setCut(id) { cut = id; refreshAll(); }
+  function paste(fid, at) { var id = cut; cut = null; if (!id || !moveItem(id, fid, at)) refreshAll(); }
+  function resetDesk() {
+    if (!window.confirm('put everything back the way Elio left it?')) return;
+    store.set('fs', null); store.set('icons', null); location.reload();
+  }
+  renderDesk();
 
   /* ---------- winamp (SoundCloud widget) ---------- */
   var SET = 'https://soundcloud.com/dominic-gagn-1/sets/nine-inch-nails-ghosts-i-iv';
@@ -600,26 +850,22 @@
   window.addEventListener('blur', function () { closeMenu(true); });
   window.addEventListener('resize', function () { closeMenu(true); });
 
-  // desktop: arrange, line up, refresh and the rest
-  function arrangeIcons() { iconPos = {}; store.set('icons', iconPos); iconEls.forEach(function (ic) { ic.place(); }); }
+  // desktop: arrange, line up, refresh, new folder, paste and the rest
+  function arrangeIcons() { childrenOf('desktop').forEach(function (id) { delete iconPos[id]; }); saveFs(); renderDesk(); }
   function lineUpIcons() {
-    var taken = {}, dh = q('.desk-area').clientHeight, rows = Math.max(1, Math.floor((dh - 12) / 64));
-    function cellOf(ic) {
-      var p = iconPos[ic.def.id];
-      if (!p) return ic.def.dock !== undefined ? { s: 'R', c: 0, r: ic.def.dock } : { s: 'L', c: Math.floor(ic.idx / 5), r: ic.idx % 5 };
-      return p.r !== undefined ? { s: 'R', c: Math.round((p.r - 12) / 76), r: Math.round((p.b - 12) / 64) }
-                               : { s: 'L', c: Math.round((p.x - 12) / 76), r: Math.round((p.y - 12) / 64) };
-    }
+    var ids = childrenOf('desktop'), taken = {}, rows = deskRows(true), spots = layoutDesk();
     // icons still in their default spot keep it; moved ones snap to the nearest free cell
-    iconEls.filter(function (ic) { return !iconPos[ic.def.id]; }).forEach(function (ic) { var c = cellOf(ic); taken[c.s + c.c + ',' + c.r] = 1; });
-    iconEls.filter(function (ic) { return iconPos[ic.def.id]; }).forEach(function (ic) {
-      var c = cellOf(ic); c.c = Math.max(0, c.c); c.r = Math.min(Math.max(0, c.r), rows - 1);
-      while (taken[c.s + c.c + ',' + c.r]) { c.r++; if (c.r >= rows) { c.r = 0; c.c++; } }
-      taken[c.s + c.c + ',' + c.r] = 1;
-      iconPos[ic.def.id] = c.s === 'R' ? { r: 12 + c.c * 76, b: 12 + c.r * 64 } : { x: 12 + c.c * 76, y: 12 + c.r * 64 };
-      ic.place();
+    ids.forEach(function (id) { if (!iconPos[id]) taken[cellOf(spots[id])] = 1; });
+    ids.forEach(function (id) {
+      var p = iconPos[id];
+      if (!p) return;
+      var R = p.r !== undefined, s = R ? 'R' : 'L';
+      var c = Math.max(0, Math.round(((R ? p.r : p.x) - 12) / 76)), r = clamp(Math.round(((R ? p.b : p.y) - 12) / 64), 0, rows - 1);
+      while (taken[s + c + ',' + r]) { if (++r >= rows) { r = 0; c++; } }
+      taken[s + c + ',' + r] = 1;
+      iconPos[id] = R ? { r: 12 + c * 76, b: 12 + r * 64 } : { x: 12 + c * 76, y: 12 + r * 64 };
     });
-    store.set('icons', iconPos);
+    saveFs(); renderDesk();
   }
   function refreshDesk() {
     setBusy(1); iconBox.style.visibility = 'hidden';
@@ -633,20 +879,41 @@
       '-',
       { label: 'Refresh', run: refreshDesk },
       '-',
-      { label: 'New Folder', disabled: true },
+      { label: 'Paste', run: function () { paste('desktop', deskPoint(x, y)); }, disabled: !cut },
+      '-',
+      { label: 'New Folder', run: function () { newFolder('desktop', deskPoint(x, y)); } },
       '-',
       { label: dark ? 'Lights On' : 'Lights Off', run: function () { q('#dark-btn').click(); } },
-      { label: 'Restore Wallpaper', run: function () { setWallpaper(null); }, disabled: !wallpaper }
+      { label: 'Restore Wallpaper', run: function () { setWallpaper(null); }, disabled: !wallpaper },
+      '-',
+      { label: 'Reset Desktop', run: resetDesk }
     ], x, y, from);
   }
+  // inside a folder window, on the empty space between items
+  function folderBgMenu(fid, x, y) {
+    openMenu([
+      { label: 'Paste', run: function () { paste(fid); }, disabled: !cut },
+      '-',
+      { label: 'New Folder', run: function () { newFolder(fid); } }
+    ], x, y, null);
+  }
 
-  // icons: open, plus link actions for the ones that go elsewhere
-  function iconMenu(ic, x, y) {
-    var d = ic.def, list = [{ label: 'Open', bold: true, run: function () { ic.inner.click(); } }];
-    if (d.kind === 'link') list.push('-', { label: 'Copy Link Address', run: function () {
-      if (navigator.clipboard) navigator.clipboard.writeText(d.href).catch(function () {});
+  // any item, on the desktop or in a folder
+  function itemMenu(it, el, x, y) {
+    var list = [{ label: 'Open', bold: true, run: function () { openItem(it); } }];
+    if (it.kind === 'photo') {
+      var p = photos[it.photo];
+      list.push({ label: 'View Full Size', run: function () { window.open(p.full, '_blank', 'noopener'); } },
+                { label: 'Set as Wallpaper', run: function () { setWallpaper(p.src); } });
+    }
+    if (it.kind === 'link') list.push({ label: 'Copy Link Address', run: function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(it.href).catch(function () {});
     } });
-    openMenu(list, x, y, ic.inner);
+    list.push('-', { label: 'Cut', run: function () { setCut(it.id); } });
+    if (it.kind === 'folder') list.push({ label: 'Paste', run: function () { paste(it.id); }, disabled: !cut || cut === it.id });
+    if (it.own) list.push('-', { label: 'Rename', run: function () { rename(it.id); } }, { label: 'Delete', run: function () { removeFolder(it.id); } });
+    if (parentOf(it.id) !== 'desktop') list.push('-', { label: 'Move to Desktop', run: function () { moveItem(it.id, 'desktop'); } });
+    openMenu(list, x, y, el);
   }
 
   // title bars: the Windows 98 system menu
@@ -662,7 +929,7 @@
     ], x, y, q('.title-bar-controls button', winEl(k)));
   }
 
-  // photos: open, full size, and set as wallpaper
+  // photos can become the wallpaper; the choice is remembered per visitor
   var wallpaper = null;
   function setWallpaper(src) {
     wallpaper = src;
@@ -674,21 +941,25 @@
     var w = store.get('wallpaper');
     if (w && photos.some(function (p) { return p.src === w; })) setWallpaper(w);
   })();
-  function photoMenu(i, x, y, from, inViewer) {
-    var p = photos[i], list = [];
-    if (!inViewer) list.push({ label: 'Open', bold: true, run: function () { showPhoto(i); openWin('photo'); } });
-    list.push({ label: 'View Full Size', run: function () { window.open(p.full, '_blank', 'noopener'); } }, '-',
-              { label: 'Set as Wallpaper', run: function () { setWallpaper(p.src); } });
-    openMenu(list, x, y, from);
+  function viewerMenu(x, y) {
+    var p = photos[pi];
+    openMenu([
+      { label: 'View Full Size', run: function () { window.open(p.full, '_blank', 'noopener'); } },
+      '-',
+      { label: 'Set as Wallpaper', run: function () { setWallpaper(p.src); } }
+    ], x, y, null);
   }
 
   // work out which menu a spot on the page gets; null keeps the browser's own menu
   function menuFor(t, x, y) {
-    var thumb = t.closest('.pthumb');
-    if (thumb) { var ti = qa('#photo-grid .pthumb').indexOf(thumb); return function () { photoMenu(ti, x, y, thumb); }; }
-    if (t.closest('#photo-img') && photos.length) return function () { photoMenu(pi, x, y, null, true); };
-    var di = t.closest('.dicon');
-    if (di) { var ic = iconEls.filter(function (c) { return c.wrap === di; })[0]; return function () { iconMenu(ic, x, y); }; }
+    if (t.closest('#photo-img') && photos.length) return function () { viewerMenu(x, y); };
+    var host = t.closest('[data-id]');
+    if (host && ITEMS[host.getAttribute('data-id')] && !t.closest('.rename98')) {
+      var it = ITEMS[host.getAttribute('data-id')], el = q('.icon, .pthumb', host);
+      return function () { select(el); itemMenu(it, el, x, y); };
+    }
+    var fw = t.closest('[data-folder]');
+    if (fw && t.closest('.folder-grid')) return function () { folderBgMenu(fw.getAttribute('data-folder'), x, y); };
     var bar = t.closest('.title-bar');
     if (bar && !t.closest('.title-bar-controls')) { var k = bar.closest('[data-win]').getAttribute('data-win'); return function () { windowMenu(k, x, y); }; }
     if (t.closest('.desk-area') && !t.closest('.win')) return function () { desktopMenu(x, y, null); };
