@@ -55,19 +55,27 @@ windows. It is a business card, not a sales page.
   Windows open at random spots that stay fully inside the desktop.
 - Phones (<=760px): icons become a grid and windows stack.
 - Files and folders: every desktop item (apps, links, photos, the photos
-  folder, visitor folders) is an item in a folder tree (`ITEMS` in app.js).
-  One click selects, a double-click opens (Enter and a tap on phones open
-  right away). Visitors can make, rename (F2), delete and move folders and
-  move any item by dragging onto a folder icon, into a folder window or out
-  onto the desk, or with Cut/Paste. Deleting a folder moves its contents up.
-  All of it is saved per visitor in localStorage (`fs`, `icons`); Reset
+  folder, the trash, visitor folders) is an item in a folder tree (`ITEMS`
+  in app.js). One click selects, a double-click opens (Enter and a tap on
+  phones open right away). Any folder but the trash can be renamed (F2);
+  the photos folder is an ordinary folder. Anything can be moved by dragging
+  onto a folder icon, into a folder window or out onto the desk, or with
+  Cut/Paste. Nested folder windows show their path in the title
+  (`photos\trips`).
+- Trash: Delete (key or menu) moves anything but the trash into it, folders
+  with their contents. Things in the trash can't be opened, only restored
+  to where they came from (or the desk if that folder is gone). It can't be
+  emptied on purpose ("Empty Trash" is greyed out), so nothing is lost. The
+  trash only lives on the desk. Its icon is SerenityOS's 32x32
+  `recycle-bin.png`, added to the end of `assets/icons.png`.
+- All of it is saved per visitor in localStorage (`fs`, `icons`); Reset
   Desktop clears it. Folder windows come from `#folder-tpl` and have a size
   grip. Icons stay put when one leaves the desk; Arrange Icons tidies up.
 - Right-click menus (Windows 98 style, `.ctx98`) on the desktop (arrange, line
   up, refresh, paste, new folder, lights, restore wallpaper, reset desktop),
-  items (open, cut, paste into folders, rename and delete for visitor
-  folders, set as wallpaper for photos, copy link), folder backgrounds (paste,
-  new folder) and title bars (restore, maximize, close, close all).
+  items (open, cut, paste into folders, rename, delete, move to desktop, set
+  as wallpaper for photos, copy link; restore in the trash), folder
+  backgrounds (paste, new folder; restore all in the trash) and title bars (restore, maximize, close, close all).
   Everything else keeps the browser's own menu. Shift+F10 / the menu key and
   Alt+Space open them from the keyboard, a long press on phones.
   Double-clicking a title bar maximizes.
