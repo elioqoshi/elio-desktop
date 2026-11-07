@@ -77,8 +77,8 @@ windows. It is a business card, not a sales page.
 - All of it is saved per visitor in localStorage (`fs`, `icons`); Reset
   Desktop clears it. Folder windows come from `#folder-tpl` and have a size
   grip. Icons stay put when one leaves the desk; Arrange Icons tidies up.
-- Right-click menus (Windows 98 style, `.ctx98`) on the desktop (arrange, line
-  up, refresh, paste, new folder, lights, restore wallpaper, reset desktop),
+- Right-click menus (Windows 98 style, `.ctx98`) on the desktop (arrange,
+  refresh, paste, new folder, lights, restore wallpaper, reset desktop),
   items (open, cut, paste into folders, rename, delete, move to desktop, set
   as wallpaper for photos, copy link; restore in the trash), folder
   backgrounds (paste, new folder; restore all in the trash) and title bars (restore, maximize, close, close all).

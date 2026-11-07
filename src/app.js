@@ -502,7 +502,7 @@
   // desktop icons: saved spots first, the rest fill free grid cells top to bottom
   var iconBox = q('#icons');
   function cellOf(p) { return p.r !== undefined ? 'R' + Math.round((p.r - 12) / 76) + ',' + Math.round((p.b - 12) / 64) : 'L' + Math.round((p.x - 12) / 76) + ',' + Math.round((p.y - 12) / 64); }
-  function deskRows(all) { var n = Math.max(1, Math.floor((iconBox.clientHeight - 68) / 64) + 1); return all ? n : Math.min(5, n); }
+  function deskRows() { return Math.min(5, Math.max(1, Math.floor((iconBox.clientHeight - 68) / 64) + 1)); }
   function layoutDesk() {
     var ids = childrenOf('desktop'), taken = {}, spots = {}, rows = deskRows();
     ids.forEach(function (id) { if (iconPos[id]) { spots[id] = iconPos[id]; taken[cellOf(iconPos[id])] = 1; } });
@@ -883,23 +883,8 @@
   window.addEventListener('blur', function () { closeMenu(true); });
   window.addEventListener('resize', function () { closeMenu(true); });
 
-  // desktop: arrange, line up, refresh, new folder, paste and the rest
+  // desktop: arrange, refresh, new folder, paste and the rest
   function arrangeIcons() { childrenOf('desktop').forEach(function (id) { delete iconPos[id]; }); saveFs(); renderDesk(); }
-  function lineUpIcons() {
-    var ids = childrenOf('desktop'), taken = {}, rows = deskRows(true), spots = layoutDesk();
-    // icons still in their default spot keep it; moved ones snap to the nearest free cell
-    ids.forEach(function (id) { if (!iconPos[id]) taken[cellOf(spots[id])] = 1; });
-    ids.forEach(function (id) {
-      var p = iconPos[id];
-      if (!p) return;
-      var R = p.r !== undefined, s = R ? 'R' : 'L';
-      var c = Math.max(0, Math.round(((R ? p.r : p.x) - 12) / 76)), r = clamp(Math.round(((R ? p.b : p.y) - 12) / 64), 0, rows - 1);
-      while (taken[s + c + ',' + r]) { if (++r >= rows) { r = 0; c++; } }
-      taken[s + c + ',' + r] = 1;
-      iconPos[id] = R ? { r: 12 + c * 76, b: 12 + r * 64 } : { x: 12 + c * 76, y: 12 + r * 64 };
-    });
-    saveFs(); renderDesk();
-  }
   function refreshDesk() {
     setBusy(1); iconBox.style.visibility = 'hidden';
     setTimeout(function () { iconBox.style.visibility = ''; setBusy(-1); }, 400);
@@ -908,7 +893,6 @@
     var dark = root.classList.contains('dark'), phoneMode = phone();
     openMenu([
       { label: 'Arrange Icons', run: arrangeIcons, disabled: phoneMode },
-      { label: 'Line up Icons', run: lineUpIcons, disabled: phoneMode },
       '-',
       { label: 'Refresh', run: refreshDesk },
       '-',
