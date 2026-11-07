@@ -41,7 +41,7 @@
   var W = {
     about: { open: true, x: 170, y: 18, z: 2, w: 290 },
     portrait: { open: true, x: 430, y: 46, z: 3, w: 170 },
-    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 210 }, imprint: { w: 300 }
+    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
   function winEl(k) { return q('[data-win="' + k + '"]'); }
