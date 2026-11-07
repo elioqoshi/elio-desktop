@@ -28,7 +28,7 @@ windows. It is a business card, not a sales page.
   without inlining; the original is the "full size" link. The Pages workflow
   runs dither.py too and ships the whole folder
 - `assets/`: MS Sans Serif regular and bold (98.css's fonts), SerenityOS icon sprite,
-  wallpaper, wait cursor, dithered portrait (and the original photo)
+  wallpaper, cursors (`assets/cursors/`), dithered portrait (and the original photo)
 
 ## Design rules (keep these)
 
@@ -41,8 +41,12 @@ windows. It is a business card, not a sales page.
   headings: like Windows 98, structure comes from bold and spacing.
 - Icons: only the SerenityOS 32x32 icon set (`assets/icons.png` sprite, 32px
   cells, see `.ico-*` classes) plus the user-supplied Winamp icon. Do not draw
-  or add icons from elsewhere. The wait cursor is SerenityOS's 16x16 timer icon
-  at 2x.
+  or add icons from elsewhere.
+- Cursors: SerenityOS's default cursor theme, Windows 9x style, at normal
+  cursor size (1x, with pixel-doubled `@2x` copies for dense screens via
+  `-webkit-image-set`). Arrow everywhere (buttons and icons too, like 98),
+  hand only on text links, I-beam in text fields, diagonal resize on the size
+  grip, and the 14-frame hourglass while busy (app.js steps `data-wf`).
 - Windows: 98.css components. Title bars are one light blue (#A8DDE6; dark
   mode #2E6E7A). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
@@ -52,7 +56,7 @@ windows. It is a business card, not a sales page.
   twice; it covers the viewport with `image-rendering:pixelated`.
 - Dark theme: the sun button in the menu bar; defaults to the system setting
   and remembers the visitor's choice in localStorage.
-- Opening a window waits 1 second with the wait cursor, like an old PC.
+- Opening a window waits 1 second with the turning hourglass, like an old PC.
   Windows open at random spots that stay fully inside the desktop.
 - Phones (<=760px): 1x zoom, icons become a grid and windows stack, centred at
   their own width.

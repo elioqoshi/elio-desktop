@@ -48,7 +48,13 @@
   function topZ() { return Math.max.apply(null, Object.keys(W).map(function (k) { return W[k].z || 0; })); }
   function apply(k) { var s = W[k], e = winEl(k); e.hidden = !s.open; e.style.left = s.x + 'px'; e.style.top = s.y + 'px'; e.style.zIndex = s.z; }
   var busy = 0, pending = {};
-  function setBusy(d) { busy = Math.max(0, busy + d); root.classList.toggle('busy', busy > 0); }
+  // while busy the hourglass cursor turns, one frame every 100ms like SerenityOS's
+  var waitTimer = 0, waitFrame = 0;
+  function setBusy(d) {
+    busy = Math.max(0, busy + d); root.classList.toggle('busy', busy > 0);
+    if (busy && !waitTimer) { root.setAttribute('data-wf', waitFrame = 0); waitTimer = setInterval(function () { root.setAttribute('data-wf', waitFrame = (waitFrame + 1) % 14); }, 100); }
+    else if (!busy && waitTimer) { clearInterval(waitTimer); waitTimer = 0; }
+  }
   function focusWin(k) { if (W[k].z < topZ()) { W[k].z = topZ() + 1; apply(k); } }
   function openWin(k) {
     if (W[k].open) { focusWin(k); return; }
