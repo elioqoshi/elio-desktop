@@ -123,6 +123,14 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .ctx98 .menuitem98[aria-disabled="true"],.root98.dark .ctx98 .menuitem98[aria-disabled="true"]:hover{color:#777;text-shadow:none}
 .sep98{margin:3px 1px;border-top:1px solid #808080;border-bottom:1px solid #fff}
 .root98.dark .sep98{border-top-color:#222;border-bottom-color:#5A5A5A}
+/* Windows 98 dialogs (Empty Trash): centred over everything, the rest of the page can't be clicked meanwhile */
+.dialog-scrim{position:fixed;inset:0;z-index:10004}
+.dialog98{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);z-index:10005;width:250px;max-width:calc(100vw - 16px)}
+.dialog98 .window-body{margin:10px}
+.dialog98-msg{display:flex;align-items:center;gap:12px}
+.root98 .dialog98-msg p{margin:0}
+.dialog98-btns{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.root98 .dialog98-btns button{min-width:75px}
 .win.max{display:flex;flex-direction:column}
 .win.max>.window-body{flex:1;min-height:0;overflow:auto}
 .desk-area img{-webkit-touch-callout:none}

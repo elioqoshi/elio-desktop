@@ -71,7 +71,9 @@ windows. It is a business card, not a sales page.
 - Trash: Delete (key or menu) moves anything but the trash into it, folders
   with their contents. Things in the trash can't be opened, only restored
   to where they came from (or the desk if that folder is gone). It can't be
-  emptied on purpose ("Empty Trash" is greyed out), so nothing is lost. The
+  emptied on purpose, so nothing is lost: "Empty Trash" asks the usual
+  Windows 98 confirmation, and Yes only gets a dialog saying "don't throw
+  Elio's stuff away 😞" (`dialog98()` in app.js). The
   trash only lives on the desk. Its icon is SerenityOS's 32x32
   `recycle-bin.png`, added to the end of `assets/icons.png`.
 - All of it is saved per visitor in localStorage (`fs`, `icons`); Reset

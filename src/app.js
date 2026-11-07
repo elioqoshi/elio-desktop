@@ -906,12 +906,52 @@
       { label: 'Reset Desktop', run: resetDesk }
     ], x, y, from);
   }
+  // a modal Windows 98 dialog: an icon, a message and buttons; Enter picks the default, Escape the last
+  function dialog98(title, ico, text, buttons) {
+    // give focus back afterwards; when a menu opened the dialog, that's what the menu was opened from
+    var scrim = document.createElement('div'), d = document.createElement('section'), from = document.activeElement;
+    if (!from || from === document.body || (from.closest && from.closest('.ctx98'))) from = ctxFrom;
+    scrim.className = 'dialog-scrim'; d.className = 'window dialog98'; d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-modal', 'true');
+    d.innerHTML = '<div class="title-bar tb-blue"><div class="title-bar-text"></div><div class="title-bar-controls"><button aria-label="Close"></button></div></div>' +
+      '<div class="window-body"><div class="dialog98-msg"><span class="ico ' + ico + '" aria-hidden="true"></span><p></p></div><div class="dialog98-btns"></div></div>';
+    q('.title-bar-text', d).textContent = title; q('p', d).textContent = text;
+    var id = 'dlg' + Date.now(); q('p', d).id = id; d.setAttribute('aria-labelledby', id);
+    function close(run) { scrim.remove(); d.remove(); if (from && from.isConnected && from.focus) from.focus(); if (run) run(); }
+    var btns = buttons.map(function (b) {
+      var el = document.createElement('button'); el.type = 'button'; el.textContent = b.label;
+      if (b.isDefault) el.className = 'default';
+      el.addEventListener('click', function () { close(b.run); });
+      q('.dialog98-btns', d).appendChild(el); return el;
+    });
+    q('.title-bar-controls button', d).addEventListener('click', function () { close(); });
+    d.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+      else if (e.key === 'Tab') { // keep focus inside the dialog
+        var i = btns.indexOf(document.activeElement); e.preventDefault();
+        btns[(i + (e.shiftKey ? btns.length - 1 : 1)) % btns.length].focus();
+      }
+    });
+    root.appendChild(scrim); root.appendChild(d);
+    (btns.filter(function (b, i) { return buttons[i].isDefault; })[0] || btns[0]).focus();
+  }
+  // the trash can't really be emptied: say yes and Elio's stuff stays put
+  function emptyTrash() {
+    var n = childrenOf('trash').length;
+    if (!n) return;
+    var what = n === 1 ? '\u201c' + ITEMS[childrenOf('trash')[0]].name + '\u201d' : 'these ' + n + ' items';
+    dialog98('Confirm Delete', 'ico-trash', 'Are you sure you want to delete ' + what + '?', [
+      { label: 'Yes', isDefault: true, run: function () {
+        dialog98('Empty Trash', 'ico-help', 'don\u2019t throw Elio\u2019s stuff away \ud83d\ude1e', [{ label: 'OK', isDefault: true }]);
+      } },
+      { label: 'No' }
+    ]);
+  }
   // inside a folder window, on the empty space between items
   function folderBgMenu(fid, x, y) {
     if (fid === 'trash') return openMenu([
       { label: 'Restore All', run: function () { childrenOf('trash').forEach(restoreItem); }, disabled: !childrenOf('trash').length },
       '-',
-      { label: 'Empty Trash', disabled: true }
+      { label: 'Empty Trash', run: emptyTrash, disabled: !childrenOf('trash').length }
     ], x, y, null);
     openMenu([
       { label: 'Paste', run: function () { paste(fid); }, disabled: !cut },
@@ -924,7 +964,7 @@
   function itemMenu(it, el, x, y) {
     var list;
     if (inTrash(it.id)) list = [{ label: 'Restore', bold: true, run: function () { restoreItem(it.id); } }, '-', { label: 'Cut', run: function () { setCut(it.id); } }];
-    else if (it.id === 'trash') list = [{ label: 'Open', bold: true, run: function () { openItem(it); } }, '-', { label: 'Empty Trash', disabled: true }];
+    else if (it.id === 'trash') list = [{ label: 'Open', bold: true, run: function () { openItem(it); } }, '-', { label: 'Empty Trash', run: emptyTrash, disabled: !childrenOf('trash').length }];
     else {
       list = [{ label: 'Open', bold: true, run: function () { openItem(it); } }];
       if (it.kind === 'photo') {
