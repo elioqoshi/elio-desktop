@@ -63,7 +63,7 @@ windows. It is a business card, not a sales page.
   the photos folder is an ordinary folder. Anything can be moved by dragging
   onto a folder icon, into a folder window or out onto the desk, or with
   Cut/Paste. Nested folder windows show their path in the title
-  (`photos\trips`).
+  (`Photos\trips`).
 - Trash: Delete (key or menu) moves anything but the trash into it, folders
   with their contents. Things in the trash can't be opened, only restored
   to where they came from (or the desk if that folder is gone). It can't be
@@ -87,6 +87,12 @@ windows. It is a business card, not a sales page.
 Short, lowercase, friendly and a bit weird, like a 90s homepage. No selling,
 no marketing claims, no invented facts about Elio. Keep screen reader labels
 plain and descriptive.
+
+The lowercase voice is for the text inside windows. Labels follow Windows 98:
+Title Case for the menu bar, right-click menus, program and system icons and
+window titles (Clients, Imprint, Talks, Winamp, Photos, Trash, Media Player).
+File names keep their own case (portrait.jpg, clock.exe, about.txt), and brand
+names keep theirs (Ura Design, LinkedIn, GitHub).
 
 ## Facts about Elio (only use these)
 

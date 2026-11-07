@@ -376,12 +376,12 @@
   function addItem(it) { ITEMS[it.id] = it; ORDER.push(it.id); }
   [
     { id: 'portrait', name: 'portrait.jpg', ico: 'ico-image', kind: 'app' },
-    { id: 'talks', name: 'talks', ico: 'ico-presenter', kind: 'app' },
+    { id: 'talks', name: 'Talks', ico: 'ico-presenter', kind: 'app' },
     { id: 'clock', name: 'clock.exe', ico: 'ico-clock', kind: 'app' },
-    { id: 'contact', name: 'help', ico: 'ico-help', kind: 'app' },
-    { id: 'radio', name: 'winamp', ico: 'ico-winamp', kind: 'app' },
-    { id: 'photos', name: 'photos', ico: 'ico-folder', kind: 'folder' },
-    { id: 'trash', name: 'trash', ico: 'ico-trash', kind: 'folder' },
+    { id: 'contact', name: 'Help', ico: 'ico-help', kind: 'app' },
+    { id: 'radio', name: 'Winamp', ico: 'ico-winamp', kind: 'app' },
+    { id: 'photos', name: 'Photos', ico: 'ico-folder', kind: 'folder' },
+    { id: 'trash', name: 'Trash', ico: 'ico-trash', kind: 'folder' },
     { id: 'ura', name: 'Ura Design', ico: 'ico-browser', kind: 'link', href: 'https://ura.design', dock: 2 },
     { id: 'linkedin', name: 'LinkedIn', ico: 'ico-network', kind: 'link', href: 'https://www.linkedin.com/in/elioqoshi/', dock: 1 },
     { id: 'github', name: 'GitHub', ico: 'ico-git', kind: 'link', href: 'https://github.com/elioqoshi/', dock: 0 }
@@ -408,7 +408,7 @@
     return false;
   }
   function inTrash(id) { return id !== 'trash' && inside('trash', parentOf(id)); }
-  // the title of a nested folder shows its path, like photos\trips
+  // the title of a nested folder shows its path, like Photos\trips
   function pathOf(fid) {
     var names = [];
     for (var f = fid, n = 0; f && f !== 'desktop' && n < 64; f = parentOf(f), n++) names.unshift(ITEMS[f].name);
