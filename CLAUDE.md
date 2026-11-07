@@ -17,7 +17,7 @@ windows. It is a business card, not a sales page.
 - `src/body.html`: all markup (menu bar, desktop, every window)
 - `src/styles.css`: page basics plus all desktop styling and dark mode
 - `src/app.js`: plain JavaScript, no framework (windows, icons, menus, clock,
-  media player, SoundCloud radio, theme)
+  media player, Winamp radio, theme)
 - `vendor/98.css`: 98.css, modified so `a.btn98` links get button styling via
   `:is(button,a.btn98)`; its MS Sans Serif @font-face rules were moved to
   `src/styles.css` (pointing at `assets/`) so the fonts get inlined
@@ -106,18 +106,21 @@ plain and descriptive.
   video, which can't be pre-dithered. Compare against the pre-dithered
   wallpaper and portrait before using it anywhere.
 - Client links in the clients menu point to homepages and are unverified.
-- Music is Nine Inch Nails, Ghosts I–IV (CC BY-NC-SA 3.0, non-commercial),
-  streamed from a fan's SoundCloud set. Consider self-hosting from an official
-  CC source, and keep the non-commercial clause in mind.
-- YouTube and SoundCloud embeds need a host that allows third-party iframes.
-  The radio shows "can't tune in here" if SoundCloud never responds.
+- Music is Nine Inch Nails, Ghosts I–IV (CC BY-NC-SA 3.0, non-commercial):
+  all 36 tracks of the official 2008 release, streamed with a plain `<audio>`
+  element from the Internet Archive item `nine-inch-nails-ghosts-i-iv-2008-web`
+  (track list and lengths are in app.js). SoundCloud only has 8 of the tracks.
+  That item labels itself CC BY 4.0, but the album is CC BY-NC-SA; credit it as
+  that. If archive.org is down, Winamp shows "can't tune in here". Consider
+  self-hosting if that happens often, and keep the non-commercial clause in mind.
+- The YouTube embed needs a host that allows third-party iframes.
 
 ## Licenses and credits
 
 The imprint window credits everything. Keep these in sync with `LICENSES/`:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), MS Sans Serif
 and MS Sans Serif Bold by lou (CC BY-SA 3.0, notice also in styles.css), Ghosts I–IV music
-and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
+(streamed from the Internet Archive) and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
 (https://www.jeremiepontin.com/, not covered by the MIT license). The site's
 own code is MIT (`LICENSE`). The Winamp logo is a trademark of its owner. If the font
 files are redistributed, ship `LICENSES/MS-Sans-Serif-*` with them.

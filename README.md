@@ -18,7 +18,7 @@ python3 -m http.server 8000      # then open http://localhost:8000
 
 `build.py` inlines all CSS, JS, fonts and images as data URIs, so `index.html`
 is a single self-contained file (apart from `photos/`). Opening it straight from disk works too, but
-the YouTube and SoundCloud embeds need to be served over http.
+the YouTube embed and the music stream work best served over http.
 
 `index.html` is generated and not committed. Edit `src/`, `vendor/` and
 `assets/` instead. See `CLAUDE.md` for the design rules.
@@ -69,7 +69,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Pixel clock | `src/app.js` (`Clock`) | Ported from SerenityOS AnalogClock, © 2021 Erlend Høier | BSD 2-Clause |
 | Wait cursor | `assets/cursor-wait.png` | SerenityOS 16x16 timer icon, drawn at 2x | BSD 2-Clause |
 | Winamp icon | in `assets/icons.png` | Supplied by Elio | Winamp logo is a trademark of its owner, used as a nod |
-| Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, via a SoundCloud set | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
+| Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, all 36 tracks from the official 2008 release, streamed from the [Internet Archive](https://archive.org/details/nine-inch-nails-ghosts-i-iv-2008-web) | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
 | Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |

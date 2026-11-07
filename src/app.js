@@ -61,7 +61,6 @@
     s.open = true; s.z = topZ() + 1; s.x = 0; s.y = 0; body.style.maxHeight = ''; body.style.overflow = ''; apply(k);
     if (k === 'talks') renderTalk();
     if (k === 'clock') tick();
-    if (k === 'radio') ensureRadio();
     if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
     var dw = desk.clientWidth, dh = desk.clientHeight, h = e.offsetHeight;
     var over = h - (dh - 16);
@@ -98,7 +97,7 @@
     if (W[k].max) maximize(k, false);
     W[k].open = false; apply(k);
     if (k === 'talks') ytSend('pauseVideo');
-    if (k === 'radio') scCall('pause');
+    if (k === 'radio') radioPause();
   }
   // folder windows are added later, so setup is a function they can call too
   function setupWin(k) {
@@ -328,7 +327,7 @@
     ytSend(func);
     // show the change right away; YouTube's own state event confirms or corrects it
     ytState = func === 'playVideo' ? 1 : func === 'pauseVideo' ? 2 : 5;
-    if (ytPlaying()) scCall('pause');
+    if (ytPlaying()) radioPause();
     renderTalkStatus();
   }
   window.addEventListener('message', function (e) {
@@ -340,7 +339,7 @@
     var s = d.event === 'onStateChange' ? d.info : d.info && d.info.playerState;
     if (typeof s !== 'number' || s === ytState) return;
     ytState = s;
-    if (ytPlaying()) scCall('pause');
+    if (ytPlaying()) radioPause();
     renderTalkStatus();
   });
   function renderTalkStatus() {
@@ -728,18 +727,22 @@
   }
   renderDesk();
 
-  /* ---------- winamp (SoundCloud widget) ---------- */
-  var SET = 'https://soundcloud.com/dominic-gagn-1/sets/nine-inch-nails-ghosts-i-iv';
+  /* ---------- winamp (Ghosts I–IV from the Internet Archive) ---------- */
+  // all 36 tracks of the official 2008 release (CC BY-NC-SA 3.0), streamed from archive.org in album order
+  var ARCHIVE = 'https://archive.org/download/nine-inch-nails-ghosts-i-iv-2008-web/';
+  var LENGTHS = [169, 196, 231, 133, 172, 259, 121, 176, 167, 162, 137, 137, 194, 186, 113, 150, 133, 323,
+    132, 219, 174, 151, 164, 159, 119, 146, 172, 322, 175, 179, 146, 266, 242, 352, 210, 139];
+  var tracks = LENGTHS.map(function (len, i) {
+    var n = i + 1, title = n + ' Ghosts ' + ['I', 'II', 'III', 'IV'][Math.floor(i / 9)];
+    return { title: title, len: len, src: ARCHIVE + encodeURIComponent('Nine Inch Nails - Ghosts I-IV - ' + String(n).padStart(2, '0') + ' - ' + title + '.mp3') };
+  });
+  var audio = new Audio();
+  audio.preload = 'none';
   var saved = store.get('fm') || {};
-  var fm = { ready: false, playing: false, time: 0, dur: 0, vol: 80, seeking: false,
-    sounds: [], idx: 0, shuffle: !!saved.shuffle, repeat: saved.repeat || 'off', list: !!saved.list };
+  var fm = { playing: false, time: 0, dur: tracks[0].len, vol: 80, seeking: false,
+    idx: 0, shuffle: !!saved.shuffle, repeat: saved.repeat || 'off', list: !!saved.list };
+  audio.volume = fm.vol / 100;
   function saveFm() { store.set('fm', { shuffle: fm.shuffle, repeat: fm.repeat, list: fm.list }); }
-  function scCall(method, value) {
-    var f = q('#sc-widget');
-    if (!f || !f.contentWindow) return;
-    var msg = value === undefined ? { method: method } : { method: method, value: value };
-    f.contentWindow.postMessage(JSON.stringify(msg), 'https://w.soundcloud.com');
-  }
   function fmt(t) { t = Math.max(0, Math.floor(t || 0)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
   function renderFm() {
     q('#fm-time').textContent = fmt(fm.time);
@@ -759,18 +762,18 @@
       b.classList.toggle('sel', i === fm.idx); b.setAttribute('aria-current', i === fm.idx ? 'true' : 'false');
     });
   }
-  function renderPlaylist() {
-    var list = q('#fm-list'); list.innerHTML = '';
-    fm.sounds.forEach(function (s, i) {
+  (function renderPlaylist() {
+    var list = q('#fm-list');
+    tracks.forEach(function (t, i) {
       var li = document.createElement('div'); li.setAttribute('role', 'listitem');
-      // SoundCloud titles already carry the track number ("5 Ghosts I"), so no number column
+      // the titles already carry the track number ("5 Ghosts I"), so no number column
       var b = document.createElement('button'); b.type = 'button'; b.className = 'prow fm-row';
       b.innerHTML = '<span class="t"></span><span></span>';
-      b.children[0].textContent = s.title || 'track ' + (i + 1); b.children[1].textContent = s.duration ? fmt(s.duration / 1000) : '';
-      b.addEventListener('click', function () { scCall('skip', i); });
+      b.children[0].textContent = t.title; b.children[1].textContent = fmt(t.len);
+      b.addEventListener('click', function () { loadTrack(i, true); });
       li.appendChild(b); list.appendChild(li);
     });
-  }
+  })();
   // keep the playing track in view inside the list, without scrolling the page
   function showCurrent() {
     var L = q('#fm-list'), row = qa('#fm-list .prow')[fm.idx];
@@ -778,62 +781,46 @@
     var top = row.parentNode.offsetTop;
     if (top < L.scrollTop || top + row.offsetHeight > L.scrollTop + L.clientHeight) L.scrollTop = top - L.clientHeight / 2;
   }
-  // the widget only knows next/prev; shuffle and repeat pick the index themselves
+  // what comes after this track, given shuffle and repeat; null means stop
   function pickNext(auto) {
-    var n = fm.sounds.length;
-    if (!n) return null;
+    var n = tracks.length;
     if (auto && fm.repeat === 'one') return fm.idx;
-    if (fm.shuffle && n > 1) { var r; do { r = Math.floor(Math.random() * n); } while (r === fm.idx); return r; }
+    if (fm.shuffle) { var r; do { r = Math.floor(Math.random() * n); } while (r === fm.idx); return r; }
     if (fm.idx + 1 < n) return fm.idx + 1;
     return fm.repeat === 'all' || !auto ? 0 : null;
   }
-  function ensureRadio() {
-    if (q('#sc-widget')) return;
-    var f = document.createElement('iframe');
-    f.id = 'sc-widget'; f.className = 'fm-widget'; f.title = 'SoundCloud player'; f.allow = 'autoplay'; f.tabIndex = -1; f.setAttribute('aria-hidden', 'true');
-    f.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(SET) + '&auto_play=false&buying=false&sharing=false&download=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&single_active=true&visual=false';
-    winEl('radio').appendChild(f);
-    setTimeout(function () {
-      if (!fm.ready) { q('#fm-title').textContent = 'can’t tune in here :('; q('#fm-sub').textContent = 'try the SoundCloud link below'; }
-    }, 8000);
+  function loadTrack(i, play) {
+    fm.idx = i; fm.time = 0; fm.dur = tracks[i].len;
+    audio.src = tracks[i].src;
+    q('#fm-title').textContent = tracks[i].title;
+    if (play) playFm();
+    renderFm(); showCurrent();
   }
-  window.addEventListener('message', function (e) {
-    if (e.origin !== 'https://w.soundcloud.com') return;
-    var d = e.data;
-    try { if (typeof d === 'string') d = JSON.parse(d); } catch (err) { return; }
-    if (!d || !d.method) return;
-    if (d.method === 'ready') {
-      fm.ready = true;
-      ['play', 'pause', 'finish', 'playProgress'].forEach(function (ev) { scCall('addEventListener', ev); });
-      scCall('setVolume', fm.vol); scCall('getCurrentSound'); scCall('getSounds');
-      q('#fm-sub').textContent = 'Nine Inch Nails, Ghosts I–IV';
-    } else if (d.method === 'play') {
-      // the widget fills in track details lazily, so ask for the list again whenever a track starts
-      fm.playing = true; scCall('getCurrentSound'); scCall('getCurrentSoundIndex'); scCall('getSounds'); if (ytPlaying()) { ytSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
-    } else if (d.method === 'pause') {
-      fm.playing = false;
-    } else if (d.method === 'finish') {
-      fm.playing = false;
-      var nx = pickNext(true);
-      // plain order is what the widget does on its own; anything else overrides it
-      if (nx !== null && !(nx === fm.idx + 1 && !fm.shuffle)) scCall('skip', nx);
-    } else if (d.method === 'getSounds' && Array.isArray(d.value)) {
-      var key = function (list) { return list.map(function (s) { return (s.title || '') + s.duration; }).join('|'); };
-      if (key(d.value) !== key(fm.sounds)) { fm.sounds = d.value; renderPlaylist(); renderFm(); showCurrent(); }
-    } else if (d.method === 'getCurrentSoundIndex' && typeof d.value === 'number') {
-      fm.idx = d.value; renderFm(); showCurrent();
-    } else if (d.method === 'playProgress' && d.value) {
-      fm.time = (d.value.currentPosition || 0) / 1000;
-    } else if (d.method === 'getCurrentSound' && d.value) {
-      q('#fm-title').textContent = d.value.title || 'Ghosts I–IV';
-      fm.dur = (d.value.duration || 0) / 1000;
-      if (d.value.permalink_url) q('#fm-link').href = d.value.permalink_url;
-    }
+  function playFm() {
+    if (!audio.src) audio.src = tracks[fm.idx].src;
+    var p = audio.play();
+    if (p && p.catch) p.catch(function (err) { if (err && err.name !== 'AbortError') cantTuneIn(); });
+  }
+  function radioPause() { audio.pause(); }
+  function cantTuneIn() { q('#fm-title').textContent = 'can’t tune in here :('; q('#fm-sub').textContent = 'try the archive.org link below'; }
+  audio.addEventListener('play', function () {
+    fm.playing = true; q('#fm-sub').textContent = 'Nine Inch Nails, Ghosts I–IV';
+    if (ytPlaying()) { ytSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
     renderFm();
   });
-  q('#fm-toggle').addEventListener('click', function () { scCall(fm.playing ? 'pause' : 'play'); });
-  q('#fm-prev').addEventListener('click', function () { scCall('prev'); });
-  q('#fm-next').addEventListener('click', function () { var nx = pickNext(false); if (nx === null) scCall('next'); else scCall('skip', nx); });
+  audio.addEventListener('pause', function () { fm.playing = false; renderFm(); });
+  audio.addEventListener('loadedmetadata', function () { if (isFinite(audio.duration)) fm.dur = audio.duration; renderFm(); });
+  audio.addEventListener('timeupdate', function () { fm.time = audio.currentTime; renderFm(); });
+  audio.addEventListener('ended', function () { var nx = pickNext(true); if (nx === null) { fm.playing = false; renderFm(); } else loadTrack(nx, true); });
+  audio.addEventListener('error', function () { if (audio.src) { fm.playing = false; cantTuneIn(); renderFm(); } });
+  q('#fm-title').textContent = tracks[0].title;
+  q('#fm-toggle').addEventListener('click', function () { if (fm.playing) radioPause(); else playFm(); });
+  // like Winamp, previous restarts the track unless it has only just begun
+  q('#fm-prev').addEventListener('click', function () {
+    if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+    loadTrack((fm.idx - 1 + tracks.length) % tracks.length, fm.playing);
+  });
+  q('#fm-next').addEventListener('click', function () { loadTrack(pickNext(false), fm.playing); });
   q('#fm-shuffle').addEventListener('click', function () { fm.shuffle = !fm.shuffle; saveFm(); renderFm(); });
   q('#fm-repeat').addEventListener('click', function () {
     fm.repeat = { off: 'all', all: 'one', one: 'off' }[fm.repeat]; saveFm(); renderFm();
@@ -841,8 +828,12 @@
   q('#fm-pl').addEventListener('click', function () { fm.list = !fm.list; saveFm(); renderFm(); showCurrent(); });
   var seek = q('#fm-seek');
   seek.addEventListener('input', function () { fm.seeking = true; q('#fm-time').textContent = fmt(Number(seek.value)); });
-  seek.addEventListener('change', function () { fm.seeking = false; fm.time = Number(seek.value); scCall('seekTo', fm.time * 1000); renderFm(); });
-  q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); scCall('setVolume', fm.vol); });
+  seek.addEventListener('change', function () {
+    fm.seeking = false; fm.time = Number(seek.value);
+    if (!audio.src) audio.src = tracks[fm.idx].src;
+    audio.currentTime = fm.time; renderFm();
+  });
+  q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); audio.volume = fm.vol / 100; });
   renderFm();
 
   /* ---------- right-click menus ---------- */
