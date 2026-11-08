@@ -325,7 +325,8 @@
     var paths = Clock.clockPaths(parts.hour || 0, parts.minute || 0, parts.second || 0);
     qa('#clock-svg path').forEach(function (p) { p.setAttribute('d', paths[p.getAttribute('data-k')] || ''); });
     q('#clock-svg').setAttribute('aria-label', 'Analog clock showing ' + time + ' in Berlin');
-    q('#clock-caption').textContent = date + ', ' + time;
+    q('#clock-place').textContent = 'Berlin, Germany ' + time;
+    q('#clock-caption').textContent = date;
   }
   tick(); setInterval(tick, 1000);
 

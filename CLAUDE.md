@@ -70,8 +70,8 @@ windows. It is a business card, not a sales page.
   etched line and the buttons bottom right. portrait.jpg still opens on its own
   from the desk. The photo viewer has no full size button (the right-click
   menu still has View Full Size).
-- The time in the menu bar opens the Clock window (the analog SerenityOS
-  clock and the date and time underneath, always Berlin time), dropped down
+- The time in the menu bar opens the Clock window ("Berlin, Germany" and the time above the analog SerenityOS
+  clock, the date underneath), dropped down
   right under it with its right edge lined up; clicking the time again closes
   it. There is no clock icon on the desk.
 - Phones (<=760px): 1x zoom and the same free-form desk: icons fill rows
