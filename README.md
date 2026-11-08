@@ -59,6 +59,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | `photos/` | Photos for the desktop photos folder (see below) |
 | `wallpapers/` | Rotating Ghosts I–IV wallpapers, dithered by `tools/dither.py` |
 | `tools/dither.py` | Dithers the photos |
+| `IMPRINT.md` | Imprint and credits, the same as the Imprint window |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |
 
@@ -94,7 +95,8 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 - *Ghosts I–IV* (music and artwork) is licensed for non-commercial use only.
   The dithered wallpaper is a derivative, so it is shared under the same
   CC BY-NC-SA 3.0 license.
-- The imprint window on the site lists the same credits. Keep both in sync.
+- The imprint window on the site and [`IMPRINT.md`](IMPRINT.md) list the same
+  credits. Keep all three in sync.
 
 ## License
 
