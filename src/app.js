@@ -123,7 +123,7 @@
   function closeWin(k) {
     if (W[k].max) maximize(k, false);
     W[k].open = false; apply(k);
-    if (k === 'talks') ytSend('pauseVideo');
+    if (k === 'talks') talkSend('pauseVideo');
     if (k === 'radio') radioPause();
   }
   // folder windows are added later, so setup is a function they can call too
@@ -333,9 +333,18 @@
   /* ---------- media player ---------- */
   var talks = [
     { title: 'Identifying and Addressing Usability Vulnerabilities', meta: 'FOSS Backstage 2026, Berlin', where: 'Berlin', video: 'vctZaoDzq2k', url: 'https://www.youtube.com/watch?v=vctZaoDzq2k', openLabel: 'watch on youtube' },
-    { title: 'Speaker at FOSDEM 2026', meta: 'FOSDEM 2026, Brussels', where: 'Brussels', url: 'https://fosdem.org/2026/schedule/speaker/elio_qoshi', openLabel: 'go there' }
+    { title: 'The UI Layer of Security: What could go wrong?', meta: 'FOSDEM 2026, Brussels, with Anja Xhakani', where: 'Brussels',
+      file: 'https://video.fosdem.org/2026/ub4132/YTN9QV-ui-layer-of-security', url: 'https://archive.fosdem.org/2026/schedule/event/YTN9QV-ui-layer-of-security/', openLabel: 'see on fosdem.org' }
   ];
   var ti = 0, ytState = -1, ytReady = false, ytQueued = null;
+  function talkSend(func) {
+    if (!talks[ti].file) return ytSend(func);
+    var v = q('#talk-file');
+    if (!v) return;
+    if (func === 'playVideo') { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+    else if (func === 'pauseVideo') v.pause();
+    else if (func === 'stopVideo') { v.pause(); v.currentTime = 0; }
+  }
   function ytSend(func) {
     // commands sent before YouTube answers are dropped, so hold the latest one
     if (!ytReady) { ytQueued = func; return; }
@@ -344,7 +353,33 @@
   }
   function renderTalk() {
     var t = talks[ti], screen = q('#talk-screen');
-    if (t.video) {
+    if (t.file) {
+      var v = q('#talk-file');
+      if (!v || v.getAttribute('data-src') !== t.file) {
+        screen.innerHTML = '';
+        v = document.createElement('video');
+        v.id = 'talk-file'; v.setAttribute('data-src', t.file); v.title = t.title;
+        v.controls = true; v.preload = 'metadata'; v.playsInline = true;
+        // AV1 where the browser can play it, MP4 everywhere else
+        [['.av1.webm', 'video/webm; codecs=av01.0.08M.08'], ['.mp4', 'video/mp4']].forEach(function (x) {
+          var so = document.createElement('source'); so.src = t.file + x[0]; so.type = x[1]; v.appendChild(so);
+        });
+        // same trick as YouTube: twice the size, scaled to half, so the browser's controls aren't zoomed
+        v.style.cssText = 'display: block; width: 200%; height: 200%; background: #000; transform: scale(0.5); transform-origin: 0 0';
+        // YouTube's states, so the buttons and the status bar work the same for both
+        var states = { play: 1, playing: 1, waiting: 3, pause: 2, ended: 0, emptied: -1 };
+        Object.keys(states).forEach(function (ev) {
+          v.addEventListener(ev, function () {
+            if (talks[ti].file !== t.file) return;
+            ytState = ev === 'pause' && v.currentTime === 0 ? 5 : states[ev];
+            if (ytPlaying()) radioPause();
+            renderTalkStatus();
+          });
+        });
+        screen.appendChild(v);
+        ytState = -1;
+      }
+    } else if (t.video) {
       var f = q('#talk-video');
       if (!f || f.getAttribute('data-id') !== t.video) {
         screen.innerHTML = '';
@@ -372,7 +407,7 @@
     }
     q('#talks-p').textContent = t.title; q('#talk-meta').textContent = t.meta;
     var open = q('#talk-open'); open.href = t.url; open.textContent = t.openLabel;
-    ['#talk-toggle', '#talk-stop'].forEach(function (id) { q(id).disabled = !t.video; });
+    ['#talk-toggle', '#talk-stop'].forEach(function (id) { q(id).disabled = !t.video && !t.file; });
     q('#talk-count').textContent = (ti + 1) + '/' + talks.length;
     renderTalkStatus();
     var list = q('#talk-list'); list.innerHTML = '';
@@ -386,13 +421,13 @@
       li.appendChild(b); list.appendChild(li);
     });
   }
-  function pickTalk(i) { ti = (i + talks.length) % talks.length; ytState = -1; renderTalk(); }
+  function pickTalk(i) { if (ytPlaying()) talkSend('pauseVideo'); ti = (i + talks.length) % talks.length; ytState = -1; renderTalk(); }
   q('#talk-prev').addEventListener('click', function () { pickTalk(ti - 1); });
   q('#talk-next').addEventListener('click', function () { pickTalk(ti + 1); });
   // YouTube player states: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
   function ytPlaying() { return ytState === 1 || ytState === 3; }
   function player(func) {
-    ytSend(func);
+    talkSend(func);
     // show the change right away; YouTube's own state event confirms or corrects it
     ytState = func === 'playVideo' ? 1 : func === 'pauseVideo' ? 2 : 5;
     if (ytPlaying()) radioPause();
@@ -411,7 +446,7 @@
     renderTalkStatus();
   });
   function renderTalkStatus() {
-    var on = ytPlaying(), video = !!talks[ti].video;
+    var on = ytPlaying(), video = !!(talks[ti].video || talks[ti].file);
     q('#talk-status').textContent = !video ? 'no tape' : on ? 'playing...' : ytState === 2 ? 'paused.' : 'ready.';
     q('#talk-ic-play').style.display = on ? 'none' : '';
     q('#talk-ic-pause').style.display = on ? '' : 'none';
@@ -913,7 +948,7 @@
   onAudio('canplaythrough', function () { preloadNext(); });
   onAudio('play', function () {
     fm.playing = true; q('#fm-sub').textContent = 'Nine Inch Nails, Ghosts I–IV';
-    if (ytPlaying()) { ytSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
+    if (ytPlaying()) { talkSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
     renderFm();
   });
   onAudio('pause', function () { fm.playing = false; renderFm(); });

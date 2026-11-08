@@ -128,7 +128,11 @@ names keep theirs (Ura Design, LinkedIn, GitHub).
 - Email: elio@ura.design. Never publish his phone number.
 - Imprint address: c/o Cultivation Space, Gottschedstr. 4, 13357 Berlin.
 - Talk: "Identifying and Addressing Usability Vulnerabilities", FOSS Backstage
-  2026, Berlin (YouTube video vctZaoDzq2k). Also spoke at FOSDEM 2026.
+  2026, Berlin (YouTube video vctZaoDzq2k).
+- Talk: "The UI Layer of Security: What could go wrong?", FOSDEM 2026,
+  Brussels, with Anja Xhakani. Recording streamed from video.fosdem.org
+  (AV1 webm with an mp4 fallback, CC BY 2.0 BE); the Media Player plays these
+  files in a `<video>` and YouTube talks in the iframe, with the same buttons.
 
 ## Open items
 
@@ -154,6 +158,7 @@ The imprint window credits everything. Keep these in sync with `LICENSES/`:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), MS Sans Serif
 and MS Sans Serif Bold by lou (CC BY-SA 3.0, notice also in styles.css), Ghosts I–IV music
 (streamed from the Internet Archive) and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
-(https://www.jeremiepontin.com/, not covered by the MIT license). The site's
+(https://www.jeremiepontin.com/, not covered by the MIT license), FOSDEM
+2026 talk recording by FOSDEM (CC BY 2.0 BE, streamed from video.fosdem.org). The site's
 own code is MIT (`LICENSE`). The Winamp logo is a trademark of its owner. If the font
 files are redistributed, ship `LICENSES/MS-Sans-Serif-*` with them.
