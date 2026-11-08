@@ -133,8 +133,49 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 .dialog98-msg p{margin:0}
 .dialog98-btns{display:flex;justify-content:center;gap:6px;margin-top:12px}
 .root98 .dialog98-btns button{min-width:75px}
-.win.max{display:flex;flex-direction:column}
-.win.max>.window-body{flex:1;min-height:0;overflow:auto}
+.win:is(.max,.sized){display:flex;flex-direction:column}
+.win:is(.max,.sized)>.window-body{flex:1;min-height:0;overflow:auto}
+/* resizing from the edges: invisible strips along each side and corner */
+.rz98{position:absolute;z-index:3;touch-action:none}
+.rz98[data-d=n]{top:-2px;left:6px;right:6px;height:5px}
+.rz98[data-d=s]{bottom:-2px;left:6px;right:6px;height:5px}
+.rz98[data-d=e]{right:-2px;top:6px;bottom:6px;width:5px}
+.rz98[data-d=w]{left:-2px;top:6px;bottom:6px;width:5px}
+.rz98:is([data-d=ne],[data-d=nw],[data-d=se],[data-d=sw]){width:8px;height:8px}
+.rz98[data-d=ne]{top:-2px;right:-2px}.rz98[data-d=nw]{top:-2px;left:-2px}.rz98[data-d=se]{bottom:-2px;right:-2px}.rz98[data-d=sw]{bottom:-2px;left:-2px}
+.win.max .rz98{display:none}
+@media (pointer:coarse){
+  .rz98[data-d=s]{bottom:-10px;height:13px}.rz98[data-d=e]{right:-10px;width:13px}.rz98[data-d=w]{left:-10px;width:13px}
+  .rz98:is([data-d=se],[data-d=sw]){width:18px;height:18px;bottom:-10px}.rz98[data-d=se]{right:-10px}.rz98[data-d=sw]{left:-10px}
+}
+/* resized folders and photos fill their window */
+.win.sized[data-folder]>.window-body,.win.sized[data-win=photo]>.window-body{display:flex;flex-direction:column;overflow:hidden}
+.win.sized .folder-grid{flex:1;min-height:0;max-height:none !important;height:auto !important}
+.win.sized .photo-panel{aspect-ratio:auto !important;flex:1;min-height:60px}
+/* Date/Time Properties, like Windows 98's */
+.sr98{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.root98 .tabs98{margin-top:0}
+.root98 .tabs98 li[role=tab] a{margin:3px 6px}
+.root98:not(.dark) .tabs98 li[role=tab][aria-selected=true]{background:#E4E4E4}
+.root98:not(.dark) .tabs98 li[role=tab]{box-shadow:inset -1px 0 #0a0a0a,inset 1px 1px #fff,inset -2px 0 #A0A0A0,inset 2px 2px #F4F4F4}
+.root98.dark .tabs98 li[role=tab]{box-shadow:inset -1px 0 #000,inset 1px 1px #6A6A6A,inset -2px 0 #222,inset 2px 2px #505050}
+.root98.dark .tabs98 li[role=tab][aria-selected=true]{background:#3A3A3A}
+.root98.dark .tabs98 li[role=tab] a{color:#E6E6E6}
+.root98 [role=tabpanel]>.window-body{margin:8px}
+.dt98{display:flex;flex-wrap:wrap;gap:8px}
+.dt98 fieldset{padding:6px 8px 8px}
+.dt-date{flex:1 1 140px;min-width:140px}
+.dt-time{flex:none}
+.root98 p.dt-zone{margin:0 8px 8px}
+.cal98 table{width:100%;border-collapse:collapse;text-align:center;white-space:nowrap}
+.root98 .cal98 th{background:#808080;color:#fff;font-weight:400;height:14px;padding:0;box-shadow:none;position:static}
+.root98 .cal98 td{height:16px;padding:0;text-align:center}
+.root98 .cal98 td.today{background:#000080;color:#fff}
+.root98.dark .cal98 table{background:#1F1F1F;color:#E6E6E6}
+.root98.dark :is(select,input[type=number],input[type=text]){background-color:#1F1F1F;color:#E6E6E6;box-shadow:inset -1px -1px #5A5A5A,inset 1px 1px #000,inset -2px -2px #3A3A3A,inset 2px 2px #111}
+.root98.dark input[readonly]{background-color:#3A3A3A}
+.root98:not(.dark) input[readonly]{background-color:#E4E4E4}
+.root98 select:focus{background-color:#000080;color:#fff}
 .desk-area img{-webkit-touch-callout:none}
 /* files and folders: icons in folder windows, renaming, cut items, drag and drop */
 .root98 .folder-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
@@ -160,7 +201,10 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 html,.root98,.root98 *{cursor:url(assets/cursors/arrow.png) 2 2,default;cursor:-webkit-image-set(url(assets/cursors/arrow@2x.png) 2x) 2 2,default}
 .root98 a[href]:not(.btn98):not(.icon),.root98 a[href]:not(.btn98):not(.icon) *{cursor:url(assets/cursors/hand.png) 8 4,pointer;cursor:-webkit-image-set(url(assets/cursors/hand@2x.png) 2x) 8 4,pointer}
 .root98 input[type=text],.root98 textarea{cursor:url(assets/cursors/ibeam.png) 7 12,text;cursor:-webkit-image-set(url(assets/cursors/ibeam@2x.png) 2x) 7 12,text}
-.root98 .grip98{cursor:url(assets/cursors/resize.png) 10 10,nwse-resize;cursor:-webkit-image-set(url(assets/cursors/resize@2x.png) 2x) 10 10,nwse-resize}
+.root98 :is(.grip98,.rz98[data-d=nw],.rz98[data-d=se]){cursor:url(assets/cursors/resize.png) 10 10,nwse-resize;cursor:-webkit-image-set(url(assets/cursors/resize@2x.png) 2x) 10 10,nwse-resize}
+.root98 .rz98:is([data-d=ne],[data-d=sw]){cursor:url(assets/cursors/resize-nesw.png) 10 10,nesw-resize;cursor:-webkit-image-set(url(assets/cursors/resize-nesw@2x.png) 2x) 10 10,nesw-resize}
+.root98 .rz98:is([data-d=n],[data-d=s]){cursor:url(assets/cursors/resize-ns.png) 6 11,ns-resize;cursor:-webkit-image-set(url(assets/cursors/resize-ns@2x.png) 2x) 6 11,ns-resize}
+.root98 .rz98:is([data-d=e],[data-d=w]){cursor:url(assets/cursors/resize-ew.png) 11 6,ew-resize;cursor:-webkit-image-set(url(assets/cursors/resize-ew@2x.png) 2x) 11 6,ew-resize}
 /* the hourglass turns: app.js steps data-wf through the 14 frames while busy */
 .root98.busy[data-wf="0"],.root98.busy[data-wf="0"] *{cursor:url(assets/cursors/wait-0.png) 10 10,wait !important;cursor:-webkit-image-set(url(assets/cursors/wait-0@2x.png) 2x) 10 10,wait !important}
 .root98.busy[data-wf="1"],.root98.busy[data-wf="1"] *{cursor:url(assets/cursors/wait-1.png) 10 10,wait !important;cursor:-webkit-image-set(url(assets/cursors/wait-1@2x.png) 2x) 10 10,wait !important}
@@ -209,3 +253,6 @@ html,body{height:100%;overflow:hidden}
   /* windows keep their own width at 1x, never wider than the screen */
   .win{max-width:calc(100% - 6px)}
 }
+/* the time box reads like Windows 98's: a white field with black text, not a greyed-out one */
+.root98 input#clock-field{background-color:#fff;color:#000}
+.root98.dark input#clock-field{background-color:#1F1F1F;color:#E6E6E6}

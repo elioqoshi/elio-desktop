@@ -45,8 +45,9 @@ windows. It is a business card, not a sales page.
 - Cursors: SerenityOS's default cursor theme, Windows 9x style, at normal
   cursor size (1x, with pixel-doubled `@2x` copies for dense screens via
   `-webkit-image-set`). Arrow everywhere (buttons and icons too, like 98),
-  hand only on text links, I-beam in text fields, diagonal resize on the size
-  grip, and the 14-frame hourglass while busy (app.js steps `data-wf`).
+  hand only on text links, I-beam in text fields, the four resize arrows on
+  window edges and corners (`resize`, `resize-nesw`, `resize-ns`,
+  `resize-ew`), and the 14-frame hourglass while busy (app.js steps `data-wf`).
 - Windows: 98.css components. Title bars are one light blue (#A8DDE6; dark
   mode #2E6E7A). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
@@ -58,10 +59,19 @@ windows. It is a business card, not a sales page.
   and remembers the visitor's choice in localStorage.
 - Opening a window waits 1 second with the turning hourglass, like an old PC.
   Windows open at random spots that stay fully inside the desktop.
+- Every window resizes from all four edges and corners (`.rz98` strips added
+  by `resizable()` in app.js); a resized window gets `.sized` and its body
+  scrolls. Dialogs (`.fixed98`, the Date/Time window) don't resize. A resized
+  photo viewer lets the photo fill the space; arrow keys and the buttons step
+  through the photos in the folder the open photo is in.
+- The clock in the menu bar opens Date/Time Properties, like the tray clock in
+  Windows 98: a month calendar with today picked out, the analog SerenityOS
+  clock, the time and a Time Zone tab. It always shows Berlin time. There is
+  no clock icon on the desk.
 - Phones (<=760px): 1x zoom and the same free-form desk: icons fill rows
   across the top (links stay docked bottom right), windows open below them and
-  everything can be dragged. On touch screens title bars, close buttons and the
-  size grip have a bigger invisible grab area (`pointer:coarse`). A long press
+  everything can be dragged. On touch screens title bars, close buttons, the
+  bottom and side edges and the size grip have a bigger invisible grab area (`pointer:coarse`). A long press
   (350ms) opens the right-click menus; the desk turns off the browser's own
   callout and text selection, but text inside windows stays selectable.
 - Files and folders: every desktop item (apps, links, photos, the photos
@@ -101,7 +111,7 @@ plain and descriptive.
 The lowercase voice is for the text inside windows. Labels follow Windows 98:
 Title Case for the menu bar, right-click menus, program and system icons and
 window titles (Clients, Imprint, Talks, Winamp, Photos, Trash, Media Player).
-File names keep their own case (portrait.jpg, clock.exe, about.txt), and brand
+File names keep their own case (portrait.jpg, about.txt), and brand
 names keep theirs (Ura Design, LinkedIn, GitHub).
 
 ## Facts about Elio (only use these)
@@ -127,7 +137,8 @@ names keep theirs (Ura Design, LinkedIn, GitHub).
   element from the Internet Archive item `nine-inch-nails-ghosts-i-iv-2008-web`
   (track list and lengths are in app.js). SoundCloud only has 8 of the tracks.
   That item labels itself CC BY 4.0, but the album is CC BY-NC-SA; credit it as
-  that. If archive.org is down, Winamp shows "can't tune in here". Consider
+  that. Winamp keeps a second `<audio>` that loads the next track (shuffle picks
+  it ahead of time) once the current one can play through, and swaps to it. If archive.org is down, Winamp shows "can't tune in here". Consider
   self-hosting if that happens often, and keep the non-commercial clause in mind.
 - The YouTube embed needs a host that allows third-party iframes.
 

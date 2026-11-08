@@ -67,7 +67,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | MS Sans Serif font (regular and bold) | `assets/ms-sans-serif.woff2`, `assets/ms-sans-serif-bold.woff2` | [MS Sans Serif](https://fontstruct.com/fontstructions/show/1384746) and [MS Sans Serif Bold](https://fontstruct.com/fontstructions/show/1384862) by lou, made with FontStruct, as shipped with 98.css 0.1.21 | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), [`LICENSES/MS-Sans-Serif-*`](LICENSES/) |
 | Desktop icons (32x32) | `assets/icons.png` (sprite) | [SerenityOS](https://github.com/SerenityOS/serenity), © the SerenityOS developers | BSD 2-Clause, [`LICENSES/SerenityOS-BSD-2-Clause.txt`](LICENSES/SerenityOS-BSD-2-Clause.txt) |
 | Pixel clock | `src/app.js` (`Clock`) | Ported from SerenityOS AnalogClock, © 2021 Erlend Høier | BSD 2-Clause |
-| Cursors | `assets/cursors/` | SerenityOS default cursor theme: arrow, hand, I-beam, diagonal resize and the 14-frame hourglass, plus pixel-doubled `@2x` copies | BSD 2-Clause |
+| Cursors | `assets/cursors/` | SerenityOS default cursor theme: arrow, hand, I-beam, the four resize arrows and the 14-frame hourglass, plus pixel-doubled `@2x` copies | BSD 2-Clause |
 | Winamp icon | in `assets/icons.png` | Supplied by Elio | Winamp logo is a trademark of its owner, used as a nod |
 | Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, all 36 tracks from the official 2008 release, streamed from the [Internet Archive](https://archive.org/details/nine-inch-nails-ghosts-i-iv-2008-web) | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |

@@ -41,7 +41,7 @@
   var W = {
     about: { open: true, x: 170, y: 18, z: 2, w: 290 },
     portrait: { open: true, x: 430, y: 46, z: 3, w: 170 },
-    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
+    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 392 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
   function winEl(k) { return q('[data-win="' + k + '"]'); }
@@ -66,14 +66,15 @@
     var s = W[k], e = winEl(k), desk = q('.desk-area'), body = q('.window-body', e);
     s.open = true; s.z = topZ() + 1; s.x = 0; s.y = 0; body.style.maxHeight = ''; body.style.overflow = ''; apply(k);
     if (k === 'talks') renderTalk();
-    if (k === 'clock') tick();
+    if (k === 'clock') { cal = berlinDay(new Date()); renderCal(); tick(); }
     if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
     var dw = desk.clientWidth, dh = desk.clientHeight, h = e.offsetHeight;
     var over = h - (dh - 16);
-    if (over > 0) {
+    if (over > 0 && e.classList.contains('sized')) { e.style.height = Math.max(80, e.offsetHeight - 6 - over) + 'px'; h = e.offsetHeight; }
+    else if (over > 0) {
       body.style.maxHeight = Math.max(60, body.offsetHeight - over) + 'px'; body.style.overflow = 'auto'; h = e.offsetHeight;
     }
-    var minX = phone() ? 8 : 168, maxX = Math.max(minX, dw - e.offsetWidth - 8), maxY = Math.max(8, dh - h - 8);
+    var minX = phone() ? Math.max(0, Math.min(8, dw - e.offsetWidth)) : 168, maxX = Math.max(minX, dw - e.offsetWidth - 8), maxY = Math.max(8, dh - h - 8);
     var minY = phone() ? Math.min(iconsBottom() + 8, maxY) : 8;
     s.x = Math.round(minX + Math.random() * (maxX - minX));
     s.y = Math.round(minY + Math.random() * (maxY - minY));
@@ -96,11 +97,11 @@
     var s = W[k], e = winEl(k), desk = q('.desk-area'), body = q('.window-body', e);
     if (on === !!s.max) return;
     if (on) {
-      s.max = { x: s.x, y: s.y, width: e.style.width, mh: body.style.maxHeight, ov: body.style.overflow };
+      s.max = { x: s.x, y: s.y, width: e.style.width, height: e.style.height, sized: e.classList.contains('sized'), mh: body.style.maxHeight, ov: body.style.overflow };
       s.x = 0; s.y = 0; body.style.maxHeight = ''; body.style.overflow = '';
       e.classList.add('max'); fitMax(k);
     } else {
-      s.x = s.max.x; s.y = s.max.y; e.style.width = s.max.width; e.style.height = '';
+      s.x = s.max.x; s.y = s.max.y; e.style.width = s.max.width; e.style.height = s.max.height; e.classList.toggle('sized', s.max.sized);
       body.style.maxHeight = s.max.mh; body.style.overflow = s.max.ov;
       e.classList.remove('max'); s.max = null;
     }
@@ -143,6 +144,44 @@
     bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
   }
   Object.keys(W).forEach(setupWin);
+  // every window but dialogs resizes from its edges and corners; a folder's size grip is the bottom-right corner
+  function resizable(k) {
+    var e = winEl(k);
+    if (e.classList.contains('fixed98')) return;
+    ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
+      var h = document.createElement('div'); h.className = 'rz98'; h.setAttribute('data-d', dir); h.setAttribute('aria-hidden', 'true');
+      e.appendChild(h); resizeFrom(k, h, dir);
+    });
+    var grip = q('.grip98', e); if (grip) resizeFrom(k, grip, 'se');
+  }
+  function resizeFrom(k, h, dir) {
+    var e = winEl(k), d = null;
+    h.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0 || W[k].max) return;
+      ev.preventDefault(); ev.stopPropagation(); focusWin(k);
+      // .window has 3px padding around its content box
+      d = { sx: ev.clientX, sy: ev.clientY, x: W[k].x, y: W[k].y, w: e.offsetWidth - 6, h: e.offsetHeight - 6 };
+      try { h.setPointerCapture(ev.pointerId); } catch (err) {}
+    });
+    h.addEventListener('pointermove', function (ev) {
+      if (!d) return;
+      var desk = q('.desk-area'), s = W[k], dx = (ev.clientX - d.sx) / Z, dy = (ev.clientY - d.sy) / Z;
+      var x = d.x, y = d.y, w = d.w, hh = d.h, minW = 150, minH = 80;
+      if (dir.indexOf('e') >= 0) w = clamp(Math.round(d.w + dx), minW, desk.clientWidth - d.x - 6);
+      if (dir.indexOf('w') >= 0) { x = clamp(Math.round(d.x + dx), 0, d.x + d.w - minW); w = d.w + d.x - x; }
+      if (dir.indexOf('s') >= 0) hh = clamp(Math.round(d.h + dy), minH, desk.clientHeight - d.y - 6);
+      if (dir.indexOf('n') >= 0) { y = clamp(Math.round(d.y + dy), 0, d.y + d.h - minH); hh = d.h + d.y - y; }
+      s.x = x; s.y = y; s.w = w; e.style.width = w + 'px';
+      if (/[ns]/.test(dir)) {
+        e.style.height = hh + 'px'; e.classList.add('sized');
+        var body = q('.window-body', e); body.style.maxHeight = ''; body.style.overflow = '';
+      }
+      apply(k);
+    });
+    function end() { d = null; }
+    h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
+  }
+  Object.keys(W).forEach(resizable);
   qa('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openWin(b.getAttribute('data-open')); }); });
   qa('[data-close]').forEach(function (b) { b.addEventListener('click', function () { closeWin(b.getAttribute('data-close')); }); });
 
@@ -277,8 +316,44 @@
     var paths = Clock.clockPaths(parts.hour || 0, parts.minute || 0, parts.second || 0);
     qa('#clock-svg path').forEach(function (p) { p.setAttribute('d', paths[p.getAttribute('data-k')] || ''); });
     q('#clock-svg').setAttribute('aria-label', 'Analog clock showing ' + time + ' in Berlin');
-    q('#clock-caption').textContent = date + ', ' + time;
+    q('#clock-field').value = fmtSecs.format(now);
+    var d = berlinDay(now);
+    if (d.key !== calToday) { calToday = d.key; renderCal(); }
+    q('#clock-zone').textContent = 'Current time zone: W. Europe ' + (/\+2/.test(fmtZone.format(now)) ? 'Daylight' : 'Standard') + ' Time';
   }
+  // the Date & Time tab: a month calendar you can page through, with today picked out like in Windows 98
+  var fmtSecs = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+  var fmtYmd = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' });
+  var fmtZone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', timeZoneName: 'shortOffset' });
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function berlinDay(now) { var p = fmtYmd.format(now).split('-').map(Number); return { y: p[0], m: p[1] - 1, d: p[2], key: p.join('-') }; }
+  var calToday = '', cal = berlinDay(new Date());
+  MONTHS.forEach(function (m, i) { var o = document.createElement('option'); o.value = i; o.textContent = m; q('#cal-month').appendChild(o); });
+  function renderCal() {
+    var t = berlinDay(new Date()), first = new Date(Date.UTC(cal.y, cal.m, 1)).getUTCDay(), days = new Date(Date.UTC(cal.y, cal.m + 1, 0)).getUTCDate();
+    q('#cal-month').value = cal.m; q('#cal-year').value = cal.y;
+    q('#cal-cap').textContent = MONTHS[cal.m] + ' ' + cal.y;
+    var body = q('#cal-days'), html = '';
+    for (var i = 0; i < 42; i++) {
+      if (i % 7 === 0) { if (i >= first + days) break; html += '<tr>'; }
+      var n = i - first + 1, real = n >= 1 && n <= days, today = real && cal.y === t.y && cal.m === t.m && n === t.d;
+      html += '<td' + (today ? ' class="today" aria-current="date"' : '') + '>' + (real ? n : '') + '</td>';
+      if (i % 7 === 6) html += '</tr>';
+    }
+    body.innerHTML = html;
+  }
+  q('#cal-month').addEventListener('change', function (e) { cal.m = Number(e.target.value); renderCal(); });
+  q('#cal-year').addEventListener('change', function (e) { var y = Math.round(Number(e.target.value)); if (y >= 1970 && y <= 2099) cal.y = y; renderCal(); });
+  // the two tabs
+  qa('.tabs98 [role=tab] a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      qa('.tabs98 [role=tab]').forEach(function (li) {
+        var on = li.contains(a); li.setAttribute('aria-selected', on ? 'true' : 'false');
+        q(li.querySelector('a').getAttribute('href')).hidden = !on;
+      });
+    });
+  });
   tick(); setInterval(tick, 1000);
 
   /* ---------- media player ---------- */
@@ -374,18 +449,36 @@
   /* ---------- photos ---------- */
   // build.py fills window.PHOTOS from the photos/ folder
   // each entry: { name, src (dithered), thumb (dithered), full (original) }
-  var photos = window.PHOTOS || [], pi = 0;
-  function showPhoto(i) {
-    pi = (i + photos.length) % photos.length;
-    var p = photos[pi], img = q('#photo-img');
+  var photos = window.PHOTOS || [], pi = 0, curPhoto = null;
+  // previous and next go through the photos in the folder the open one sits in, wherever that is now
+  function photoList() { return curPhoto ? childrenOf(parentOf(curPhoto)).filter(function (id) { return ITEMS[id].kind === 'photo'; }) : []; }
+  function showPhoto(id) {
+    curPhoto = id; pi = ITEMS[id].photo;
+    var p = photos[pi], img = q('#photo-img'), list = photoList();
     img.src = p.src; img.alt = p.name;
-    q('#photo-t').textContent = p.name; q('#photo-name').textContent = p.name;
-    q('#photo-pos').textContent = (pi + 1) + '/' + photos.length;
+    q('#photo-t').textContent = ITEMS[id].name; q('#photo-name').textContent = ITEMS[id].name;
+    q('#photo-pos').textContent = (list.indexOf(id) + 1) + '/' + list.length;
     q('#photo-full').href = p.full;
-    q('#photo-prev').disabled = q('#photo-next').disabled = photos.length < 2;
+    q('#photo-prev').disabled = q('#photo-next').disabled = list.length < 2;
   }
-  q('#photo-prev').addEventListener('click', function () { showPhoto(pi - 1); });
-  q('#photo-next').addEventListener('click', function () { showPhoto(pi + 1); });
+  function stepPhoto(n) {
+    var list = photoList();
+    if (list.length < 2) return;
+    var i = Math.max(0, list.indexOf(curPhoto));
+    showPhoto(list[(i + n + list.length) % list.length]);
+  }
+  q('#photo-prev').addEventListener('click', function () { stepPhoto(-1); });
+  q('#photo-next').addEventListener('click', function () { stepPhoto(1); });
+  // arrow keys flip through them while the viewer is the window in front
+  document.addEventListener('keydown', function (e) {
+    if (!W.photo.open || W.photo.z !== topZ() || e.altKey || e.ctrlKey || e.metaKey) return;
+    var a = document.activeElement;
+    if (a && a.closest && (a.closest('input, textarea, select, .ctx98, .dialog98, .menu98'))) return;
+    if (document.querySelector('.ctx98:not([hidden]), .dialog98')) return;
+    var n = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
+    if (!n) return;
+    e.preventDefault(); stepPhoto(n);
+  });
 
   /* ---------- files and folders ---------- */
   // Everything on the desktop is an item in a small folder tree. Visitors can make, rename,
@@ -396,7 +489,6 @@
   [
     { id: 'portrait', name: 'portrait.jpg', ico: 'ico-image', kind: 'app' },
     { id: 'talks', name: 'Talks', ico: 'ico-presenter', kind: 'app' },
-    { id: 'clock', name: 'clock.exe', ico: 'ico-clock', kind: 'app' },
     { id: 'contact', name: 'Help', ico: 'ico-help', kind: 'app' },
     { id: 'radio', name: 'Winamp', ico: 'ico-winamp', kind: 'app' },
     { id: 'photos', name: 'Photos', ico: 'ico-folder', kind: 'folder' },
@@ -469,7 +561,7 @@
     if (inTrash(it.id)) return;
     if (it.kind === 'app') openWin(it.id);
     else if (it.kind === 'folder') openFolder(it.id);
-    else if (it.kind === 'photo') { showPhoto(it.photo); openWin('photo'); }
+    else if (it.kind === 'photo') { showPhoto(it.id); openWin('photo'); }
     else if (it.kind === 'link') window.open(it.href, '_blank', 'noopener');
   }
   function wireItem(el, it) {
@@ -604,30 +696,9 @@
       e.setAttribute('data-win', k); e.setAttribute('data-folder', fid);
       q('.desk-area').appendChild(e);
       W[k] = { w: 300, open: false, x: 0, y: 0, z: 0 };
-      setupWin(k); sizeGrip(k);
+      setupWin(k); resizable(k);
     }
     openWin(k);
-  }
-  // the size grip in the bottom-right corner resizes a folder window, like in Windows 98
-  function sizeGrip(k) {
-    var e = winEl(k), grip = q('.grip98', e), grid = q('.folder-grid', e), body = q('.window-body', e), d = null;
-    grip.addEventListener('pointerdown', function (ev) {
-      if (ev.button !== 0 || W[k].max) return;
-      ev.preventDefault(); ev.stopPropagation();
-      d = { sx: ev.clientX, sy: ev.clientY, w: parseFloat(e.style.width) || e.clientWidth, h: grid.offsetHeight };
-      try { grip.setPointerCapture(ev.pointerId); } catch (err) {}
-    });
-    grip.addEventListener('pointermove', function (ev) {
-      if (!d) return;
-      var desk = q('.desk-area'), s = W[k];
-      var w = clamp(Math.round(d.w + (ev.clientX - d.sx) / Z), 160, desk.clientWidth - s.x - 6);
-      var h = clamp(Math.round(d.h + (ev.clientY - d.sy) / Z), 60, desk.clientHeight - s.y - (e.offsetHeight - grid.offsetHeight) - 4);
-      s.w = w; e.style.width = w + 'px';
-      grid.style.maxHeight = 'none'; grid.style.height = h + 'px';
-      body.style.maxHeight = ''; body.style.overflow = '';
-    });
-    function end() { d = null; }
-    grip.addEventListener('pointerup', end); grip.addEventListener('pointercancel', end);
   }
   function renderFolder(fid) {
     var e = winEl(folderKey(fid)), it = ITEMS[fid];
@@ -777,12 +848,23 @@
     var n = i + 1, title = n + ' Ghosts ' + ['I', 'II', 'III', 'IV'][Math.floor(i / 9)];
     return { title: title, len: len, src: ARCHIVE + encodeURIComponent('Nine Inch Nails - Ghosts I-IV - ' + String(n).padStart(2, '0') + ' - ' + title + '.mp3') };
   });
-  var audio = new Audio();
-  audio.preload = 'none';
+  // two players: one plays, the other quietly loads the track that comes next, then they swap
+  var audio = new Audio(), spare = new Audio(), spareIdx = -1;
+  audio.preload = 'none'; spare.preload = 'auto';
   var saved = store.get('fm') || {};
   var fm = { playing: false, time: 0, dur: tracks[0].len, vol: 80, seeking: false,
     idx: 0, shuffle: !!saved.shuffle, repeat: saved.repeat || 'off', list: !!saved.list };
-  audio.volume = fm.vol / 100;
+  audio.volume = spare.volume = fm.vol / 100;
+  // shuffle picks the next track ahead of time so it can be loaded before it's needed
+  function queueNext() {
+    var n = tracks.length, r;
+    if (fm.shuffle && n > 1) { do { r = Math.floor(Math.random() * n); } while (r === fm.idx); fm.upNext = r; }
+    else fm.upNext = (fm.idx + 1) % n;
+  }
+  function preloadNext() {
+    if (fm.upNext === undefined || spareIdx === fm.upNext || fm.upNext === fm.idx) return;
+    spareIdx = fm.upNext; spare.src = tracks[spareIdx].src; spare.load();
+  }
   function saveFm() { store.set('fm', { shuffle: fm.shuffle, repeat: fm.repeat, list: fm.list }); }
   function fmt(t) { t = Math.max(0, Math.floor(t || 0)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
   function renderFm() {
@@ -828,13 +910,20 @@
   function pickNext(auto) {
     var n = tracks.length;
     if (auto && fm.repeat === 'one') return fm.idx;
-    if (fm.shuffle) { var r; do { r = Math.floor(Math.random() * n); } while (r === fm.idx); return r; }
+    if (fm.shuffle) return fm.upNext;
     if (fm.idx + 1 < n) return fm.idx + 1;
     return fm.repeat === 'all' || !auto ? 0 : null;
   }
   function loadTrack(i, play) {
     fm.idx = i; fm.time = 0; fm.dur = tracks[i].len;
-    audio.src = tracks[i].src;
+    if (spareIdx === i && i !== -1) {
+      // already loaded: swap the players
+      var old = audio; audio = spare; spare = old; spareIdx = -1;
+      old.pause(); old.removeAttribute('src'); old.load();
+      audio.currentTime = 0; audio.preload = 'auto'; spare.preload = 'auto';
+      if (isFinite(audio.duration)) fm.dur = audio.duration;
+    } else audio.src = tracks[i].src;
+    queueNext();
     q('#fm-title').textContent = tracks[i].title;
     if (play) playFm();
     renderFm(); showCurrent();
@@ -846,17 +935,23 @@
   }
   function radioPause() { audio.pause(); }
   function cantTuneIn() { q('#fm-title').textContent = 'can’t tune in here :('; q('#fm-sub').textContent = 'try the archive.org link below'; }
-  audio.addEventListener('play', function () {
+  function onAudio(type, fn) {
+    [audio, spare].forEach(function (el) { el.addEventListener(type, function (e) { if (e.currentTarget === audio) fn(e); }); });
+  }
+  // once the current track has loaded enough to play through, start on the next one
+  onAudio('canplaythrough', function () { preloadNext(); });
+  onAudio('play', function () {
     fm.playing = true; q('#fm-sub').textContent = 'Nine Inch Nails, Ghosts I–IV';
     if (ytPlaying()) { ytSend('pauseVideo'); ytState = 2; renderTalkStatus(); }
     renderFm();
   });
-  audio.addEventListener('pause', function () { fm.playing = false; renderFm(); });
-  audio.addEventListener('loadedmetadata', function () { if (isFinite(audio.duration)) fm.dur = audio.duration; renderFm(); });
-  audio.addEventListener('timeupdate', function () { fm.time = audio.currentTime; renderFm(); });
-  audio.addEventListener('ended', function () { var nx = pickNext(true); if (nx === null) { fm.playing = false; renderFm(); } else loadTrack(nx, true); });
-  audio.addEventListener('error', function () { if (audio.src) { fm.playing = false; cantTuneIn(); renderFm(); } });
+  onAudio('pause', function () { fm.playing = false; renderFm(); });
+  onAudio('loadedmetadata', function () { if (isFinite(audio.duration)) fm.dur = audio.duration; renderFm(); });
+  onAudio('timeupdate', function () { fm.time = audio.currentTime; renderFm(); });
+  onAudio('ended', function () { var nx = pickNext(true); if (nx === null) { fm.playing = false; renderFm(); } else loadTrack(nx, true); });
+  onAudio('error', function () { if (audio.src) { fm.playing = false; cantTuneIn(); renderFm(); } });
   q('#fm-title').textContent = tracks[0].title;
+  queueNext();
   q('#fm-toggle').addEventListener('click', function () { if (fm.playing) radioPause(); else playFm(); });
   // like Winamp, previous restarts the track unless it has only just begun
   q('#fm-prev').addEventListener('click', function () {
@@ -864,7 +959,7 @@
     loadTrack((fm.idx - 1 + tracks.length) % tracks.length, fm.playing);
   });
   q('#fm-next').addEventListener('click', function () { loadTrack(pickNext(false), fm.playing); });
-  q('#fm-shuffle').addEventListener('click', function () { fm.shuffle = !fm.shuffle; saveFm(); renderFm(); });
+  q('#fm-shuffle').addEventListener('click', function () { fm.shuffle = !fm.shuffle; saveFm(); renderFm(); queueNext(); if (fm.playing) preloadNext(); });
   q('#fm-repeat').addEventListener('click', function () {
     fm.repeat = { off: 'all', all: 'one', one: 'off' }[fm.repeat]; saveFm(); renderFm();
   });
@@ -876,7 +971,7 @@
     if (!audio.src) audio.src = tracks[fm.idx].src;
     audio.currentTime = fm.time; renderFm();
   });
-  q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); audio.volume = fm.vol / 100; q('#fm-volnum').textContent = fm.vol; });
+  q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); audio.volume = spare.volume = fm.vol / 100; q('#fm-volnum').textContent = fm.vol; });
   renderFm();
 
   /* ---------- right-click menus ---------- */
