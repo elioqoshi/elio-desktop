@@ -74,7 +74,8 @@ windows. It is a business card, not a sales page.
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
 - About is the one window open on arrival, laid out like a Windows 98 About
-  box: the portrait in a sunken frame on the left, text on the right, an
+  box (340px wide): the portrait in a sunken frame on the left (`assets/portrait-small.png`,
+  104x139, the same 6-grey ordered dither as `portrait-dither.png`), text on the right, an
   etched line and the buttons bottom right. portrait.jpg still opens on its own
   from the desk. The photo viewer has no full size button (the right-click
   menu still has View Full Size).

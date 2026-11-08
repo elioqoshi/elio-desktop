@@ -39,7 +39,7 @@
 
   /* ---------- windows ---------- */
   var W = {
-    about: { open: true, x: 170, y: 18, z: 2, w: 410 },
+    about: { open: true, x: 170, y: 18, z: 2, w: 340 },
     portrait: { w: 170 },
     talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
   };
