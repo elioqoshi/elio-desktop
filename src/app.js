@@ -59,6 +59,8 @@
   function openWin(k) {
     if (W[k].open) { focusWin(k); return; }
     if (pending[k]) return;
+    // the clock drops down from the menu bar straight away, everything else takes a second like an old PC
+    if (k === 'clock') { reallyOpen(k); return; }
     pending[k] = true; setBusy(1);
     setTimeout(function () { pending[k] = false; reallyOpen(k); setBusy(-1); }, 1000);
   }

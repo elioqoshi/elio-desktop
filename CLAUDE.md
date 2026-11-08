@@ -57,7 +57,8 @@ windows. It is a business card, not a sales page.
   twice; it covers the viewport with `image-rendering:pixelated`.
 - Dark theme: the sun button in the menu bar; defaults to the system setting
   and remembers the visitor's choice in localStorage.
-- Opening a window waits 1 second with the turning hourglass, like an old PC.
+- Opening a window waits 1 second with the turning hourglass, like an old PC
+  (except the Clock, which opens instantly).
   Windows open at random spots that stay fully inside the desktop.
 - Every window resizes from all four edges and corners (`.rz98` strips added
   by `resizable()` in app.js); a resized window gets `.sized` and its body
