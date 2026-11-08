@@ -93,7 +93,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
 | FOSDEM talk video | streamed, not in the repo | "The UI Layer of Security: What could go wrong?", FOSDEM 2026, recorded by FOSDEM, streamed from [video.fosdem.org](https://video.fosdem.org/2026/ub4132/) | [CC BY 2.0 BE](https://creativecommons.org/licenses/by/2.0/be/) |
 | Wallpapers | `assets/wallpaper-ghosts.png`, `wallpapers/` (originals in `wallpapers/originals/`) | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site; a new one every 15 minutes | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
-| Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png`, `assets/portrait-small.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
+| Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png`, `assets/portrait-small.png` | Photo of Elio by [Jérémie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jérémie Pontin, not covered by the MIT license |
 | Sample photos | `photos/originals/` (dithered copies in `photos/`) | Unsplash: [Brandenburg Gate](https://unsplash.com/photos/uFGi0_YciE0), [TV tower](https://unsplash.com/photos/g8DI2ZZFt8I), [U-Bahn](https://unsplash.com/photos/Y_aNcALhqZw) | [Unsplash License](https://unsplash.com/license) |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 
@@ -118,4 +118,4 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 
 The site's own code is released under the [MIT License](LICENSE). Third-party
 assets keep the licenses listed above, and the portrait photo remains
-© Jeremie Pontin.
+© Jérémie Pontin.

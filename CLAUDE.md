@@ -178,7 +178,7 @@ wallpapers, that they were changed. The README keeps the full table. Keep both
 and `LICENSES/` in sync:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), MS Sans Serif
 and MS Sans Serif Bold by lou (CC BY-SA 3.0, notice also in styles.css), Ghosts I–IV music
-(streamed from the Internet Archive) and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
+(streamed from the Internet Archive) and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jérémie Pontin
 (https://www.jeremiepontin.com/, not covered by the MIT license), FOSDEM
 2026 talk recording by FOSDEM (CC BY 2.0 BE, streamed from video.fosdem.org). The site's
 own code is MIT (`LICENSE`). The Winamp logo is a trademark of its owner. If the font
