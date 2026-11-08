@@ -27,6 +27,8 @@ windows. It is a business card, not a sales page.
   (56x42) for new or changed ones. `build.py` lists them in `window.PHOTOS`
   without inlining; the original opens from "View Full Size" in the viewer's right-click menu. The Pages workflow
   runs dither.py too and ships the whole folder
+- `wallpapers/`: the rotating wallpapers (originals in `wallpapers/originals/`,
+  dithered PNGs next to them); the Pages workflow ships the PNGs
 - `assets/`: MS Sans Serif regular and bold (98.css's fonts), SerenityOS icon sprite,
   wallpaper, cursors (`assets/cursors/`), dithered portrait (and the original photo)
 
@@ -51,9 +53,15 @@ windows. It is a business card, not a sales page.
 - Windows: 98.css components. Title bars are one light blue (#A8DDE6; dark
   mode #2E6E7A). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
-- Wallpaper: Ghosts I–IV album artwork (CC BY-NC-SA 3.0), 4x4 ordered
-  dither to 16 colours at 716x422 (`assets/wallpaper-ghosts.png`). Same in
-  both themes. It sits on `html`, not `.root98`, so `zoom:2` does not scale it
+- Wallpaper: Ghosts I–IV album artwork by Rob Sheridan (CC BY-NC-SA 3.0),
+  4x4 ordered dither to 16 colours, same in both themes. Ten of them take
+  turns: a new one every 15 minutes, the same for everyone, picked by a script
+  in `<head>` (build.py) so it shows after a refresh without a flash. The first
+  is the inlined desert (`assets/wallpaper-ghosts.png`, 716x422); the rest are
+  `wallpapers/<name>.png`, dithered by `tools/dither.py` from
+  `wallpapers/originals/` at 716px wide and not inlined. A photo set as
+  wallpaper wins until Restore Wallpaper. To add one, drop it in
+  `wallpapers/originals/` and run dither.py. It sits on `html`, not `.root98`, so `zoom:2` does not scale it
   twice; it covers the viewport with `image-rendering:pixelated`.
 - Dark theme: the sun button in the menu bar; defaults to the system setting
   and remembers the visitor's choice in localStorage.

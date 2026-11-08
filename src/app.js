@@ -1138,10 +1138,12 @@
 
   // photos can become the wallpaper; the choice is remembered per visitor
   var wallpaper = null;
+  // without a chosen photo it's the Ghosts I-IV wallpaper of the moment (build.py's <head> script)
   function setWallpaper(src) {
     wallpaper = src;
-    document.documentElement.style.backgroundImage = src ? 'url("' + src + '")' : '';
-    document.documentElement.style.backgroundPosition = src ? 'center' : '';
+    var show = src || (window.wallpaperNow && window.wallpaperNow());
+    document.documentElement.style.backgroundImage = show ? 'url("' + show + '")' : '';
+    document.documentElement.style.backgroundPosition = show ? 'center' : '';
     store.set('wallpaper', src);
   }
   (function () {

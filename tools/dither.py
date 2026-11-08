@@ -8,6 +8,10 @@ every pixel as a clean 2x2 block:
   photos/<name>.png         fits the viewer window (VIEW_W x VIEW_H)
   photos/thumbs/<name>.png  fills a folder thumbnail (THUMB_W x THUMB_H)
 
+It does the same for the rotating wallpapers in wallpapers/originals/:
+
+  wallpapers/<name>.png     WALL_W wide, keeping the original's shape
+
 Only new or changed originals are redone; outputs whose original is gone are
 removed. Needs Pillow (pip install -r requirements.txt).
 
@@ -25,6 +29,8 @@ EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
 VIEW_W, VIEW_H = 308, 230    # inside of the viewer's sunken panel
 THUMB_W, THUMB_H = 56, 42    # .pthumb img in styles.css
 COLOURS = 16
+WALL_W = 716                 # same width as assets/wallpaper-ghosts.png; covers the screen at 2x
+WALLS = ROOT / 'wallpapers'
 
 BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]]
 
@@ -65,7 +71,27 @@ def load(path):
     return img.convert('RGB')
 
 
+def walls(force=False):
+    src_dir = WALLS / 'originals'
+    if not src_dir.is_dir():
+        return
+    stems = set()
+    for src in sorted(p for p in src_dir.iterdir() if p.suffix.lower() in EXT):
+        stems.add(src.stem)
+        out = WALLS / (src.stem + '.png')
+        if not force and out.exists() and out.stat().st_mtime >= src.stat().st_mtime:
+            continue
+        img = load(src)
+        img = img.resize((WALL_W, round(img.height * WALL_W / img.width)), Image.LANCZOS)
+        dither(img).save(out, optimize=True)
+        print('dithered wallpaper %s -> %dx%d' % (src.name, img.width, img.height))
+    for p in WALLS.glob('*.png'):
+        if p.stem not in stems:
+            p.unlink(); print('removed %s' % p.relative_to(ROOT))
+
+
 def main(force=False):
+    walls(force)
     if not SRC.is_dir():
         print('no photos/originals/ folder, nothing to do')
         return

@@ -34,6 +34,8 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # once
 python3 build.py
 ```
 
+The same command dithers new wallpapers dropped in `wallpapers/originals/`.
+
 `tools/dither.py` gives each new or changed photo a 16-colour ordered dither,
 like the wallpaper, at the exact size it is shown at: `photos/<name>.png` for
 the viewer and `photos/thumbs/<name>.png` for the folder. The desktop shows
@@ -55,6 +57,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | `vendor/98.css` | 98.css, lightly modified (see below) |
 | `assets/` | Font, icons, wallpaper, cursors, portrait |
 | `photos/` | Photos for the desktop photos folder (see below) |
+| `wallpapers/` | Rotating Ghosts I–IV wallpapers, dithered by `tools/dither.py` |
 | `tools/dither.py` | Dithers the photos |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |
@@ -72,7 +75,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Music | streamed, not in the repo | Nine Inch Nails, *Ghosts I–IV*, all 36 tracks from the official 2008 release, streamed from the [Internet Archive](https://archive.org/details/nine-inch-nails-ghosts-i-iv-2008-web) | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial) |
 | Talk video | embedded from YouTube | FOSS Backstage 2026 talk | YouTube embed |
 | FOSDEM talk video | streamed, not in the repo | "The UI Layer of Security: What could go wrong?", FOSDEM 2026, recorded by FOSDEM, streamed from [video.fosdem.org](https://video.fosdem.org/2026/ub4132/) | [CC BY 2.0 BE](https://creativecommons.org/licenses/by/2.0/be/) |
-| Wallpaper | `assets/wallpaper-ghosts.png` | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
+| Wallpapers | `assets/wallpaper-ghosts.png`, `wallpapers/` (originals in `wallpapers/originals/`) | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site; a new one every 15 minutes | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png` | Photo of Elio by [Jeremie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jeremie Pontin, not covered by the MIT license |
 | Sample photos | `photos/originals/` (dithered copies in `photos/`) | Unsplash: [Brandenburg Gate](https://unsplash.com/photos/uFGi0_YciE0), [TV tower](https://unsplash.com/photos/g8DI2ZZFt8I), [U-Bahn](https://unsplash.com/photos/Y_aNcALhqZw) | [Unsplash License](https://unsplash.com/license) |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |

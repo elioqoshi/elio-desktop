@@ -25,14 +25,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      # index.html inlines everything but photos/; LICENSES ships alongside the inlined font.
-      # dither.py only redoes photos that were added without being dithered locally
+      # index.html inlines everything but photos/ and wallpapers/; LICENSES ships alongside the inlined font.
+      # dither.py only redoes photos and wallpapers that were added without being dithered locally
       - run: |
           pip install -r requirements.txt
           python3 tools/dither.py
           python3 build.py
           mkdir _site
           cp -r index.html LICENSES photos _site/
+          mkdir _site/wallpapers && cp wallpapers/*.png _site/wallpapers/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

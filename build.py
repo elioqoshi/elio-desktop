@@ -45,6 +45,18 @@ if stale:
     print('not dithered yet, run python3 tools/dither.py: ' + ', '.join(stale))
 js = 'window.PHOTOS = %s;\n' % json.dumps(photos) + js
 
+# wallpapers/ is not inlined either: the dithered Ghosts I-IV artwork from tools/dither.py.
+# The inlined desert (assets/wallpaper-ghosts.png) is the first of the set; a script in <head>
+# picks one per 15 minutes before the page is drawn, so a refresh after that shows the next
+walls = [None] + ['wallpapers/' + urllib.parse.quote(p.name) for p in sorted((ROOT / 'wallpapers').glob('*.png'))]
+head_js = '''window.WALLPAPERS = %s;
+window.wallpaperNow = function () { return WALLPAPERS[Math.floor(Date.now() / 9e5) %% WALLPAPERS.length]; };
+(function () {
+  var w = wallpaperNow(), saved = null;
+  try { saved = JSON.parse(localStorage.getItem('elio98:wallpaper')); } catch (e) {}
+  if (w && !saved) { var s = document.documentElement.style; s.backgroundImage = 'url("' + w + '")'; s.backgroundPosition = 'center'; }
+})();''' % json.dumps(walls)
+
 html = f'''<!doctype html>
 <html lang="en">
 <head>
@@ -53,6 +65,9 @@ html = f'''<!doctype html>
 <title>Elio Qoshi</title>
 <meta name="description" content="hi! i’m Elio. i design things for open source, privacy and security software.">
 <link rel="icon" href="{data_uri('assets/favicon.png')}">
+<script>
+{head_js}
+</script>
 <style>
 {css98}
 </style>
