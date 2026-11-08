@@ -23,6 +23,22 @@ the YouTube embed and the music stream work best served over http.
 `index.html` is generated and not committed. Edit `src/`, `vendor/` and
 `assets/` instead. See `CLAUDE.md` for the design rules.
 
+## Content
+
+The text of About, Help and the Imprint, the desktop link icons and the Clients
+menu are Markdown files in `content/`. Edit them and run `python3 build.py`:
+
+| File | Becomes |
+| --- | --- |
+| [`content/about.md`](content/about.md) | the About window |
+| [`content/help.md`](content/help.md) | the Help window |
+| [`content/imprint.md`](content/imprint.md) | the Imprint window (each `##` is a box) |
+| [`content/links.md`](content/links.md) | the link icons in the bottom-right corner |
+| [`content/clients.md`](content/clients.md) | the Clients menu |
+
+A line with only links becomes a row of buttons; `[**write me**](mailto:…)` is
+the default button and `[later](#close)` closes the window. `*text*` is grey.
+
 ## Photos
 
 Put `.jpg`, `.png`, `.gif` or `.webp` files in `photos/originals/`, then
@@ -51,6 +67,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 
 | Path | What it is |
 | --- | --- |
+| `content/` | The words as Markdown: About, Help, Imprint, the desktop links and the Clients menu |
 | `src/body.html` | All markup: menu bar, desktop, every window |
 | `src/styles.css` | Desktop styling and dark mode |
 | `src/app.js` | Windows, icons, menus, clock, media player, radio, theme |
@@ -59,7 +76,6 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | `photos/` | Photos for the desktop photos folder (see below) |
 | `wallpapers/` | Rotating Ghosts I–IV wallpapers, dithered by `tools/dither.py` |
 | `tools/dither.py` | Dithers the photos |
-| `IMPRINT.md` | Imprint and credits, the same as the Imprint window |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |
 
@@ -95,8 +111,8 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 - *Ghosts I–IV* (music and artwork) is licensed for non-commercial use only.
   The dithered wallpaper is a derivative, so it is shared under the same
   CC BY-NC-SA 3.0 license.
-- The imprint window on the site and [`IMPRINT.md`](IMPRINT.md) list the same
-  credits. Keep all three in sync.
+- The imprint window on the site comes from
+  [`content/imprint.md`](content/imprint.md). Keep its credits and this table in sync.
 
 ## License
 

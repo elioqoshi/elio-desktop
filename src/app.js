@@ -195,13 +195,8 @@
   qa('[data-close]').forEach(function (b) { b.addEventListener('click', function () { closeWin(b.getAttribute('data-close')); }); });
 
   /* ---------- clients menu ---------- */
-  var clients = [
-    ['Mozilla', 'https://www.mozilla.org'], ['Ubuntu', 'https://ubuntu.com'], ['Tor Project', 'https://www.torproject.org'],
-    ['Thunderbird', 'https://www.thunderbird.net'], ['GitHub', 'https://github.com'], ['Wikimedia Deutschland', 'https://www.wikimedia.de'],
-    ['Open Technology Fund', 'https://www.opentech.fund'], ['EFF', 'https://www.eff.org'], ['Linux Foundation', 'https://www.linuxfoundation.org'],
-    ['Eclipse Foundation', 'https://www.eclipse.org'], ['Internews', 'https://internews.org'], ['Reset Tech', 'https://www.reset.tech'],
-    ['eQualitie', 'https://equalit.ie'], ['GIZ', 'https://www.giz.de'], ['TU Darmstadt', 'https://www.tu-darmstadt.de'], ['University of Michigan', 'https://umich.edu']
-  ];
+  // from content/clients.md (build.py)
+  var clients = (window.CLIENTS || []).map(function (c) { return [c.name, c.href]; });
   var menu = q('#clients-menu'), scrim = q('#menu-scrim'), mbtn = q('#clients-btn');
   clients.forEach(function (c) {
     var a = document.createElement('a');
@@ -500,11 +495,15 @@
     { id: 'contact', name: 'Help', ico: 'ico-help', kind: 'app' },
     { id: 'radio', name: 'Winamp', ico: 'ico-winamp', kind: 'app' },
     { id: 'photos', name: 'Photos', ico: 'ico-folder', kind: 'folder' },
-    { id: 'trash', name: 'Trash', ico: 'ico-trash', kind: 'folder' },
-    { id: 'ura', name: 'Ura Design', ico: 'ico-browser', kind: 'link', href: 'https://ura.design', dock: 2 },
-    { id: 'linkedin', name: 'LinkedIn', ico: 'ico-network', kind: 'link', href: 'https://www.linkedin.com/in/elioqoshi/', dock: 1 },
-    { id: 'github', name: 'GitHub', ico: 'ico-git', kind: 'link', href: 'https://github.com/elioqoshi/', dock: 0 }
+    { id: 'trash', name: 'Trash', ico: 'ico-trash', kind: 'folder' }
   ].forEach(function (it) { it.home = 'desktop'; addItem(it); });
+  // the link icons come from content/links.md, docked bottom right in the file's order; the id is the
+  // first word of the name (ura, linkedin, github), so visitors' saved spots and folders still match
+  var links = window.LINKS || [];
+  links.forEach(function (l, i) {
+    addItem({ id: l.name.split(/\s+/)[0].toLowerCase().replace(/[^a-z0-9]/g, ''), name: l.name, ico: 'ico-' + (l.icon || 'browser'),
+      kind: 'link', href: l.href, dock: links.length - 1 - i, home: 'desktop' });
+  });
   photos.forEach(function (p, i) { addItem({ id: 'photo:' + p.name, name: p.name, ico: 'ico-image', kind: 'photo', photo: i, home: 'photos' }); });
   var fs = store.get('fs') || {};
   // folders: visitor-made folders; parent: moves; names: renamed built-in folders;

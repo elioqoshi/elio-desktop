@@ -9,11 +9,20 @@ windows. It is a business card, not a sales page.
 - `python3 build.py` writes `index.html`, a single self-contained file with all
   CSS, JS, fonts and images inlined as data URIs. Always rebuild after editing.
 - Open `index.html` in a browser to test. No server or dependencies needed.
-- Edit only the files in `src/`, `vendor/`, `assets/` and `photos/`.
+- Edit only the files in `content/`, `src/`, `vendor/`, `assets/`, `photos/`
+  and `wallpapers/`.
   `index.html` is generated.
 
 ## Files
 
+- `content/`: the words, as Markdown, rendered by build.py: `about.md`,
+  `help.md`, `imprint.md` (each `##` is a fieldset), `links.md` (the desktop
+  link icons; `<!-- icon: name -->` picks the `.ico-` class) and `clients.md`
+  (the Clients menu). Change text there, not in body.html. The renderer knows
+  `## heading`, `**bold**`, `*muted*` (grey; the font has no italic), links,
+  `\` line breaks, `- lists`, `---` (separator) and a line of only links (a
+  button row: `[**text**](url)` is the default button, `#close` closes the
+  window). Window titles and layout stay in body.html
 - `src/body.html`: all markup (menu bar, desktop, every window)
 - `src/styles.css`: page basics plus all desktop styling and dark mode
 - `src/app.js`: plain JavaScript, no framework (windows, icons, menus, clock,
@@ -163,8 +172,8 @@ names keep theirs (Ura Design, LinkedIn, GitHub).
 
 ## Licenses and credits
 
-The imprint window credits everything, and `IMPRINT.md` has the same imprint
-and credits for the repo. Keep the window, `IMPRINT.md` and `LICENSES/` in sync:
+The imprint window credits everything, from `content/imprint.md`. Keep it and
+`LICENSES/` in sync:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), MS Sans Serif
 and MS Sans Serif Bold by lou (CC BY-SA 3.0, notice also in styles.css), Ghosts I–IV music
 (streamed from the Internet Archive) and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin

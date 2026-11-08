@@ -1,0 +1,18 @@
+<!-- The Clients menu in the menu bar, in this order. -->
+
+- [Mozilla](https://www.mozilla.org)
+- [Ubuntu](https://ubuntu.com)
+- [Tor Project](https://www.torproject.org)
+- [Thunderbird](https://www.thunderbird.net)
+- [GitHub](https://github.com)
+- [Wikimedia Deutschland](https://www.wikimedia.de)
+- [Open Technology Fund](https://www.opentech.fund)
+- [EFF](https://www.eff.org)
+- [Linux Foundation](https://www.linuxfoundation.org)
+- [Eclipse Foundation](https://www.eclipse.org)
+- [Internews](https://internews.org)
+- [Reset Tech](https://www.reset.tech)
+- [eQualitie](https://equalit.ie)
+- [GIZ](https://www.giz.de)
+- [TU Darmstadt](https://www.tu-darmstadt.de)
+- [University of Michigan](https://umich.edu)

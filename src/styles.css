@@ -234,8 +234,16 @@ html,body{height:100%;overflow:hidden}
 .about-pic{flex:none;width:auto;height:auto;overflow:hidden}
 .about-pic img{display:block;width:104px;height:139px;image-rendering:pixelated}
 .about-text{flex:1;min-width:0;display:flex;flex-direction:column;align-self:stretch}
-.root98 .about-text p{margin:0 0 8px}
-.root98 .about-text h1{margin:0 0 8px}
-.about-text .sep98{margin:4px 0 8px}
-.about-btns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 @media (max-width:340px){.root98 .about98{flex-wrap:wrap}.about-pic{margin:0 auto}}
+/* text rendered from content/*.md by build.py: paragraphs and headings spaced like Windows 98 dialogs */
+.root98 .md98 :is(p,h2){margin:0 0 8px}
+.root98 .md98 .sep98{margin:4px 0 8px}
+.root98 .md98 ul.tree-view{margin:0 0 8px}
+.root98 .md98>:last-child,.root98 .md98 fieldset>:last-child{margin-bottom:0}
+.btns98{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.root98 .btns98>*+*{margin-left:0}
+.imprint98{display:flex;flex-direction:column;gap:10px}
+.root98 .imprint98 fieldset p{margin:0 0 4px}
+/* links in rendered lists look like links (98.css makes tree-view links black, for tree navigation) */
+.root98 .md98 ul.tree-view a{color:#00f;text-decoration:underline}
+.root98.dark .md98 ul.tree-view a{color:#C9D3FF}

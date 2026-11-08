@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build a single self-contained index.html from src/, vendor/ and assets/.
 
+The words come from content/*.md (About, Help, Imprint, desktop links, Clients).
 Every asset referenced as url(assets/...) in CSS or src="assets/..." in HTML is
 inlined as a data URI, so the output is one file with no outside requests except
 the YouTube and SoundCloud embeds and the
@@ -25,7 +26,82 @@ def inline(text):
 
 css98 = (ROOT / 'vendor/98.css').read_text()
 css = inline((ROOT / 'src/styles.css').read_text())
-body = inline((ROOT / 'src/body.html').read_text())
+# ---------- content/*.md ----------
+# The text of About, Help and Imprint, the desktop links and the Clients menu live in content/
+# as Markdown. This is a small renderer for just what those files use:
+#   ## heading          a bold heading (Imprint: a fieldset with that legend)
+#   **bold**  *muted*   bold text, grey text (the pixel font has no italic)
+#   [text](url)         a link; external ones open in a new tab
+#   line\              a line break inside a paragraph
+#   - item              a list
+#   ---                 the etched Windows 98 separator
+#   a line of links     a row of buttons; [**text**](url) is the default one, [text](#close) closes the window
+LINK = re.compile(r'\[([^\]]+)\]\(([^)\s]+)\)')
+
+def esc(t):
+    return t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
+
+def md_inline(t):
+    t = esc(t)
+    def link(m):
+        text, url = m.group(1), m.group(2)
+        ext = url.startswith('http')
+        return '<a href="%s"%s>%s</a>' % (url, ' target="_blank" rel="noopener"' if ext else '', text)
+    t = LINK.sub(link, t)
+    t = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', t)
+    return re.sub(r'\*(.+?)\*', r'<span class="muted">\1</span>', t)
+
+def md_button(m, win):
+    text, url = m.group(1), m.group(2)
+    default = text.startswith('**') and text.endswith('**')
+    text = esc(text.strip('*'))
+    if url == '#close':
+        return '<button type="button" data-close="%s">%s</button>' % (win, text)
+    ext = url.startswith('http')
+    return '<a class="btn98%s" href="%s"%s>%s</a>' % (' default' if default else '', esc(url), ' target="_blank" rel="noopener"' if ext else '', text)
+
+def md(name, win, fieldsets=False):
+    text = re.sub(r'<!--.*?-->', '', (ROOT / 'content' / (name + '.md')).read_text(), flags=re.S).strip()
+    out, first, open_set = [], True, False
+    for block in re.split(r'\n\s*\n', text):
+        block = block.strip()
+        if not block:
+            continue
+        lines = block.split('\n')
+        h = re.match(r'#{1,6}\s+(.*)', block)
+        if h and len(lines) == 1:
+            id_ = ' id="%s-p"' % win if first else ''
+            first = False
+            if fieldsets:
+                if open_set: out.append('</fieldset>')
+                out.append('<fieldset><legend%s>%s</legend>' % (id_, md_inline(h.group(1))))
+                open_set = True
+            else:
+                out.append('<h2%s>%s</h2>' % (id_, md_inline(h.group(1))))
+        elif re.fullmatch(r'-{3,}', block):
+            out.append('<div class="sep98" role="separator"></div>')
+        elif lines[0].startswith('- '):
+            items = []
+            for line in lines:
+                if line.startswith('- '): items.append(line[2:].strip())
+                else: items[-1] += ' ' + line.strip()
+            out.append('<ul class="tree-view">' + ''.join('<li>%s</li>' % md_inline(i) for i in items) + '</ul>')
+        elif re.fullmatch(r'(\s*\[[^\]]+\]\([^)\s]+\))+\s*', block):
+            out.append('<div class="btns98">' + ''.join(md_button(m, win) for m in LINK.finditer(block)) + '</div>')
+        else:
+            out.append('<p>' + ''.join(md_inline(l[:-1]) + '<br>' if l.endswith('\\') else md_inline(l) + ' ' for l in lines).strip() + '</p>')
+    if open_set:
+        out.append('</fieldset>')
+    return '\n'.join(out)
+
+def md_links(name):
+    rx = re.compile(r'^- \[([^\]]+)\]\(([^)\s]+)\)(?:\s*<!--\s*icon:\s*([\w-]+)\s*-->)?', re.M)
+    return [{'name': m.group(1), 'href': m.group(2), 'icon': m.group(3)} for m in rx.finditer((ROOT / 'content' / (name + '.md')).read_text())]
+
+body = (ROOT / 'src/body.html').read_text()
+for name, win, sets in [('about', 'about', False), ('help', 'contact', False), ('imprint', 'imprint', True)]:
+    body = body.replace('<!-- md:%s -->' % name, md(name, win, sets))
+body = inline(body)
 js = (ROOT / 'src/app.js').read_text()
 
 # photos/ is not inlined: the page lists the dithered files from tools/dither.py
@@ -44,6 +120,7 @@ for p in originals:
 if stale:
     print('not dithered yet, run python3 tools/dither.py: ' + ', '.join(stale))
 js = 'window.PHOTOS = %s;\n' % json.dumps(photos) + js
+js = 'window.LINKS = %s;\nwindow.CLIENTS = %s;\n' % (json.dumps(md_links('links')), json.dumps(md_links('clients'))) + js
 
 # wallpapers/ is not inlined either: the dithered Ghosts I-IV artwork from tools/dither.py.
 # The inlined desert (assets/wallpaper-ghosts.png) is the first of the set; a script in <head>
