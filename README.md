@@ -95,6 +95,7 @@ and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
 | Wallpapers | `assets/wallpaper-ghosts.png`, `wallpapers/` (originals in `wallpapers/originals/`) | Nine Inch Nails, *Ghosts I–IV* album artwork by Rob Sheridan, ordered-dithered to 16 colours for this site; a new one every 15 minutes | [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) (non-commercial, share-alike) |
 | Portrait | `assets/portrait-original.jpg`, `assets/portrait-dither.png`, `assets/portrait-small.png` | Photo of Elio by [Jérémie Pontin](https://www.jeremiepontin.com/), dithered for this site | © Jérémie Pontin, not covered by the MIT license |
 | Sample photos | `photos/originals/` (dithered copies in `photos/`) | Unsplash: [Brandenburg Gate](https://unsplash.com/photos/uFGi0_YciE0), [TV tower](https://unsplash.com/photos/g8DI2ZZFt8I), [U-Bahn](https://unsplash.com/photos/Y_aNcALhqZw) | [Unsplash License](https://unsplash.com/license) |
+| Title bar colour | live, not in the repo | Berlin's current weather from [Open-Meteo](https://open-meteo.com/), mixed with the sun's position in `src/app.js` | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | Favicon | `assets/favicon.png` | Made for this site | Elio Qoshi |
 
 ### Changes to 98.css

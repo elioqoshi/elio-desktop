@@ -17,4 +17,5 @@ Germany
 - **icons, cursors and clock:** © the [SerenityOS](https://github.com/SerenityOS/serenity) developers, clock © Erlend Høier, [BSD 2-Clause License](https://github.com/SerenityOS/serenity/blob/master/LICENSE)
 - **music and wallpapers:** Nine Inch Nails, Ghosts I–IV, artwork by [Rob Sheridan](https://www.robsheridan.com), [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/). wallpapers dithered from the original artwork
 - **FOSDEM 2026 talk video:** © FOSDEM, [CC BY 2.0 BE](https://creativecommons.org/licenses/by/2.0/be/)
+- **title bar colour:** weather data by [Open-Meteo.com](https://open-meteo.com/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **portrait photo:** © [Jérémie Pontin](https://www.jeremiepontin.com/)

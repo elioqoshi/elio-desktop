@@ -17,6 +17,66 @@
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(v, Math.max(lo, hi))); }
   function qa(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
+  /* ---------- sky colour ---------- */
+  // The title bars are the colour of the sky over Berlin, worked out from where the sun is and Berlin's
+  // current weather (Open-Meteo, every 15 minutes): blue by day, warm at sunrise and sunset, navy at night,
+  // grey as clouds come in, darker in rain, and the orange-grey glow of a cloudy city night.
+  var BERLIN = { lat: 52.52, lon: 13.405 };
+  // the sun's height over Berlin in degrees (the usual low-precision solar position formula)
+  function sunHeight(t) {
+    var r = Math.PI / 180, d = t / 864e5 + 2440587.5 - 2451545;
+    var g = (357.529 + 0.98560028 * d) * r, q = 280.459 + 0.98564736 * d;
+    var L = (q + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g)) * r, e = (23.439 - 3.6e-7 * d) * r;
+    var ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)), dec = Math.asin(Math.sin(e) * Math.sin(L));
+    var ha = ((18.697374558 + 24.06570982441908 * d) * 15 + BERLIN.lon) * r - ra, lat = BERLIN.lat * r;
+    return Math.asin(Math.sin(lat) * Math.sin(dec) + Math.cos(lat) * Math.cos(dec) * Math.cos(ha)) / r;
+  }
+  function mix(a, b, k) { k = Math.max(0, Math.min(1, k)); return [0, 1, 2].map(function (i) { return a[i] + (b[i] - a[i]) * k; }); }
+  // a colour along a list of [sun height, colour] stops
+  function ramp(stops, h) {
+    if (h <= stops[0][0]) return stops[0][1];
+    for (var i = 1; i < stops.length; i++) if (h <= stops[i][0]) return mix(stops[i - 1][1], stops[i][1], (h - stops[i - 1][0]) / (stops[i][0] - stops[i - 1][0]));
+    return stops[stops.length - 1][1];
+  }
+  var CLEAR = [[-18, [12, 16, 38]], [-12, [24, 30, 70]], [-6, [62, 64, 120]], [-2, [150, 100, 135]], [2, [232, 150, 112]], [8, [222, 178, 140]], [15, [140, 180, 225]], [30, [105, 160, 222]]];
+  var CLOUD = [[-12, [64, 54, 54]], [-6, [80, 70, 74]], [-2, [128, 104, 108]], [3, [170, 150, 142]], [10, [168, 172, 178]], [30, [186, 190, 196]]];
+  // weather: { cloud: 0-100, rain: mm in the last 15 minutes, code: WMO weather code }
+  function skyColour(t, w) {
+    var h = sunHeight(t), c = ramp(CLEAR, h);
+    if (w) {
+      var cloud = ramp(CLOUD, h), wet = w.rain > 0 || (w.code >= 51 && w.code <= 99);
+      if (w.code === 45 || w.code === 48) cloud = mix(cloud, [200, 200, 204], h > 0 ? 0.5 : 0.1);   // fog
+      if (wet) cloud = mix(cloud, [0, 0, 0], 0.25);
+      c = mix(c, cloud, Math.pow(Math.min(100, w.cloud) / 100, 0.8));
+    }
+    return c.map(Math.round);
+  }
+  var weather = null;
+  function paintSky() {
+    var c = skyColour(Date.now(), weather), lum = (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
+    root.style.setProperty('--sky', 'rgb(' + c.join(',') + ')');
+    root.style.setProperty('--sky-text', lum > 0.5 ? '#000' : '#fff');
+  }
+  function fetchWeather() {
+    if (!window.fetch) return;
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=' + BERLIN.lat + '&longitude=' + BERLIN.lon + '&current=cloud_cover,precipitation,weather_code')
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var cur = j && j.current;
+        if (!cur || typeof cur.cloud_cover !== 'number') return;
+        weather = { cloud: cur.cloud_cover, rain: cur.precipitation || 0, code: cur.weather_code };
+        store.set('weather', { w: weather, t: Date.now() }); paintSky();
+      })
+      .catch(function () {});
+  }
+  (function () {
+    // the last weather seen (up to 3 hours old) paints the sky straight away; without it the sun alone does
+    var saved = store.get('weather');
+    if (saved && saved.w && Date.now() - saved.t < 108e5) weather = saved.w;
+    paintSky(); fetchWeather();
+    setInterval(paintSky, 6e4); setInterval(fetchWeather, 9e5);
+  })();
+
   /* ---------- theme ---------- */
   var savedTheme = store.get('theme');
   function systemDark() {

@@ -60,8 +60,14 @@ windows. It is a business card, not a sales page.
   `-webkit-image-set`). Arrow everywhere (buttons and icons too, like 98),
   hand only on text links, I-beam in text fields, the diagonal resize arrow
   on the bottom-right corner (`resize`), and the 14-frame hourglass while busy (app.js steps `data-wf`).
-- Windows: 98.css components. Title bars are one light blue (#A8DDE6; dark
-  mode #2E6E7A). Light theme windows are #E4E4E4 with retuned bevels, not
+- Windows: 98.css components. Title bars are the colour of the sky over
+  Berlin right now: app.js works it out from the sun's height and Open-Meteo's
+  current Berlin weather (cloud cover, rain, fog; fetched every 15 minutes,
+  repainted every minute, last weather kept 3 hours in localStorage) and sets
+  `--sky` and `--sky-text` (black or white by brightness). Blue by day, warm at
+  sunrise/sunset, navy at night, grey with clouds, darker in rain, brownish
+  grey on cloudy nights. Without script they fall back to light blue #A8DDE6
+  (dark mode #2E6E7A). Open-Meteo is credited in the imprint (CC BY 4.0). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
 - Wallpaper: Ghosts I–IV album artwork by Rob Sheridan (CC BY-NC-SA 3.0),
   4x4 ordered dither to 16 colours, same in both themes. Ten of them take

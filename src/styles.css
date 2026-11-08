@@ -63,9 +63,13 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark button svg path{fill:#E6E6E6}
 .root98.dark button:disabled svg path{fill:#777}
 .root98.dark button:disabled svg{filter:none}
-.root98 .tb-blue{background:#A8DDE6}
-.root98.dark .tb-blue{background:#2E6E7A}
+/* title bars are the colour of the sky over Berlin (--sky and --sky-text from app.js, black or white text
+   by brightness); without script they keep the light blue and dark teal */
+.root98 .tb-blue{background:var(--sky,#A8DDE6)}
+.root98.dark .tb-blue{background:var(--sky,#2E6E7A)}
+.root98 .tb-blue .title-bar-text{color:var(--sky-text,#000)}
 .root98.dark .title-bar-text{color:#fff}
+.root98.dark .tb-blue .title-bar-text{color:var(--sky-text,#fff)}
 .root98.dark .title-bar-controls button{filter:invert(1);background-color:#C5C5C5;box-shadow:inset -1px -1px #fff,inset 1px 1px #959595,inset -2px -2px #ddd,inset 2px 2px #afafaf}
 .root98.dark .title-bar-controls button:not(:disabled):active{box-shadow:inset -1px -1px #959595,inset 1px 1px #fff,inset -2px -2px #afafaf,inset 2px 2px #ddd}
 .root98.dark .mbtn,.root98.dark .icon{background:transparent;box-shadow:none;color:#E6E6E6}
