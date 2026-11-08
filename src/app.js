@@ -73,10 +73,23 @@
     if (over > 0) {
       body.style.maxHeight = Math.max(60, body.offsetHeight - over) + 'px'; body.style.overflow = 'auto'; h = e.offsetHeight;
     }
-    var minX = dw > 380 ? 168 : 8, maxX = Math.max(minX, dw - s.w - 8), maxY = Math.max(8, dh - h - 8);
+    var minX = phone() ? 8 : 168, maxX = Math.max(minX, dw - e.offsetWidth - 8), maxY = Math.max(8, dh - h - 8);
+    var minY = phone() ? Math.min(iconsBottom() + 8, maxY) : 8;
     s.x = Math.round(minX + Math.random() * (maxX - minX));
-    s.y = Math.round(8 + Math.random() * (maxY - 8));
+    s.y = Math.round(minY + Math.random() * (maxY - minY));
     apply(k);
+  }
+  // the lowest edge of the icons along the top of a phone's desk
+  function iconsBottom() {
+    var b = 0;
+    qa('#icons .dicon').forEach(function (d) { if (d.style.top !== 'auto') b = Math.max(b, d.offsetTop + d.offsetHeight); });
+    return b;
+  }
+  // keep every open window on the desk when the screen changes size or turns
+  function keepOnDesk(k) {
+    var s = W[k], e = winEl(k), desk = q('.desk-area');
+    if (!s.open || s.max) return;
+    s.x = clamp(s.x, 0, desk.clientWidth - e.offsetWidth); s.y = clamp(s.y, 0, desk.clientHeight - 20); apply(k);
   }
   // maximize fills the desk; the old spot and size come back on restore
   function maximize(k, on) {
@@ -98,7 +111,7 @@
     // .window has 3px padding on each side around its content box
     e.style.width = (desk.clientWidth - 6) + 'px'; e.style.height = (desk.clientHeight - 6) + 'px';
   }
-  window.addEventListener('resize', function () { Object.keys(W).forEach(function (k) { if (W[k].max) fitMax(k); }); });
+  window.addEventListener('resize', function () { Object.keys(W).forEach(function (k) { if (W[k].max) fitMax(k); else keepOnDesk(k); }); });
   function closeWin(k) {
     if (W[k].max) maximize(k, false);
     W[k].open = false; apply(k);
@@ -112,7 +125,7 @@
     q('.title-bar-controls button', e).addEventListener('click', function () { closeWin(k); });
     var bar = q('.title-bar', e), drag = null;
     bar.style.touchAction = 'none';
-    bar.addEventListener('dblclick', function (ev) { if (!ev.target.closest('button') && !phone()) maximize(k, !W[k].max); });
+    bar.addEventListener('dblclick', function (ev) { if (!ev.target.closest('button')) maximize(k, !W[k].max); });
     bar.addEventListener('pointerdown', function (ev) {
       if (ev.button !== 0 || ev.target.closest('button') || W[k].max) return;
       drag = { sx: ev.clientX, sy: ev.clientY, ox: W[k].x, oy: W[k].y };
@@ -504,13 +517,16 @@
   function cellOf(p) { return p.r !== undefined ? 'R' + Math.round((p.r - 12) / 76) + ',' + Math.round((p.b - 12) / 64) : 'L' + Math.round((p.x - 12) / 76) + ',' + Math.round((p.y - 12) / 64); }
   function deskRows() { return Math.min(5, Math.max(1, Math.floor((iconBox.clientHeight - 68) / 64) + 1)); }
   function layoutDesk() {
-    var ids = childrenOf('desktop'), taken = {}, spots = {}, rows = deskRows();
+    // a phone is tall and narrow, so its icons fill rows across the top and the windows go below them
+    var ids = childrenOf('desktop'), taken = {}, spots = {}, rows = deskRows(), across = phone();
+    var cols = Math.max(1, Math.floor((iconBox.clientWidth - 8) / 76));
     ids.forEach(function (id) { if (iconPos[id]) { spots[id] = iconPos[id]; taken[cellOf(iconPos[id])] = 1; } });
     ids.forEach(function (id) {
       if (spots[id]) return;
       var it = ITEMS[id];
       if (it.dock !== undefined && !taken['R0,' + it.dock]) { spots[id] = { r: 12, b: 12 + it.dock * 64 }; taken['R0,' + it.dock] = 1; return; }
-      for (var c = 0; ; c++) for (var r = 0; r < rows; r++) {
+      for (var n = 0; ; n++) {
+        var c = across ? n % cols : Math.floor(n / rows), r = across ? Math.floor(n / cols) : n % rows;
         if (!taken['L' + c + ',' + r]) { taken['L' + c + ',' + r] = 1; spots[id] = { x: 12 + c * 76, y: 12 + r * 64 }; return; }
       }
     });
@@ -523,7 +539,13 @@
   function renderDesk() {
     var spots = layoutDesk();
     iconBox.innerHTML = '';
-    childrenOf('desktop').forEach(function (id) { iconBox.appendChild(deskIcon(ITEMS[id], spots[id])); });
+    var mx = iconBox.clientWidth - 72, my = iconBox.clientHeight - 50;
+    childrenOf('desktop').forEach(function (id) {
+      var p = spots[id];
+      // spots saved on a bigger screen are pulled back inside this one
+      p = p.r !== undefined ? { r: clamp(p.r, 0, mx), b: clamp(p.b, 0, my) } : { x: clamp(p.x, 0, mx), y: clamp(p.y, 0, my) };
+      iconBox.appendChild(deskIcon(ITEMS[id], p));
+    });
   }
   function deskIcon(it, p) {
     var wrap = document.createElement('div');
@@ -732,6 +754,19 @@
     store.set('fs', null); store.set('icons', null); location.reload();
   }
   renderDesk();
+  // on phones about.txt and the portrait start under the icons
+  function phoneStart() {
+    if (!phone()) return;
+    var desk = q('.desk-area'), dw = desk.clientWidth, dh = desk.clientHeight, a = W.about, p = W.portrait;
+    var ae = winEl('about'), pe = winEl('portrait'), top = iconsBottom() + 8;
+    a.x = Math.max(0, Math.round((dw - ae.offsetWidth) / 2)); a.y = top; apply('about');
+    p.x = Math.max(0, dw - pe.offsetWidth - 8); p.y = clamp(top + ae.offsetHeight + 12, 0, dh - pe.offsetHeight - 4); apply('portrait');
+  }
+  phoneStart();
+  Object.keys(W).forEach(keepOnDesk);
+  // switching between phone and desktop size lays the icons out again
+  var phoneMq = window.matchMedia('(max-width: 760px)');
+  if (phoneMq.addEventListener) phoneMq.addEventListener('change', function () { renderDesk(); });
 
   /* ---------- winamp (Ghosts I–IV from the Internet Archive) ---------- */
   // all 36 tracks of the official 2008 release (CC BY-NC-SA 3.0), streamed from archive.org in album order
@@ -752,6 +787,8 @@
   function fmt(t) { t = Math.max(0, Math.floor(t || 0)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
   function renderFm() {
     q('#fm-time').textContent = fmt(fm.time);
+    q('#fm-dur').textContent = fmt(fm.dur);
+    q('#fm-volnum').textContent = fm.vol;
     var seek = q('#fm-seek'); seek.max = Math.max(1, Math.round(fm.dur)); if (!fm.seeking) seek.value = Math.round(fm.time);
     q('#fm-ic-play').style.display = fm.playing ? 'none' : '';
     q('#fm-ic-pause').style.display = fm.playing ? '' : 'none';
@@ -839,7 +876,7 @@
     if (!audio.src) audio.src = tracks[fm.idx].src;
     audio.currentTime = fm.time; renderFm();
   });
-  q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); audio.volume = fm.vol / 100; });
+  q('#fm-vol').addEventListener('input', function (e) { fm.vol = Number(e.target.value); audio.volume = fm.vol / 100; q('#fm-volnum').textContent = fm.vol; });
   renderFm();
 
   /* ---------- right-click menus ---------- */
@@ -890,9 +927,9 @@
     setTimeout(function () { iconBox.style.visibility = ''; setBusy(-1); }, 400);
   }
   function desktopMenu(x, y, from) {
-    var dark = root.classList.contains('dark'), phoneMode = phone();
+    var dark = root.classList.contains('dark');
     openMenu([
-      { label: 'Arrange Icons', run: arrangeIcons, disabled: phoneMode },
+      { label: 'Arrange Icons', run: arrangeIcons },
       '-',
       { label: 'Refresh', run: refreshDesk },
       '-',
@@ -941,7 +978,7 @@
     var what = n === 1 ? '\u201c' + ITEMS[childrenOf('trash')[0]].name + '\u201d' : 'these ' + n + ' items';
     dialog98('Confirm Delete', 'ico-trash', 'Are you sure you want to delete ' + what + '?', [
       { label: 'Yes', isDefault: true, run: function () {
-        dialog98('Empty Trash', 'ico-help', 'don\u2019t throw Elio\u2019s stuff away \ud83d\ude1e', [{ label: 'OK', isDefault: true }]);
+        dialog98('Empty Trash', 'ico-help', 'don\u2019t throw Elio\u2019s stuff away :(', [{ label: 'OK', isDefault: true }]);
       } },
       { label: 'No' }
     ]);
@@ -987,11 +1024,11 @@
 
   // title bars: the Windows 98 system menu
   function windowMenu(k, x, y) {
-    var s = W[k], phoneMode = phone();
+    var s = W[k];
     openMenu([
       { label: 'Restore', run: function () { maximize(k, false); }, disabled: !s.max },
       { label: 'Minimize', disabled: true },
-      { label: 'Maximize', run: function () { maximize(k, true); }, disabled: !!s.max || phoneMode },
+      { label: 'Maximize', run: function () { maximize(k, true); }, disabled: !!s.max },
       '-',
       { label: 'Close', bold: true, run: function () { closeWin(k); } },
       { label: 'Close All Windows', run: function () { Object.keys(W).forEach(function (w) { if (W[w].open) closeWin(w); }); } }
@@ -1040,7 +1077,10 @@
     if (!x && !y && t.getBoundingClientRect) { var r = t.getBoundingClientRect(); x = r.left + 8; y = r.bottom; }
     var show = menuFor(t, x, y);
     if (!show) return;
-    e.preventDefault(); show();
+    e.preventDefault();
+    // a long press already opened this menu; Android fires contextmenu a little later
+    if (Date.now() - pressedAt < 1500) return;
+    show();
   });
   // keyboard, like in Windows: Shift+F10 or the menu key for whatever has focus (the desktop
   // when nothing does), Alt+Space for the system menu of the focused window
@@ -1062,15 +1102,15 @@
     }
   });
   // iOS has no contextmenu event, so a long press opens the menu there; other phones fire contextmenu first
-  var press = null, eatClick = false;
+  var press = null, eatClick = false, pressedAt = 0;
   document.addEventListener('pointerdown', function (e) {
     if (e.pointerType !== 'touch' || !menuFor(e.target, 0, 0)) return;
     var x = e.clientX, y = e.clientY, t = e.target;
     press = { x: x, y: y, timer: setTimeout(function () {
       press = null;
       if (!ctx.hidden) return;
-      var show = menuFor(t, x, y); if (show) { eatClick = true; show(); }
-    }, 550) };
+      var show = menuFor(t, x, y); if (show) { eatClick = true; pressedAt = Date.now(); show(); }
+    }, 350) };
   });
   function cancelPress(e) {
     if (!press) return;

@@ -91,6 +91,8 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 /* player buttons sit close together; the "1" of repeat one overlays its corner so the width never changes */
 .root98 .fm-controls{gap:2px}
 .root98 .fm-controls>*+*{margin-left:0}
+/* the volume number keeps a fixed width so the slider doesn't jump between 5 and 100 */
+.fm-volnum{flex:none;width:18px;text-align:right;font-variant-numeric:tabular-nums}
 /* toggled-on buttons (shuffle, repeat, playlist): pushed in with the checkered Windows 98 fill */
 .root98:not(.dark) :is(button,a.btn98):not(.mbtn):not(.icon):not(.prow):not(.pthumb)[aria-pressed="true"]{background:#E4E4E4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E") 0 0/2px 2px;box-shadow:inset -1px -1px #fff,inset 1px 1px #0a0a0a,inset -2px -2px #F4F4F4,inset 2px 2px #A0A0A0}
 .root98.dark button[aria-pressed="true"]:not(.mbtn){background:#3A3A3A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2' shape-rendering='crispEdges'%3E%3Cpath fill='%23505050' d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E") 0 0/2px 2px;box-shadow:inset -1px -1px #6A6A6A,inset 1px 1px #000,inset -2px -2px #505050,inset 2px 2px #222}
@@ -148,7 +150,6 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .grip98{position:absolute;right:4px;bottom:4px;width:12px;height:12px;touch-action:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' d='M10 0h1v1h-1zM9 1h1v1H9zM8 2h1v1H8zM7 3h1v1H7zM6 4h1v1H6zM5 5h1v1H5zM4 6h1v1H4zM3 7h1v1H3zM2 8h1v1H2zM1 9h1v1H1zM0 10h1v1H0zM10 4h1v1h-1zM9 5h1v1H9zM8 6h1v1H8zM7 7h1v1H7zM6 8h1v1H6zM5 9h1v1H5zM4 10h1v1H4zM10 8h1v1h-1zM9 9h1v1H9zM8 10h1v1H8z'/%3E%3Cpath fill='%23808080' d='M11 0h1v2h-1zM10 1h1v1h-1zM9 2h1v1H9zM8 3h1v1H8zM7 4h1v1H7zM6 5h1v1H6zM5 6h1v1H5zM4 7h1v1H4zM3 8h1v1H3zM2 9h1v1H2zM1 10h1v1H1zM0 11h2v1H0zM11 4h1v2h-1zM10 5h1v1h-1zM9 6h1v1H9zM8 7h1v1H8zM7 8h1v1H7zM6 9h1v1H6zM5 10h1v1H5zM4 11h2v1H4zM11 8h1v2h-1zM10 9h1v1h-1zM9 10h1v1H9zM8 11h2v1H8z'/%3E%3C/svg%3E") no-repeat}
 [data-folder] .status-bar{padding-right:14px}
 .win.max .grip98{display:none}
-@media (max-width:760px){.grip98{display:none}}
 .root98 .helpbtn{padding:2px 4px}
 .root98 .helpbtn svg path.help-bg{fill:#000080}
 .root98 .helpbtn svg path.help-fg{fill:#fff}
@@ -184,20 +185,27 @@ html,.root98,.root98 *{cursor:url(assets/cursors/arrow.png) 2 2,default;cursor:-
 .root98 button.pthumb:focus-visible .pname{outline:1px dotted #fff}
 .root98.dark button.pthumb{background:transparent;box-shadow:none;color:#E6E6E6}
 /* a desktop doesn't scroll: the page is exactly one screen and the desk fills what the menu bar leaves */
-@media (min-width:761px){
-  html,body{height:100%;overflow:hidden}
-  .root98{display:flex;flex-direction:column;height:50vh;min-height:0}
-  .menubar{flex:none}
-  .desk-area{flex:1;min-height:0}
+html,body{height:100%;overflow:hidden}
+.root98{display:flex;flex-direction:column;height:50vh;min-height:0}
+.menubar{flex:none}
+.desk-area{flex:1;min-height:0}
+/* touch: long presses open our menus, so the browser's own callout and text selection stay off the desk
+   (text inside windows can still be selected); title bars and the size grip get a bigger grab area */
+.desk-area{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.desk-area .window-body{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+.desk-area .window-body :is(.folder-grid,.fm-controls,button,input[type=range]){-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+@media (pointer:coarse){
+  .root98 .title-bar{position:relative}
+  .root98 .title-bar::before{content:"";position:absolute;inset:-12px -6px -4px}
+  .root98 .title-bar-controls{position:relative;z-index:1}
+  .root98 .title-bar-controls button{position:relative}
+  .root98 .title-bar-controls button::before{content:"";position:absolute;inset:-10px -6px -4px}
+  .grip98::before{content:"";position:absolute;inset:-12px}
 }
 @media (max-width:760px){
   /* phones get the true 1x size: 2x made everything twice as big as a phone needs */
-  .root98{zoom:1;min-height:100vh}
-  .desk-area{min-height:calc(100vh - 36px)}
-  html{background-attachment:scroll;background-position:60% top;background-size:auto 100vh}
-  .desk-area{display:flex;flex-direction:column;gap:12px;padding:8px;overflow:visible}
-  .deskicons{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));pointer-events:auto}
-  .dicon{position:static !important;width:auto}
-  /* windows keep their own width at 1x, centred and never wider than the screen */
-  .win{position:relative !important;left:auto !important;top:auto !important;align-self:center;max-width:calc(100% - 6px)}
+  .root98{zoom:1;height:100vh;height:100dvh}
+  html{background-position:60% top}
+  /* windows keep their own width at 1x, never wider than the screen */
+  .win{max-width:calc(100% - 6px)}
 }

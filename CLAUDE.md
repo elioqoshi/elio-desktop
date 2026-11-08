@@ -58,8 +58,12 @@ windows. It is a business card, not a sales page.
   and remembers the visitor's choice in localStorage.
 - Opening a window waits 1 second with the turning hourglass, like an old PC.
   Windows open at random spots that stay fully inside the desktop.
-- Phones (<=760px): 1x zoom, icons become a grid and windows stack, centred at
-  their own width.
+- Phones (<=760px): 1x zoom and the same free-form desk: icons fill rows
+  across the top (links stay docked bottom right), windows open below them and
+  everything can be dragged. On touch screens title bars, close buttons and the
+  size grip have a bigger invisible grab area (`pointer:coarse`). A long press
+  (350ms) opens the right-click menus; the desk turns off the browser's own
+  callout and text selection, but text inside windows stays selectable.
 - Files and folders: every desktop item (apps, links, photos, the photos
   folder, the trash, visitor folders) is an item in a folder tree (`ITEMS`
   in app.js). One click selects, a double-click opens (Enter and a tap on
@@ -73,7 +77,7 @@ windows. It is a business card, not a sales page.
   to where they came from (or the desk if that folder is gone). It can't be
   emptied on purpose, so nothing is lost: "Empty Trash" asks the usual
   Windows 98 confirmation, and Yes only gets a dialog saying "don't throw
-  Elio's stuff away 😞" (`dialog98()` in app.js). The
+  Elio's stuff away :(" (`dialog98()` in app.js). The
   trash only lives on the desk. Its icon is SerenityOS's 32x32
   `recycle-bin.png`, added to the end of `assets/icons.png`.
 - All of it is saved per visitor in localStorage (`fs`, `icons`); Reset

@@ -145,6 +145,7 @@
         <div class="field-row" style="gap: 4px">
           <span style="font-variant-numeric: tabular-nums" id="fm-time">00:00</span>
           <input type="range" aria-label="Seek" min="0" max="1" step="1" value="0" id="fm-seek" style="flex: 1; min-width: 0">
+          <span style="font-variant-numeric: tabular-nums" id="fm-dur" aria-label="Track length">00:00</span>
         </div>
         <div class="field-row fm-controls">
           <button type="button" aria-label="Previous track" id="fm-prev" style="min-width: 0; padding: 0 6px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h1v8H0zM6 0h1v8H6zM5 1h1v6H5zM4 2h1v4H4zM3 3h1v2H3z"></path></svg></button>
@@ -154,6 +155,7 @@
           <button type="button" aria-label="Repeat: off" aria-pressed="false" title="repeat: off" id="fm-repeat" style="position: relative; min-width: 0; padding: 0 6px"><svg width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 1h7v1H1zM6 0h1v3H6zM8 1h1v1H8zM1 2h1v3H1zM8 3h1v3H8zM2 6h7v1H2zM3 5h1v3H3zM1 6h1v1H1z"></path></svg><svg id="fm-ic-one" width="3" height="5" viewBox="0 0 3 5" shape-rendering="crispEdges" aria-hidden="true" style="display: none; position: absolute; right: 2px; bottom: 3px"><path d="M1 0h1v5H1zM0 1h1v1H0zM0 4h3v1H0z"></path></svg></button>
           <button type="button" aria-label="Playlist" aria-expanded="false" aria-controls="fm-list" title="playlist" id="fm-pl" style="min-width: 0; padding: 0 6px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 1h8v1H0zM0 4h8v1H0zM0 7h8v1H0z"></path></svg></button>
           <svg class="fm-spk" width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true" style="margin-left: 4px; flex: none"><path d="M0 2h2v4H0zM2 1h1v6H2zM3 0h1v8H3zM6 2h1v4H6zM8 1h1v6H8z"></path></svg>
+          <span class="fm-volnum" id="fm-volnum" aria-hidden="true">80</span>
           <input type="range" aria-label="Volume" min="0" max="100" step="1" value="80" id="fm-vol" style="flex: 1; min-width: 40px">
         </div>
         <div class="sunken-panel" role="list" aria-label="Playlist" id="fm-list" style="position: relative; width: auto; height: auto; max-height: 86px" hidden></div>
