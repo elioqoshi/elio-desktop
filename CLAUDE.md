@@ -126,7 +126,9 @@ windows. It is a business card, not a sales page.
   Windows 98 confirmation, and Yes only gets a dialog saying "don't throw
   Elio's stuff away :(" (`dialog98()` in app.js). The
   trash only lives on the desk. Its icon is SerenityOS's 32x32
-  `recycle-bin.png`, added to the end of `assets/icons.png`.
+  `recycle-bin.png`, added to the end of `assets/icons.png`. Talks uses
+  SerenityOS's `app-video-player.png` (a clapperboard, `.ico-video`), the last
+  cell of the sprite (512x32).
 - All of it is saved per visitor in localStorage (`fs`, `icons`); Reset
   Desktop clears it. Folder windows come from `#folder-tpl` and have a size
   grip. Icons stay put when one leaves the desk; Arrange Icons tidies up.

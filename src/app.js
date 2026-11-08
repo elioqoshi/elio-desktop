@@ -470,7 +470,7 @@
         ytState = -1; ytReady = false; ytQueued = null;
       }
     } else {
-      screen.innerHTML = '<div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; text-align: center; color: #fff"><span class="ico ico-presenter" aria-hidden="true"></span><p style="margin: 0">no tape for this one :(</p><a class="btn98" target="_blank" rel="noopener">go there</a></div>';
+      screen.innerHTML = '<div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; text-align: center; color: #fff"><span class="ico ico-video" aria-hidden="true"></span><p style="margin: 0">no tape for this one :(</p><a class="btn98" target="_blank" rel="noopener">go there</a></div>';
       q('a', screen).href = t.url;
     }
     q('#talks-p').textContent = t.title; q('#talk-meta').textContent = t.meta;
@@ -564,7 +564,7 @@
   function addItem(it) { ITEMS[it.id] = it; ORDER.push(it.id); }
   [
     { id: 'portrait', name: 'portrait.jpg', ico: 'ico-image', kind: 'app' },
-    { id: 'talks', name: 'Talks', ico: 'ico-presenter', kind: 'app' },
+    { id: 'talks', name: 'Talks', ico: 'ico-video', kind: 'app' },
     { id: 'contact', name: 'Help', ico: 'ico-help', kind: 'app' },
     { id: 'radio', name: 'Winamp', ico: 'ico-winamp', kind: 'app' },
     { id: 'photos', name: 'Photos', ico: 'ico-folder', kind: 'folder' },
