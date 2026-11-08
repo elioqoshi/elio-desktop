@@ -70,8 +70,8 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98.dark .title-bar-controls button:not(:disabled):active{box-shadow:inset -1px -1px #959595,inset 1px 1px #fff,inset -2px -2px #afafaf,inset 2px 2px #ddd}
 .root98.dark .mbtn,.root98.dark .icon{background:transparent;box-shadow:none;color:#E6E6E6}
 .root98.dark .icon .lbl{color:#fff}
-/* icon labels over the wallpaper: a black shadow on the right and the left, so they read on light parts too */
-.root98.wp-ghosts .lbl{color:#fff;text-shadow:1px 1px #000,-1px 1px #000,-1px 0 #000}
+/* icon labels over the wallpaper: a 1px black outline all round, so they read on light parts too */
+.root98.wp-ghosts .lbl{color:#fff;text-shadow:1px 1px #000,-1px 1px #000,-1px 0 #000,1px 0 #000,0 -1px #000,1px -1px #000,-1px -1px #000,0 1px #000}
 .root98.wp-ghosts .icon.sel .lbl,.root98.wp-ghosts .icon:focus-visible .lbl{color:#fff;text-shadow:none}
 .root98.dark .mbtn:hover,.root98.dark .mbtn:focus-visible{background:#000080;color:#fff}
 .root98.dark .sunbtn svg path{fill:#FFE08A}
