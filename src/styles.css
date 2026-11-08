@@ -223,18 +223,26 @@ html,body{height:100%;overflow:hidden}
   .grip98::before{content:"";position:absolute;inset:-12px}
 }
 @media (max-width:760px){
-  /* phones get the true 1x size: 2x made everything twice as big as a phone needs */
-  .root98{zoom:1;height:100vh;height:100dvh}
+  /* phones get 1.5x: 2x was too big, 1x too small to read and tap. vh/vw aren't zoomed, so divide by 1.5 */
+  .root98{zoom:1.5;height:calc(100vh / 1.5);height:calc(100dvh / 1.5);min-height:0}
+  .desk-area{min-height:0}
   html{background-position:60% top}
-  /* windows keep their own width at 1x, never wider than the screen */
+  /* windows keep their own width, never wider than the screen (about 250px on a phone) */
   .win{max-width:calc(100% - 6px)}
+  .dialog98{max-width:calc(100vw / 1.5 - 16px)}
+  /* the menu bar stays on one line: tighter buttons, and the clock shows just the time (app.js) */
+  .menubar{flex-wrap:nowrap;gap:0;padding:1px 2px}
+  .root98 .mbtn{padding:2px 4px}
+  .menubar nav{flex-wrap:nowrap !important;min-width:0}
+  /* About stacks the portrait above the text */
+  .root98 .about98{flex-direction:column;align-items:stretch}
+  .about-pic{align-self:center}
 }
 /* About, laid out like a Windows 98 About box: the picture in a sunken frame on the left, text on the right */
 .root98 .about98{margin:10px;display:flex;gap:10px;align-items:flex-start}
 .about-pic{flex:none;width:auto;height:auto;overflow:hidden}
 .about-pic img{display:block;width:104px;height:139px;image-rendering:pixelated}
 .about-text{flex:1;min-width:0;display:flex;flex-direction:column;align-self:stretch}
-@media (max-width:340px){.root98 .about98{flex-wrap:wrap}.about-pic{margin:0 auto}}
 /* text rendered from content/*.md by build.py: paragraphs and headings spaced like Windows 98 dialogs */
 .root98 .md98 :is(p,h2){margin:0 0 8px}
 .root98 .md98 .sep98{margin:4px 0 8px}

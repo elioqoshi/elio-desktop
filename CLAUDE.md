@@ -44,10 +44,12 @@ windows. It is a business card, not a sales page.
 ## Design rules (keep these)
 
 - Everything is drawn at native 1x pixel sizes and the whole page is scaled with
-  `.root98{zoom:2}`, except on phones (<=760px), which get zoom 1. Pointer math
-  in app.js divides by `Z`, which follows the same breakpoint.
+  `.root98{zoom:2}`, except on phones (<=760px), which get zoom 1.5 (so the desk
+  is about 250px wide there; `vh`/`vw` aren't zoomed, so phone sizes divide by
+  1.5). Pointer math in app.js divides by `Z`, which follows the same breakpoint.
 - Font: Pixelated MS Sans Serif (98.css's font) only, at 11px (line-height
-  14px) for everything. Other sizes blur. It has a real bold weight (700), so
+  14px) for everything. Other sizes blur (1.5x on phones is the one exception:
+  sharp on 2x screens, slightly uneven pixels on 3x ones). It has a real bold weight (700), so
   use bold freely; `font-synthesis:none` stays on so nothing is faked. No big
   headings: like Windows 98, structure comes from bold and spacing.
 - Icons: only the SerenityOS 32x32 icon set (`assets/icons.png` sprite, 32px
@@ -92,7 +94,9 @@ windows. It is a business card, not a sales page.
   clock, the date underneath), dropped down
   right under it with its right edge lined up; clicking the time again closes
   it. There is no clock icon on the desk.
-- Phones (<=760px): 1x zoom and the same free-form desk: icons fill rows
+- Phones (<=760px): 1.5x zoom and the same free-form desk. The menu bar stays
+  on one line (tighter buttons, the clock shows only the time) and About puts
+  the portrait above the text: icons fill rows
   across the top (links stay docked bottom right), windows open below them and
   everything can be dragged. On touch screens title bars, close buttons, the
   bottom and side edges and the size grip have a bigger invisible grab area (`pointer:coarse`). A long press

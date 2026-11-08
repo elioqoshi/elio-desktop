@@ -1,10 +1,10 @@
 (function () {
   'use strict';
-  // the page is drawn at 1x and zoomed 2x (1x on phones, see styles.css); pointer math divides by it
+  // the page is drawn at 1x and zoomed 2x (1.5x on phones, see styles.css); pointer math divides by it
   var Z = 2;
   (function () {
     var mq = window.matchMedia('(max-width: 760px)');
-    function setZ() { Z = mq.matches ? 1 : 2; }
+    function setZ() { Z = mq.matches ? 1.5 : 2; }
     setZ(); if (mq.addEventListener) mq.addEventListener('change', setZ);
   })();
   var root = document.getElementById('root98');
@@ -313,7 +313,8 @@
   var fmtParts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23' });
   function tick() {
     var now = new Date(), time = fmtTime.format(now), date = fmtDate.format(now).replace(',', '');
-    q('#menu-time').textContent = date + '  ' + time;
+    // a phone's menu bar only has room for the time; the Clock window has the date
+    q('#menu-time').textContent = phone() ? time : date + '  ' + time;
     if (!W.clock.open) return;
     var parts = {};
     fmtParts.formatToParts(now).forEach(function (p) { parts[p.type] = Number(p.value); });
