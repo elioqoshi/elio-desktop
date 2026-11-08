@@ -1,10 +1,10 @@
-# elio-desktop
+# elioqoshi.me
 
 Elio Qoshi's personal homepage: a retro desktop in the style of Windows 95/98
 with a touch of Poolsuite. Draggable icons open windows with an about page,
 talks, clients, a clock, a radio and an imprint.
 
-Live at https://elioqoshi.github.io/elio-desktop/
+Live at https://elioqoshi.me (GitHub Pages with a custom domain; DNS is on Namecheap)
 
 ## Build and run
 
@@ -61,7 +61,12 @@ file name, which is also the label. They are not inlined into `index.html`.
 ## Deploying
 
 Every push to `main` runs `.github/workflows/pages.yml`. It builds the page
-and publishes `index.html`, `photos/` and `LICENSES/` to GitHub Pages.
+and publishes `index.html`, `photos/`, `wallpapers/` and `LICENSES/` to GitHub Pages.
+
+The custom domain `elioqoshi.me` is set in the repo's Pages settings (no
+`CNAME` file is needed with Actions deploys). Its DNS lives in Namecheap's
+cPanel Zone Editor: four A and four AAAA records for GitHub Pages on the bare
+domain, `www` as a CNAME, and the mail records (MX, `mail`) left alone.
 
 ## Project layout
 

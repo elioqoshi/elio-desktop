@@ -1,4 +1,4 @@
-# elio-desktop
+# elioqoshi.me
 
 Elio Qoshi's personal page: a retro desktop in the style of Windows 95/98 with a
 touch of Poolsuite. Visitors land on a desktop with draggable icons that open
