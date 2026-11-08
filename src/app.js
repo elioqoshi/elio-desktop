@@ -39,8 +39,8 @@
 
   /* ---------- windows ---------- */
   var W = {
-    about: { open: true, x: 170, y: 18, z: 2, w: 290 },
-    portrait: { open: true, x: 430, y: 46, z: 3, w: 170 },
+    about: { open: true, x: 170, y: 18, z: 2, w: 410 },
+    portrait: { w: 170 },
     talks: { w: 340 }, photo: { w: 320 }, clock: { w: 392 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
@@ -458,7 +458,6 @@
     img.src = p.src; img.alt = p.name;
     q('#photo-t').textContent = ITEMS[id].name; q('#photo-name').textContent = ITEMS[id].name;
     q('#photo-pos').textContent = (list.indexOf(id) + 1) + '/' + list.length;
-    q('#photo-full').href = p.full;
     q('#photo-prev').disabled = q('#photo-next').disabled = list.length < 2;
   }
   function stepPhoto(n) {
@@ -825,13 +824,11 @@
     store.set('fs', null); store.set('icons', null); location.reload();
   }
   renderDesk();
-  // on phones about.txt and the portrait start under the icons
+  // on phones About starts under the icons
   function phoneStart() {
     if (!phone()) return;
-    var desk = q('.desk-area'), dw = desk.clientWidth, dh = desk.clientHeight, a = W.about, p = W.portrait;
-    var ae = winEl('about'), pe = winEl('portrait'), top = iconsBottom() + 8;
-    a.x = Math.max(0, Math.round((dw - ae.offsetWidth) / 2)); a.y = top; apply('about');
-    p.x = Math.max(0, dw - pe.offsetWidth - 8); p.y = clamp(top + ae.offsetHeight + 12, 0, dh - pe.offsetHeight - 4); apply('portrait');
+    var desk = q('.desk-area'), dw = desk.clientWidth, a = W.about, ae = winEl('about');
+    a.x = Math.max(0, Math.round((dw - ae.offsetWidth) / 2)); a.y = iconsBottom() + 8; apply('about');
   }
   phoneStart();
   Object.keys(W).forEach(keepOnDesk);

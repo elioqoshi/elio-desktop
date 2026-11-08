@@ -256,3 +256,13 @@ html,body{height:100%;overflow:hidden}
 /* the time box reads like Windows 98's: a white field with black text, not a greyed-out one */
 .root98 input#clock-field{background-color:#fff;color:#000}
 .root98.dark input#clock-field{background-color:#1F1F1F;color:#E6E6E6}
+/* About, laid out like a Windows 98 About box: the picture in a sunken frame on the left, text on the right */
+.root98 .about98{margin:12px;display:flex;gap:12px;align-items:flex-start}
+.about-pic{flex:none;width:auto;height:auto;overflow:hidden}
+.about-pic img{display:block;width:152px;height:203px;image-rendering:pixelated}
+.about-text{flex:1;min-width:0;display:flex;flex-direction:column;align-self:stretch}
+.root98 .about-text p{margin:0 0 8px}
+.root98 .about-text h1{margin:0 0 8px}
+.about-text .sep98{margin:auto 0 8px}
+.about-btns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+@media (max-width:420px){.root98 .about98{flex-wrap:wrap}.about-pic{margin:0 auto}}

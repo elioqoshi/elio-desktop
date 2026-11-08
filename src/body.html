@@ -21,23 +21,27 @@
 
     <div class="deskicons" role="list" aria-label="Desktop" id="icons"></div>
 
-    <section class="window win" data-win="about" aria-labelledby="about-p" style="width: 290px">
+    <section class="window win fixed98" data-win="about" aria-labelledby="about-t" aria-describedby="about-p" style="width: 410px">
       <div class="title-bar tb-blue">
-        <div class="title-bar-text">about.txt</div>
+        <div class="title-bar-text" id="about-t">About</div>
         <div class="title-bar-controls"><button aria-label="Close"></button></div>
       </div>
-      <div class="window-body" style="margin: 12px">
-        <p style="margin: 0 0 8px">hi! i’m Elio :-)</p>
-        <h1 id="about-p" style="margin: 8px 0">you surfed to the right edge of the web</h1>
-        <p style="margin: 0 0 12px">i design things for open source, privacy and security software, mostly at Ura Design, my studio in Berlin. before that: Canonical, Mozilla, Tor Project.</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 6px">
-          <a class="btn98 default" href="mailto:elio@ura.design">write me</a>
-          <a class="btn98" href="https://ura.design" target="_blank" rel="noopener">ura.design</a>
+      <div class="window-body about98">
+        <div class="sunken-panel about-pic"><img src="assets/portrait-dither.png" alt="Portrait of Elio Qoshi" width="152" height="203"></div>
+        <div class="about-text">
+          <p>hi! i’m Elio :-)</p>
+          <h1 id="about-p">you surfed to the right edge of the web</h1>
+          <p>i design things for open source, privacy and security software, mostly at Ura Design, my studio in Berlin. before that: Canonical, Mozilla, Tor Project.</p>
+          <div class="sep98" role="separator"></div>
+          <div class="about-btns">
+            <a class="btn98 default" href="mailto:elio@ura.design">write me</a>
+            <a class="btn98" href="https://ura.design" target="_blank" rel="noopener">ura.design</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="window win" data-win="portrait" aria-label="Portrait" style="width: 170px">
+    <section class="window win" data-win="portrait" aria-label="Portrait" style="width: 170px" hidden>
       <div class="title-bar tb-blue">
         <div class="title-bar-text">portrait.jpg</div>
         <div class="title-bar-controls"><button aria-label="Close"></button></div>
@@ -95,8 +99,6 @@
         <div style="display: flex; align-items: center; gap: 4px">
           <button type="button" aria-label="Previous photo" id="photo-prev" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h1v8H0zM6 0h1v8H6zM5 1h1v6H5zM4 2h1v4H4zM3 3h1v2H3z"></path></svg></button>
           <button type="button" aria-label="Next photo" id="photo-next" style="min-width: 0; padding: 0 8px"><svg width="8" height="8" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M7 0h1v8H7zM1 0h1v8H1zM2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4z"></path></svg></button>
-          <span style="flex: 1"></span>
-          <a class="btn98" id="photo-full" href="#" target="_blank" rel="noopener">full size</a>
         </div>
       </div>
       <div class="status-bar"><p class="status-bar-field" id="photo-pos"></p><p class="status-bar-field" id="photo-name"></p></div>

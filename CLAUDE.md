@@ -25,7 +25,7 @@ windows. It is a business card, not a sales page.
   `tools/dither.py` (Pillow, see `requirements.txt`) writes dithered
   `photos/<name>.png` (viewer, 308x230 max) and `photos/thumbs/<name>.png`
   (56x42) for new or changed ones. `build.py` lists them in `window.PHOTOS`
-  without inlining; the original is the "full size" link. The Pages workflow
+  without inlining; the original opens from "View Full Size" in the viewer's right-click menu. The Pages workflow
   runs dither.py too and ships the whole folder
 - `assets/`: MS Sans Serif regular and bold (98.css's fonts), SerenityOS icon sprite,
   wallpaper, cursors (`assets/cursors/`), dithered portrait (and the original photo)
@@ -61,9 +61,14 @@ windows. It is a business card, not a sales page.
   Windows open at random spots that stay fully inside the desktop.
 - Every window resizes from all four edges and corners (`.rz98` strips added
   by `resizable()` in app.js); a resized window gets `.sized` and its body
-  scrolls. Dialogs (`.fixed98`, the Date/Time window) don't resize. A resized
+  scrolls. Dialogs (`.fixed98`: About and Date/Time) don't resize. A resized
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
+- About is the one window open on arrival, laid out like a Windows 98 About
+  box: the portrait in a sunken frame on the left, text on the right, an
+  etched line and the buttons bottom right. portrait.jpg still opens on its own
+  from the desk. The photo viewer has no full size button (the right-click
+  menu still has View Full Size).
 - The clock in the menu bar opens Date/Time Properties, like the tray clock in
   Windows 98: a month calendar with today picked out, the analog SerenityOS
   clock, the time and a Time Zone tab. It always shows Berlin time. There is
@@ -111,7 +116,7 @@ plain and descriptive.
 The lowercase voice is for the text inside windows. Labels follow Windows 98:
 Title Case for the menu bar, right-click menus, program and system icons and
 window titles (Clients, Imprint, Talks, Winamp, Photos, Trash, Media Player).
-File names keep their own case (portrait.jpg, about.txt), and brand
+File names keep their own case (portrait.jpg), and brand
 names keep theirs (Ura Design, LinkedIn, GitHub).
 
 ## Facts about Elio (only use these)

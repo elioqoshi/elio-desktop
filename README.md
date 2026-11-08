@@ -37,7 +37,7 @@ python3 build.py
 `tools/dither.py` gives each new or changed photo a 16-colour ordered dither,
 like the wallpaper, at the exact size it is shown at: `photos/<name>.png` for
 the viewer and `photos/thumbs/<name>.png` for the folder. The desktop shows
-the dithered versions; "full size" opens the original. Photos are sorted by
+the dithered versions; "View Full Size" in the right-click menu opens the original. Photos are sorted by
 file name, which is also the label. They are not inlined into `index.html`.
 
 ## Deploying
