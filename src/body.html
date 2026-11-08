@@ -13,7 +13,7 @@
     </nav>
     <span style="display: inline-flex; align-items: center">
       <button class="mbtn helpbtn" type="button" data-open="contact" aria-label="Help" title="help!"><svg width="12" height="12" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><path class="help-bg" d="M4 0h4v1H4zM2 1h8v1H2zM1 2h10v2H1zM0 4h12v4H0zM1 8h10v2H1zM2 10h8v1H2zM4 11h4v1H4z"></path><path class="help-fg" d="M4 2h4v1H4zM3 3h2v1H3zM7 3h2v2H7zM6 5h2v1H6zM5 6h2v2H5zM5 9h2v1H5z"></path></svg></button>
-      <button class="mbtn" type="button" data-open="clock" aria-haspopup="dialog" title="Date/Time Properties" style="font-variant-numeric: tabular-nums" id="menu-time"></button>
+      <button class="mbtn" type="button" aria-haspopup="dialog" aria-controls="clock-win" title="clock" style="font-variant-numeric: tabular-nums" id="menu-time"></button>
     </span>
   </header>
 
@@ -104,51 +104,14 @@
       <div class="status-bar"><p class="status-bar-field" id="photo-pos"></p><p class="status-bar-field" id="photo-name"></p></div>
     </section>
 
-    <section class="window win fixed98" data-win="clock" aria-labelledby="clock-t" style="width: 392px" hidden>
+    <section class="window win fixed98" data-win="clock" id="clock-win" aria-labelledby="clock-t" style="width: 194px" hidden>
       <div class="title-bar tb-blue">
-        <div class="title-bar-text" id="clock-t">Date/Time Properties</div>
+        <div class="title-bar-text" id="clock-t">Clock</div>
         <div class="title-bar-controls"><button aria-label="Close"></button></div>
       </div>
-      <div class="window-body" style="margin: 6px">
-        <menu role="tablist" class="tabs98">
-          <li role="tab" aria-selected="true"><a href="#dt-panel" aria-controls="dt-panel">Date &amp; Time</a></li>
-          <li role="tab" aria-selected="false"><a href="#tz-panel" aria-controls="tz-panel">Time Zone</a></li>
-        </menu>
-        <div class="window" role="tabpanel" id="dt-panel">
-          <div class="window-body dt98">
-            <fieldset class="dt-date">
-              <legend>Date</legend>
-              <div class="field-row" style="gap: 4px">
-                <select id="cal-month" aria-label="Month" style="flex: 1; min-width: 0"></select>
-                <input type="number" id="cal-year" aria-label="Year" min="1970" max="2099" style="width: 54px; margin-left: 0">
-              </div>
-              <div class="sunken-panel cal98" style="width: auto; height: auto; margin-top: 6px">
-                <table role="grid" aria-labelledby="cal-cap"><caption id="cal-cap" class="sr98"></caption><thead><tr><th abbr="Sunday">S</th><th abbr="Monday">M</th><th abbr="Tuesday">T</th><th abbr="Wednesday">W</th><th abbr="Thursday">T</th><th abbr="Friday">F</th><th abbr="Saturday">S</th></tr></thead><tbody id="cal-days"></tbody></table>
-              </div>
-            </fieldset>
-            <fieldset class="dt-time">
-              <legend>Time</legend>
-              <svg id="clock-svg" width="170" height="170" viewBox="0 0 170 170" shape-rendering="crispEdges" role="img" aria-label="Analog clock" style="display: block; margin: 0 auto"><path class="ck-gfill" data-k="gfill"></path><path class="ck-hi" data-k="ghi"></path><path class="ck-gsh" data-k="gsh"></path><path class="ck-min" data-k="minFill"></path><path class="ck-mindk" data-k="minDark"></path><path class="ck-hi" data-k="minHi"></path><path class="ck-hour" data-k="hourFill"></path><path class="ck-hourdk" data-k="hourDark"></path><path class="ck-hi" data-k="hourHi"></path><path class="ck-sec" data-k="sec"></path></svg>
-              <input type="text" id="clock-field" aria-label="Time" readonly style="display: block; width: 84px; margin: 6px auto 0; text-align: center">
-            </fieldset>
-          </div>
-          <p class="dt-zone" id="clock-zone"></p>
-        </div>
-        <div class="window" role="tabpanel" id="tz-panel" hidden>
-          <div class="window-body">
-            <select aria-label="Time zone" style="width: 100%"><option>(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option></select>
-            <div class="field-row" style="margin-top: 10px">
-              <input type="checkbox" id="tz-dst" checked disabled>
-              <label for="tz-dst">Automatically adjust clock for daylight saving changes</label>
-            </div>
-            <p class="muted" style="margin: 10px 0 0">this clock always shows Berlin time, where Elio is.</p>
-          </div>
-        </div>
-        <div class="dialog98-btns" style="justify-content: flex-end; margin-top: 6px">
-          <button type="button" class="default" data-close="clock">OK</button>
-          <button type="button" data-close="clock">Cancel</button>
-          <button type="button" disabled>Apply</button>
-        </div>
+      <div class="window-body" style="margin: 8px">
+        <svg id="clock-svg" width="170" height="170" viewBox="0 0 170 170" shape-rendering="crispEdges" role="img" aria-label="Analog clock" style="display: block; margin: 0 auto"><path class="ck-gfill" data-k="gfill"></path><path class="ck-hi" data-k="ghi"></path><path class="ck-gsh" data-k="gsh"></path><path class="ck-min" data-k="minFill"></path><path class="ck-mindk" data-k="minDark"></path><path class="ck-hi" data-k="minHi"></path><path class="ck-hour" data-k="hourFill"></path><path class="ck-hourdk" data-k="hourDark"></path><path class="ck-hi" data-k="hourHi"></path><path class="ck-sec" data-k="sec"></path></svg>
+        <p class="muted" style="margin: 4px 0 0; text-align: center" id="clock-caption"></p>
       </div>
     </section>
 

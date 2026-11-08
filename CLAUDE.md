@@ -61,7 +61,7 @@ windows. It is a business card, not a sales page.
   Windows open at random spots that stay fully inside the desktop.
 - Every window resizes from all four edges and corners (`.rz98` strips added
   by `resizable()` in app.js); a resized window gets `.sized` and its body
-  scrolls. Dialogs (`.fixed98`: About and Date/Time) don't resize. A resized
+  scrolls. Dialogs (`.fixed98`: About and Clock) don't resize. A resized
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
 - About is the one window open on arrival, laid out like a Windows 98 About
@@ -69,10 +69,10 @@ windows. It is a business card, not a sales page.
   etched line and the buttons bottom right. portrait.jpg still opens on its own
   from the desk. The photo viewer has no full size button (the right-click
   menu still has View Full Size).
-- The clock in the menu bar opens Date/Time Properties, like the tray clock in
-  Windows 98: a month calendar with today picked out, the analog SerenityOS
-  clock, the time and a Time Zone tab. It always shows Berlin time. There is
-  no clock icon on the desk.
+- The time in the menu bar opens the Clock window (the analog SerenityOS
+  clock and the date and time underneath, always Berlin time), dropped down
+  right under it with its right edge lined up; clicking the time again closes
+  it. There is no clock icon on the desk.
 - Phones (<=760px): 1x zoom and the same free-form desk: icons fill rows
   across the top (links stay docked bottom right), windows open below them and
   everything can be dragged. On touch screens title bars, close buttons, the

@@ -41,7 +41,7 @@
   var W = {
     about: { open: true, x: 170, y: 18, z: 2, w: 410 },
     portrait: { w: 170 },
-    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 392 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
+    talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
   function winEl(k) { return q('[data-win="' + k + '"]'); }
@@ -66,7 +66,7 @@
     var s = W[k], e = winEl(k), desk = q('.desk-area'), body = q('.window-body', e);
     s.open = true; s.z = topZ() + 1; s.x = 0; s.y = 0; body.style.maxHeight = ''; body.style.overflow = ''; apply(k);
     if (k === 'talks') renderTalk();
-    if (k === 'clock') { cal = berlinDay(new Date()); renderCal(); tick(); }
+    if (k === 'clock') tick();
     if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
     var dw = desk.clientWidth, dh = desk.clientHeight, h = e.offsetHeight;
     var over = h - (dh - 16);
@@ -78,6 +78,11 @@
     var minY = phone() ? Math.min(iconsBottom() + 8, maxY) : 8;
     s.x = Math.round(minX + Math.random() * (maxX - minX));
     s.y = Math.round(minY + Math.random() * (maxY - minY));
+    // the clock drops down from the time in the menu bar, its right edge under the time's
+    if (k === 'clock') {
+      var t = q('#menu-time').getBoundingClientRect(), dr = desk.getBoundingClientRect();
+      s.x = clamp(Math.round((t.right - dr.left) / Z) - e.offsetWidth, 0, dw - e.offsetWidth); s.y = 0;
+    }
     apply(k);
   }
   // the lowest edge of the icons along the top of a phone's desk
@@ -183,6 +188,8 @@
   }
   Object.keys(W).forEach(resizable);
   qa('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openWin(b.getAttribute('data-open')); }); });
+  // the time in the menu bar opens the clock, and closes it again
+  q('#menu-time').addEventListener('click', function () { if (W.clock.open) closeWin('clock'); else openWin('clock'); });
   qa('[data-close]').forEach(function (b) { b.addEventListener('click', function () { closeWin(b.getAttribute('data-close')); }); });
 
   /* ---------- clients menu ---------- */
@@ -316,44 +323,8 @@
     var paths = Clock.clockPaths(parts.hour || 0, parts.minute || 0, parts.second || 0);
     qa('#clock-svg path').forEach(function (p) { p.setAttribute('d', paths[p.getAttribute('data-k')] || ''); });
     q('#clock-svg').setAttribute('aria-label', 'Analog clock showing ' + time + ' in Berlin');
-    q('#clock-field').value = fmtSecs.format(now);
-    var d = berlinDay(now);
-    if (d.key !== calToday) { calToday = d.key; renderCal(); }
-    q('#clock-zone').textContent = 'Current time zone: W. Europe ' + (/\+2/.test(fmtZone.format(now)) ? 'Daylight' : 'Standard') + ' Time';
+    q('#clock-caption').textContent = date + ', ' + time;
   }
-  // the Date & Time tab: a month calendar you can page through, with today picked out like in Windows 98
-  var fmtSecs = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
-  var fmtYmd = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' });
-  var fmtZone = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', timeZoneName: 'shortOffset' });
-  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  function berlinDay(now) { var p = fmtYmd.format(now).split('-').map(Number); return { y: p[0], m: p[1] - 1, d: p[2], key: p.join('-') }; }
-  var calToday = '', cal = berlinDay(new Date());
-  MONTHS.forEach(function (m, i) { var o = document.createElement('option'); o.value = i; o.textContent = m; q('#cal-month').appendChild(o); });
-  function renderCal() {
-    var t = berlinDay(new Date()), first = new Date(Date.UTC(cal.y, cal.m, 1)).getUTCDay(), days = new Date(Date.UTC(cal.y, cal.m + 1, 0)).getUTCDate();
-    q('#cal-month').value = cal.m; q('#cal-year').value = cal.y;
-    q('#cal-cap').textContent = MONTHS[cal.m] + ' ' + cal.y;
-    var body = q('#cal-days'), html = '';
-    for (var i = 0; i < 42; i++) {
-      if (i % 7 === 0) { if (i >= first + days) break; html += '<tr>'; }
-      var n = i - first + 1, real = n >= 1 && n <= days, today = real && cal.y === t.y && cal.m === t.m && n === t.d;
-      html += '<td' + (today ? ' class="today" aria-current="date"' : '') + '>' + (real ? n : '') + '</td>';
-      if (i % 7 === 6) html += '</tr>';
-    }
-    body.innerHTML = html;
-  }
-  q('#cal-month').addEventListener('change', function (e) { cal.m = Number(e.target.value); renderCal(); });
-  q('#cal-year').addEventListener('change', function (e) { var y = Math.round(Number(e.target.value)); if (y >= 1970 && y <= 2099) cal.y = y; renderCal(); });
-  // the two tabs
-  qa('.tabs98 [role=tab] a').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      qa('.tabs98 [role=tab]').forEach(function (li) {
-        var on = li.contains(a); li.setAttribute('aria-selected', on ? 'true' : 'false');
-        q(li.querySelector('a').getAttribute('href')).hidden = !on;
-      });
-    });
-  });
   tick(); setInterval(tick, 1000);
 
   /* ---------- media player ---------- */

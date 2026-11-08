@@ -152,30 +152,6 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .win.sized[data-folder]>.window-body,.win.sized[data-win=photo]>.window-body{display:flex;flex-direction:column;overflow:hidden}
 .win.sized .folder-grid{flex:1;min-height:0;max-height:none !important;height:auto !important}
 .win.sized .photo-panel{aspect-ratio:auto !important;flex:1;min-height:60px}
-/* Date/Time Properties, like Windows 98's */
-.sr98{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.root98 .tabs98{margin-top:0}
-.root98 .tabs98 li[role=tab] a{margin:3px 6px}
-.root98:not(.dark) .tabs98 li[role=tab][aria-selected=true]{background:#E4E4E4}
-.root98:not(.dark) .tabs98 li[role=tab]{box-shadow:inset -1px 0 #0a0a0a,inset 1px 1px #fff,inset -2px 0 #A0A0A0,inset 2px 2px #F4F4F4}
-.root98.dark .tabs98 li[role=tab]{box-shadow:inset -1px 0 #000,inset 1px 1px #6A6A6A,inset -2px 0 #222,inset 2px 2px #505050}
-.root98.dark .tabs98 li[role=tab][aria-selected=true]{background:#3A3A3A}
-.root98.dark .tabs98 li[role=tab] a{color:#E6E6E6}
-.root98 [role=tabpanel]>.window-body{margin:8px}
-.dt98{display:flex;flex-wrap:wrap;gap:8px}
-.dt98 fieldset{padding:6px 8px 8px}
-.dt-date{flex:1 1 140px;min-width:140px}
-.dt-time{flex:none}
-.root98 p.dt-zone{margin:0 8px 8px}
-.cal98 table{width:100%;border-collapse:collapse;text-align:center;white-space:nowrap}
-.root98 .cal98 th{background:#808080;color:#fff;font-weight:400;height:14px;padding:0;box-shadow:none;position:static}
-.root98 .cal98 td{height:16px;padding:0;text-align:center}
-.root98 .cal98 td.today{background:#000080;color:#fff}
-.root98.dark .cal98 table{background:#1F1F1F;color:#E6E6E6}
-.root98.dark :is(select,input[type=number],input[type=text]){background-color:#1F1F1F;color:#E6E6E6;box-shadow:inset -1px -1px #5A5A5A,inset 1px 1px #000,inset -2px -2px #3A3A3A,inset 2px 2px #111}
-.root98.dark input[readonly]{background-color:#3A3A3A}
-.root98:not(.dark) input[readonly]{background-color:#E4E4E4}
-.root98 select:focus{background-color:#000080;color:#fff}
 .desk-area img{-webkit-touch-callout:none}
 /* files and folders: icons in folder windows, renaming, cut items, drag and drop */
 .root98 .folder-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
@@ -253,9 +229,6 @@ html,body{height:100%;overflow:hidden}
   /* windows keep their own width at 1x, never wider than the screen */
   .win{max-width:calc(100% - 6px)}
 }
-/* the time box reads like Windows 98's: a white field with black text, not a greyed-out one */
-.root98 input#clock-field{background-color:#fff;color:#000}
-.root98.dark input#clock-field{background-color:#1F1F1F;color:#E6E6E6}
 /* About, laid out like a Windows 98 About box: the picture in a sunken frame on the left, text on the right */
 .root98 .about98{margin:12px;display:flex;gap:12px;align-items:flex-start}
 .about-pic{flex:none;width:auto;height:auto;overflow:hidden}
