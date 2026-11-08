@@ -52,10 +52,24 @@
     return c.map(Math.round);
   }
   var weather = null;
+  function hsl(c) {
+    var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn, h = 0;
+    if (d) h = mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return [h * 60, d ? d / (1 - Math.abs(2 * l - 1)) : 0, l];
+  }
+  function rgb(h, s, l) {
+    var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l);
+    return [0, 8, 4].map(function (n) { return Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)))); });
+  }
+  function css(c) { return 'rgb(' + c.join(',') + ')'; }
+  // like Windows 98's title bars, a gradient from dark on the left to light on the right, here in the sky's
+  // own colour with a bit more saturation than real life; the text suits the dark end it starts on
   function paintSky() {
-    var c = skyColour(Date.now(), weather), lum = (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
-    root.style.setProperty('--sky', 'rgb(' + c.join(',') + ')');
-    root.style.setProperty('--sky-text', lum > 0.5 ? '#000' : '#fff');
+    var x = hsl(skyColour(Date.now(), weather)), s = Math.min(1, x[1] * 1.6 + 0.04), l = x[2];
+    var dark = rgb(x[0], s, l * 0.55), mid = rgb(x[0], s, l), light = rgb(x[0], s, l + (1 - l) * 0.45);
+    var lum = (0.2126 * dark[0] + 0.7152 * dark[1] + 0.0722 * dark[2]) / 255;
+    root.style.setProperty('--sky', 'linear-gradient(90deg,' + css(dark) + ',' + css(mid) + ' 45%,' + css(light) + ')');
+    root.style.setProperty('--sky-text', lum > 0.45 ? '#000' : '#fff');
   }
   function fetchWeather() {
     if (!window.fetch) return;

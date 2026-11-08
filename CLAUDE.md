@@ -64,7 +64,9 @@ windows. It is a business card, not a sales page.
   Berlin right now: app.js works it out from the sun's height and Open-Meteo's
   current Berlin weather (cloud cover, rain, fog; fetched every 15 minutes,
   repainted every minute, last weather kept 3 hours in localStorage) and sets
-  `--sky` and `--sky-text` (black or white by brightness). Blue by day, warm at
+  `--sky` and `--sky-text`. Like Windows 98, `--sky` is a left-to-right
+  gradient from dark to light, here in that colour with saturation boosted
+  1.6x; the text is black or white by the brightness of the dark end. Blue by day, warm at
   sunrise/sunset, navy at night, grey with clouds, darker in rain, brownish
   grey on cloudy nights. Without script they fall back to light blue #A8DDE6
   (dark mode #2E6E7A). Open-Meteo is credited in the imprint (CC BY 4.0). Light theme windows are #E4E4E4 with retuned bevels, not
