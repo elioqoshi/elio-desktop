@@ -58,9 +58,8 @@ windows. It is a business card, not a sales page.
 - Cursors: SerenityOS's default cursor theme, Windows 9x style, at normal
   cursor size (1x, with pixel-doubled `@2x` copies for dense screens via
   `-webkit-image-set`). Arrow everywhere (buttons and icons too, like 98),
-  hand only on text links, I-beam in text fields, the four resize arrows on
-  window edges and corners (`resize`, `resize-nesw`, `resize-ns`,
-  `resize-ew`), and the 14-frame hourglass while busy (app.js steps `data-wf`).
+  hand only on text links, I-beam in text fields, the diagonal resize arrow
+  on the bottom-right corner (`resize`), and the 14-frame hourglass while busy (app.js steps `data-wf`).
 - Windows: 98.css components. Title bars are one light blue (#A8DDE6; dark
   mode #2E6E7A). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
@@ -78,10 +77,12 @@ windows. It is a business card, not a sales page.
   and remembers the visitor's choice in localStorage.
 - Opening a window waits 1 second with the turning hourglass, like an old PC
   (except the Clock, which opens instantly).
-  Windows open at random spots that stay fully inside the desktop.
-- Every window resizes from all four edges and corners (`.rz98` strips added
-  by `resizable()` in app.js); a resized window gets `.sized` and its body
-  scrolls. Dialogs (`.fixed98`: About and Clock) don't resize. A resized
+  Windows open at random spots that stay fully inside the desktop. Dragged,
+  they can go off any side but the top, as long as 48px stay on the desk.
+- Every window resizes from its bottom-right corner only: a folder's size grip,
+  or an invisible `.rz98` handle (`resizable()` in app.js), with a grab area a
+  little past the corner (bigger on touch screens). A resized window gets
+  `.sized` and its body scrolls. Dialogs (`.fixed98`: About and Clock) don't resize. A resized
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
 - About is the one window open on arrival, laid out like a Windows 98 About

@@ -97,7 +97,7 @@
   function keepOnDesk(k) {
     var s = W[k], e = winEl(k), desk = q('.desk-area');
     if (!s.open || s.max) return;
-    s.x = clamp(s.x, 0, desk.clientWidth - e.offsetWidth); s.y = clamp(s.y, 0, desk.clientHeight - 20); apply(k);
+    s.x = clamp(s.x, 48 - e.offsetWidth, desk.clientWidth - 48); s.y = clamp(s.y, 0, desk.clientHeight - 20); apply(k);
   }
   // maximize fills the desk; the old spot and size come back on restore
   function maximize(k, on) {
@@ -143,7 +143,7 @@
       if (!drag) return;
       // keep at least part of the title bar on the desk so the window can always be grabbed again
       var desk = q('.desk-area');
-      W[k].x = clamp(Math.round(drag.ox + (ev.clientX - drag.sx) / Z), 0, desk.clientWidth - 48);
+      W[k].x = clamp(Math.round(drag.ox + (ev.clientX - drag.sx) / Z), 48 - e.offsetWidth, desk.clientWidth - 48);
       W[k].y = clamp(Math.round(drag.oy + (ev.clientY - drag.sy) / Z), 0, desk.clientHeight - 20);
       apply(k);
     });
@@ -151,15 +151,13 @@
     bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
   }
   Object.keys(W).forEach(setupWin);
-  // every window but dialogs resizes from its edges and corners; a folder's size grip is the bottom-right corner
+  // every window but dialogs resizes from its bottom-right corner: a folder's size grip, or an invisible handle
   function resizable(k) {
     var e = winEl(k);
     if (e.classList.contains('fixed98')) return;
-    ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
-      var h = document.createElement('div'); h.className = 'rz98'; h.setAttribute('data-d', dir); h.setAttribute('aria-hidden', 'true');
-      e.appendChild(h); resizeFrom(k, h, dir);
-    });
-    var grip = q('.grip98', e); if (grip) resizeFrom(k, grip, 'se');
+    var h = q('.grip98', e);
+    if (!h) { h = document.createElement('div'); h.className = 'rz98'; h.setAttribute('data-d', 'se'); h.setAttribute('aria-hidden', 'true'); e.appendChild(h); }
+    resizeFrom(k, h, 'se');
   }
   function resizeFrom(k, h, dir) {
     var e = winEl(k), d = null;

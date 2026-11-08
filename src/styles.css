@@ -137,16 +137,12 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .win:is(.max,.sized)>.window-body{flex:1;min-height:0;overflow:auto}
 /* resizing from the edges: invisible strips along each side and corner */
 .rz98{position:absolute;z-index:3;touch-action:none}
-.rz98[data-d=n]{top:-2px;left:6px;right:6px;height:5px}
-.rz98[data-d=s]{bottom:-2px;left:6px;right:6px;height:5px}
-.rz98[data-d=e]{right:-2px;top:6px;bottom:6px;width:5px}
-.rz98[data-d=w]{left:-2px;top:6px;bottom:6px;width:5px}
-.rz98:is([data-d=ne],[data-d=nw],[data-d=se],[data-d=sw]){width:8px;height:8px}
-.rz98[data-d=ne]{top:-2px;right:-2px}.rz98[data-d=nw]{top:-2px;left:-2px}.rz98[data-d=se]{bottom:-2px;right:-2px}.rz98[data-d=sw]{bottom:-2px;left:-2px}
+/* windows resize from the bottom-right corner only; the grab area reaches a little past the corner */
+.rz98[data-d=se]{right:-3px;bottom:-3px;width:14px;height:14px}
+.grip98::before{content:"";position:absolute;inset:-4px -7px -7px -4px}
 .win.max .rz98{display:none}
 @media (pointer:coarse){
-  .rz98[data-d=s]{bottom:-10px;height:13px}.rz98[data-d=e]{right:-10px;width:13px}.rz98[data-d=w]{left:-10px;width:13px}
-  .rz98:is([data-d=se],[data-d=sw]){width:18px;height:18px;bottom:-10px}.rz98[data-d=se]{right:-10px}.rz98[data-d=sw]{left:-10px}
+  .rz98[data-d=se]{right:-10px;bottom:-10px;width:24px;height:24px}
 }
 /* resized folders and photos fill their window */
 .win.sized[data-folder]>.window-body,.win.sized[data-win=photo]>.window-body{display:flex;flex-direction:column;overflow:hidden}
@@ -177,10 +173,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 html,.root98,.root98 *{cursor:url(assets/cursors/arrow.png) 2 2,default;cursor:-webkit-image-set(url(assets/cursors/arrow@2x.png) 2x) 2 2,default}
 .root98 a[href]:not(.btn98):not(.icon),.root98 a[href]:not(.btn98):not(.icon) *{cursor:url(assets/cursors/hand.png) 8 4,pointer;cursor:-webkit-image-set(url(assets/cursors/hand@2x.png) 2x) 8 4,pointer}
 .root98 input[type=text],.root98 textarea{cursor:url(assets/cursors/ibeam.png) 7 12,text;cursor:-webkit-image-set(url(assets/cursors/ibeam@2x.png) 2x) 7 12,text}
-.root98 :is(.grip98,.rz98[data-d=nw],.rz98[data-d=se]){cursor:url(assets/cursors/resize.png) 10 10,nwse-resize;cursor:-webkit-image-set(url(assets/cursors/resize@2x.png) 2x) 10 10,nwse-resize}
-.root98 .rz98:is([data-d=ne],[data-d=sw]){cursor:url(assets/cursors/resize-nesw.png) 10 10,nesw-resize;cursor:-webkit-image-set(url(assets/cursors/resize-nesw@2x.png) 2x) 10 10,nesw-resize}
-.root98 .rz98:is([data-d=n],[data-d=s]){cursor:url(assets/cursors/resize-ns.png) 6 11,ns-resize;cursor:-webkit-image-set(url(assets/cursors/resize-ns@2x.png) 2x) 6 11,ns-resize}
-.root98 .rz98:is([data-d=e],[data-d=w]){cursor:url(assets/cursors/resize-ew.png) 11 6,ew-resize;cursor:-webkit-image-set(url(assets/cursors/resize-ew@2x.png) 2x) 11 6,ew-resize}
+.root98 :is(.grip98,.rz98[data-d=se]){cursor:url(assets/cursors/resize.png) 10 10,nwse-resize;cursor:-webkit-image-set(url(assets/cursors/resize@2x.png) 2x) 10 10,nwse-resize}
 /* the hourglass turns: app.js steps data-wf through the 14 frames while busy */
 .root98.busy[data-wf="0"],.root98.busy[data-wf="0"] *{cursor:url(assets/cursors/wait-0.png) 10 10,wait !important;cursor:-webkit-image-set(url(assets/cursors/wait-0@2x.png) 2x) 10 10,wait !important}
 .root98.busy[data-wf="1"],.root98.busy[data-wf="1"] *{cursor:url(assets/cursors/wait-1.png) 10 10,wait !important;cursor:-webkit-image-set(url(assets/cursors/wait-1@2x.png) 2x) 10 10,wait !important}
