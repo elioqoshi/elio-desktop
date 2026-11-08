@@ -172,8 +172,10 @@ names keep theirs (Ura Design, LinkedIn, GitHub).
 
 ## Licenses and credits
 
-The imprint window credits everything, from `content/imprint.md`. Keep it and
-`LICENSES/` in sync:
+The imprint window (`content/imprint.md`) lists only the credits the licenses
+require, plainly, no jokes: copyright holder, license link and, for the
+wallpapers, that they were changed. The README keeps the full table. Keep both
+and `LICENSES/` in sync:
 98.css (MIT), SerenityOS icons and pixel clock (BSD 2-Clause), MS Sans Serif
 and MS Sans Serif Bold by lou (CC BY-SA 3.0, notice also in styles.css), Ghosts I–IV music
 (streamed from the Internet Archive) and wallpaper artwork by Rob Sheridan (CC BY-NC-SA 3.0), portrait photo by Jeremie Pontin
