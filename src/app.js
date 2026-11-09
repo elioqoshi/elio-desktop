@@ -221,9 +221,97 @@
     if (k === 'talks') talkSend('pauseVideo');
     if (k === 'radio') radioPause();
   }
+  /* ---------- scrollbars ---------- */
+  // 98.css styles scrollbars with ::-webkit-scrollbar. Browsers without it (Firefox) get the browser's own hidden
+  // and a Windows 98 one drawn over the right edge of anything that scrolls, in the space of 16px more padding
+  var FAKE_SB = !(window.CSS && CSS.supports && CSS.supports('selector(::-webkit-scrollbar)'));
+  var bars = [];
+  if (FAKE_SB) root.classList.add('sb98-fake');
+  function scrollbars98(win) {
+    if (!FAKE_SB) return;
+    qa('.window-body, .sunken-panel, ul.tree-view', win).forEach(function (el) { scrollbar98(el, win); });
+  }
+  function scrollbar98(el, win) {
+    if (el.sb98) return;
+    var bar = document.createElement('div');
+    bar.className = 'sb98'; bar.hidden = true; bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<div class="sb98-up"></div><div class="sb98-track"><div class="sb98-thumb"></div></div><div class="sb98-down"></div>';
+    win.appendChild(bar);
+    var track = bar.children[1], thumb = track.firstChild, on = false, pad = null;
+    var b = { el: el, update: update };
+    el.sb98 = b; bars.push(b);
+    function update() {
+      var shown = win.offsetParent !== null && !win.hidden && /auto|scroll/.test(getComputedStyle(el).overflowY);
+      var need = shown && el.scrollHeight - el.clientHeight > 1;
+      if (need !== on) {
+        on = need;
+        if (pad === null) pad = parseFloat(getComputedStyle(el).paddingRight) || 0;
+        el.style.paddingRight = on ? (pad + 16) + 'px' : '';
+      }
+      bar.hidden = !on;
+      if (!on) return;
+      // where the element sits inside its window, less any scrolling between them
+      var x = 0, y = 0, n = el;
+      while (n && n !== win) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+      for (n = el.parentElement; n && n !== win; n = n.parentElement) y -= n.scrollTop;
+      bar.style.left = (x + el.clientLeft + el.clientWidth - 16) + 'px';
+      bar.style.top = (y + el.clientTop) + 'px';
+      bar.style.height = el.clientHeight + 'px';
+      var th = track.clientHeight, size = Math.max(8, Math.round(th * el.clientHeight / el.scrollHeight));
+      var room = el.scrollHeight - el.clientHeight;
+      thumb.style.height = size + 'px';
+      thumb.style.top = Math.round((th - size) * (room ? el.scrollTop / room : 0)) + 'px';
+    }
+    if (window.ResizeObserver) new ResizeObserver(update).observe(el);
+    new MutationObserver(function () { requestAnimationFrame(update); }).observe(el, { childList: true, subtree: true, characterData: true });
+    // the arrows step a line at a time and keep going while held; the track pages
+    function hold(step) {
+      var t = setTimeout(function () { t = setInterval(step, 50); }, 400);
+      step();
+      function up() { clearTimeout(t); clearInterval(t); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', up); }
+      document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+    }
+    function press(part, step) {
+      part.addEventListener('pointerdown', function (ev) { if (ev.button !== 0) return; ev.preventDefault(); ev.stopPropagation(); hold(step); });
+    }
+    press(bar.firstChild, function () { el.scrollTop -= 14; });
+    press(bar.lastChild, function () { el.scrollTop += 14; });
+    track.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0 || ev.target === thumb) return;
+      ev.preventDefault(); ev.stopPropagation();
+      var y = (ev.clientY - track.getBoundingClientRect().top) / Z;
+      hold(function () {
+        var t = thumb.offsetTop;
+        if (y < t) el.scrollTop -= el.clientHeight; else if (y > t + thumb.offsetHeight) el.scrollTop += el.clientHeight;
+      });
+    });
+    var drag = null;
+    thumb.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0) return;
+      ev.preventDefault(); ev.stopPropagation();
+      drag = { y: ev.clientY, top: el.scrollTop };
+      try { thumb.setPointerCapture(ev.pointerId); } catch (err) {}
+    });
+    thumb.addEventListener('pointermove', function (ev) {
+      if (!drag) return;
+      var free = track.clientHeight - thumb.offsetHeight;
+      if (free > 0) el.scrollTop = drag.top + (ev.clientY - drag.y) / Z * (el.scrollHeight - el.clientHeight) / free;
+    });
+    thumb.addEventListener('pointerup', function () { drag = null; });
+    thumb.addEventListener('pointercancel', function () { drag = null; });
+    bar.addEventListener('wheel', function (ev) { el.scrollTop += ev.deltaY * (ev.deltaMode === 1 ? 14 : 1); ev.preventDefault(); }, { passive: false });
+    update();
+  }
+  function updateBars() { bars.forEach(function (b) { b.update(); }); }
+  if (FAKE_SB) {
+    // scrolling moves the thumb, and the bars of anything inside what scrolled
+    document.addEventListener('scroll', updateBars, true);
+    window.addEventListener('resize', updateBars);
+  }
+
   // folder windows are added later, so setup is a function they can call too
   function setupWin(k) {
-    var e = winEl(k); apply(k);
+    var e = winEl(k); apply(k); scrollbars98(e);
     e.addEventListener('pointerdown', function () { focusWin(k); });
     q('.title-bar-controls button', e).addEventListener('click', function () { closeWin(k); });
     var bar = q('.title-bar', e), drag = null;

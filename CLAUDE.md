@@ -90,10 +90,15 @@ My personal page which mixes some of what I do with what I grew up with.
   (except the Clock, which opens instantly).
   Windows open at random spots that stay fully inside the desktop. Dragged,
   they can go off any side but the top, as long as 48px stay on the desk.
+- Scrollbars are Windows 98's: 98.css's `::-webkit-scrollbar` styles in
+  Chrome and Safari. Firefox can't do those, so there app.js
+  (`scrollbar98()`) hides the browser's own (`.sb98-fake`) and draws a
+  `.sb98` bar with 98.css's pictures over the right edge of anything that
+  scrolls (arrows, track paging, draggable thumb, wheel).
 - Every window resizes from its bottom-right corner only: a folder's size grip,
   or an invisible `.rz98` handle (`resizable()` in app.js), with a grab area a
   little past the corner (bigger on touch screens). A resized window gets
-  `.sized` and its body scrolls. Dialogs (`.fixed98`: About and Clock) don't resize. A resized
+  `.sized` and its body scrolls. Dialogs (`.fixed98`: About, Help and Clock) don't resize. A resized
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
 - About opens on a visitor's first visit only (after that the windows they
