@@ -1,8 +1,6 @@
 # elioqoshi.me
 
-Elio Qoshi's personal page: a retro desktop in the style of Windows 95/98 with a
-touch of Poolsuite. Visitors land on a desktop with draggable icons that open
-windows. It is a business card, not a sales page.
+My personal page which mixes some of what I do with what I grew up with.
 
 ## Build and run
 
