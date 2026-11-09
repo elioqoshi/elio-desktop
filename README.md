@@ -90,7 +90,7 @@ domain, `www` as a CNAME, and the mail records (MX, `mail`) left alone.
 | --- | --- | --- | --- |
 | 98.css (windows, buttons, controls) | `vendor/98.css` | [jdan/98.css](https://github.com/jdan/98.css) by Jordan Scales | MIT, [`LICENSES/98.css-MIT.txt`](LICENSES/98.css-MIT.txt) |
 | MS Sans Serif font (regular and bold) | `assets/ms-sans-serif.woff2`, `assets/ms-sans-serif-bold.woff2` | [MS Sans Serif](https://fontstruct.com/fontstructions/show/1384746) and [MS Sans Serif Bold](https://fontstruct.com/fontstructions/show/1384862) by lou, made with FontStruct, as shipped with 98.css 0.1.21 | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), [`LICENSES/MS-Sans-Serif-*`](LICENSES/) |
-| Desktop icons (32x32) | `assets/icons.png` (sprite) | [SerenityOS](https://github.com/SerenityOS/serenity), © the SerenityOS developers | BSD 2-Clause, [`LICENSES/SerenityOS-BSD-2-Clause.txt`](LICENSES/SerenityOS-BSD-2-Clause.txt) |
+| Desktop icons (32x32) | `assets/icons.png` (sprite) | [SerenityOS](https://github.com/SerenityOS/serenity), © the SerenityOS developers; the empty trash is their recycle bin with the paper removed | BSD 2-Clause, [`LICENSES/SerenityOS-BSD-2-Clause.txt`](LICENSES/SerenityOS-BSD-2-Clause.txt) |
 | Pixel clock | `src/app.js` (`Clock`) | Ported from SerenityOS AnalogClock, © 2021 Erlend Høier | BSD 2-Clause |
 | Cursors | `assets/cursors/` | SerenityOS default cursor theme: arrow, hand, I-beam, the diagonal resize arrow and the 14-frame hourglass, plus pixel-doubled `@2x` copies | BSD 2-Clause |
 | Winamp icon | in `assets/icons.png` | Supplied by Elio | Winamp logo is a trademark of its owner, used as a nod |

@@ -131,7 +131,7 @@ window.wallpaperNow = function () { return WALLPAPERS[Math.floor(Date.now() / 9e
 (function () {
   var w = wallpaperNow(), saved = null;
   try { saved = JSON.parse(localStorage.getItem('elio98:wallpaper')); } catch (e) {}
-  if (w && !saved) { var s = document.documentElement.style; s.backgroundImage = 'url("' + w + '")'; s.backgroundPosition = 'center'; }
+  if (w && !saved) { var s = document.documentElement.style; s.backgroundImage = 'url("' + w + '")'; s.backgroundPosition = 'center bottom'; }
 })();''' % json.dumps(walls)
 
 html = f'''<!doctype html>

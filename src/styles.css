@@ -21,7 +21,7 @@ a{color:#000080}a:hover{color:#0000FF}
 .root98 .title-bar{touch-action:none;user-select:none}
 .root98 a.btn98{display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:transparent;box-sizing:border-box}
 /* Wallpaper sits on html, outside .root98, so zoom:2 does not scale it a second time */
-html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-repeat fixed;image-rendering:pixelated}
+html{background:#160507 url(assets/wallpaper-ghosts.png) 60% bottom/cover no-repeat fixed;image-rendering:pixelated}
 .menubar{position:sticky;top:0;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 12px;padding:1px 4px;background:silver;box-shadow:inset 0 1px #fff,inset 0 -1px #808080,0 1px #0a0a0a}
 /* No big headings: like Windows 98, structure comes from spacing */
 .root98 :is(h1,h2,h3){font-size:11px;line-height:14px}
@@ -36,8 +36,8 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 .root98 .icon:focus,.root98 .icon:not(:disabled):active{outline:none;box-shadow:none;text-shadow:none}
 .root98 .lbl{padding:0 2px;font-size:11px;line-height:14px;white-space:nowrap;color:#fff}
 .root98 .icon.sel .lbl,.root98 .icon:focus-visible .lbl{background:#000080;color:#fff;outline:1px dotted #fff}
-.ico{display:block;flex:none;width:32px;height:32px;background-image:url(assets/icons.png);background-size:512px 32px;background-repeat:no-repeat;image-rendering:pixelated}
-.ico-winamp{background-position:-416px 0}.ico-trash{background-position:-448px 0}.ico-video{background-position:-480px 0}.ico-text{background-position:0 0}.ico-image{background-position:-32px 0}.ico-folder{background-position:-64px 0}.ico-presenter{background-position:-96px 0}.ico-users{background-position:-128px 0}.ico-browser{background-position:-160px 0}.ico-charmap{background-position:-192px 0}.ico-clock{background-position:-224px 0}.ico-mail{background-position:-256px 0}.ico-network{background-position:-288px 0}.ico-git{background-position:-320px 0}.ico-speaker{background-position:-352px 0}.ico-help{background-position:-384px 0}
+.ico{display:block;flex:none;width:32px;height:32px;background-image:url(assets/icons.png);background-size:544px 32px;background-repeat:no-repeat;image-rendering:pixelated}
+.ico-winamp{background-position:-416px 0}.ico-trash{background-position:-448px 0}.ico-video{background-position:-480px 0}.trash-empty .ico-trash{background-position:-512px 0}.ico-text{background-position:0 0}.ico-image{background-position:-32px 0}.ico-folder{background-position:-64px 0}.ico-presenter{background-position:-96px 0}.ico-users{background-position:-128px 0}.ico-browser{background-position:-160px 0}.ico-charmap{background-position:-192px 0}.ico-clock{background-position:-224px 0}.ico-mail{background-position:-256px 0}.ico-network{background-position:-288px 0}.ico-git{background-position:-320px 0}.ico-speaker{background-position:-352px 0}.ico-help{background-position:-384px 0}
 .root98 a.icon{text-decoration:none}
 .win{position:absolute;max-width:calc(100% - 16px)}
 .root98 .prow{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:6px;width:100%;min-width:0;min-height:0;padding:1px 4px;text-align:left;background:#fff;box-shadow:none}
@@ -220,11 +220,14 @@ html,body{height:100%;overflow:hidden}
   .root98 .title-bar-controls button::before{content:"";position:absolute;inset:-10px -6px -4px}
   .grip98::before{content:"";position:absolute;inset:-12px}
 }
+/* the talk video and YouTube frame undo the page zoom so their own controls stay normal size */
+.unzoom98{display:block;width:200%;height:200%;transform:scale(.5);transform-origin:0 0}
 @media (max-width:760px){
+  .unzoom98{width:150%;height:150%;transform:scale(.666667)}
   /* phones get 1.5x: 2x was too big, 1x too small to read and tap. vh/vw aren't zoomed, so divide by 1.5 */
   .root98{zoom:1.5;height:calc(100vh / 1.5);height:calc(100dvh / 1.5);min-height:0}
   .desk-area{min-height:0}
-  html{background-position:60% top}
+  html{background-position:60% bottom}
   /* windows keep their own width, never wider than the screen (about 250px on a phone) */
   .win{max-width:calc(100% - 6px)}
   .dialog98{max-width:calc(100vw / 1.5 - 16px)}

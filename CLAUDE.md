@@ -52,7 +52,8 @@ My personal page which mixes some of what I do with what I grew up with.
   headings: like Windows 98, structure comes from bold and spacing.
 - Icons: only the SerenityOS 32x32 icon set (`assets/icons.png` sprite, 32px
   cells, see `.ico-*` classes) plus the user-supplied Winamp icon. Do not draw
-  or add icons from elsewhere.
+  or add icons from elsewhere. The one exception is the empty trash, which is
+  SerenityOS's bin with the paper taken out.
 - Cursors: SerenityOS's default cursor theme, Windows 9x style, at normal
   cursor size (1x, with pixel-doubled `@2x` copies for dense screens via
   `-webkit-image-set`). Arrow everywhere (buttons and icons too, like 98),
@@ -70,7 +71,7 @@ My personal page which mixes some of what I do with what I grew up with.
   (dark mode #2E6E7A). Open-Meteo is credited in the imprint (CC BY 4.0). Light theme windows are #E4E4E4 with retuned bevels, not
   98.css silver.
 - Wallpaper: Ghosts I–IV album artwork by Rob Sheridan (CC BY-NC-SA 3.0),
-  4x4 ordered dither to 16 colours, same in both themes. Ten of them take
+  4x4 ordered dither to 16 colours, same in both themes, lined up with the bottom of the screen (the top gets cropped; photos set as wallpaper stay centred). Ten of them take
   turns: a new one every 15 minutes, the same for everyone, picked by a script
   in `<head>` (build.py) so it shows after a refresh without a flash. The first
   is the inlined desert (`assets/wallpaper-ghosts.png`, 716x422); the rest are
@@ -91,7 +92,8 @@ My personal page which mixes some of what I do with what I grew up with.
   `.sized` and its body scrolls. Dialogs (`.fixed98`: About and Clock) don't resize. A resized
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
-- About is the one window open on arrival, laid out like a Windows 98 About
+- About opens on a visitor's first visit only (after that the windows they
+  left open come back), laid out like a Windows 98 About
   box (340px wide): the portrait in a sunken frame on the left (`assets/portrait-small.png`,
   104x139, the same 6-grey ordered dither as `portrait-dither.png`), text on the right, an
   etched line and the buttons bottom right. portrait.jpg still opens on its own
@@ -124,11 +126,15 @@ My personal page which mixes some of what I do with what I grew up with.
   Windows 98 confirmation, and Yes only gets a dialog saying "don't throw
   Elio's stuff away :(" (`dialog98()` in app.js). The
   trash only lives on the desk. Its icon is SerenityOS's 32x32
-  `recycle-bin.png`, added to the end of `assets/icons.png`. Talks uses
-  SerenityOS's `app-video-player.png` (a clapperboard, `.ico-video`), the last
-  cell of the sprite (512x32).
-- All of it is saved per visitor in localStorage (`fs`, `icons`); Reset
-  Desktop clears it. Folder windows come from `#folder-tpl` and have a size
+  `recycle-bin.png` (full, at -448px) while anything is in it, and an
+  empty version of that same bin (paper removed, open top in the icon's own
+  colours, at -512px) when there's nothing; app.js sets `.trash-empty` on the
+  root. Talks uses SerenityOS's `app-video-player.png` (a clapperboard,
+  `.ico-video`, at -480px). The sprite is 544x32.
+- All of it is saved per visitor in localStorage (`fs`, `icons`), and so are
+  the open windows (`wins`: spot, size, order, maximized, plus the open photo
+  and talk; not the clock), which come back on the next visit without the
+  hourglass. Reset Desktop clears all three. Folder windows come from `#folder-tpl` and have a size
   grip. Icons stay put when one leaves the desk; Arrange Icons tidies up.
 - Right-click menus (Windows 98 style, `.ctx98`) on the desktop (arrange,
   refresh, paste, new folder, lights, restore wallpaper, reset desktop),

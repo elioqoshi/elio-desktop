@@ -113,14 +113,33 @@
 
   /* ---------- windows ---------- */
   var W = {
-    about: { open: true, x: 170, y: 18, z: 2, w: 340 },
+    // About greets first-time visitors; after that the desk comes back the way they left it
+    about: { open: store.get('wins') === null, x: 170, y: 18, z: 2, w: 340 },
     portrait: { w: 170 },
     talks: { w: 340 }, photo: { w: 320 }, clock: { w: 194 }, contact: { w: 270 }, radio: { w: 280 }, imprint: { w: 300 }
   };
   Object.keys(W).forEach(function (k) { var s = W[k]; if (s.open === undefined) { s.open = false; s.x = 0; s.y = 0; s.z = 0; } });
   function winEl(k) { return q('[data-win="' + k + '"]'); }
   function topZ() { return Math.max.apply(null, Object.keys(W).map(function (k) { return W[k].z || 0; })); }
-  function apply(k) { var s = W[k], e = winEl(k); e.hidden = !s.open; e.style.left = s.x + 'px'; e.style.top = s.y + 'px'; e.style.zIndex = s.z; }
+  function apply(k) { var s = W[k], e = winEl(k); e.hidden = !s.open; e.style.left = s.x + 'px'; e.style.top = s.y + 'px'; e.style.zIndex = s.z; saveWins(); }
+  // open windows, where they are, their size and order, saved for the next visit (not the clock, it's a drop-down)
+  var winsReady = false, winsTimer = 0;
+  function saveWins() {
+    if (!winsReady || winsTimer) return;
+    winsTimer = setTimeout(function () {
+      winsTimer = 0;
+      var open = {};
+      Object.keys(W).forEach(function (k) {
+        var s = W[k], e = winEl(k);
+        if (!s.open || k === 'clock' || !e) return;
+        // a maximized window keeps the spot and size it goes back to
+        var m = s.max;
+        open[k] = m ? { x: m.x, y: m.y, w: m.width, h: m.height, sized: m.sized, z: s.z, max: true }
+          : { x: s.x, y: s.y, w: e.style.width, h: e.style.height, sized: e.classList.contains('sized'), z: s.z };
+      });
+      store.set('wins', { open: open, photo: curPhoto, talk: ti });
+    }, 250);
+  }
   var busy = 0, pending = {};
   // while busy the hourglass cursor turns, one frame every 100ms like SerenityOS's
   var waitTimer = 0, waitFrame = 0;
@@ -144,12 +163,7 @@
     if (k === 'talks') renderTalk();
     if (k === 'clock') tick();
     if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
-    var dw = desk.clientWidth, dh = desk.clientHeight, h = e.offsetHeight;
-    var over = h - (dh - 16);
-    if (over > 0 && e.classList.contains('sized')) { e.style.height = Math.max(80, e.offsetHeight - 6 - over) + 'px'; h = e.offsetHeight; }
-    else if (over > 0) {
-      body.style.maxHeight = Math.max(60, body.offsetHeight - over) + 'px'; body.style.overflow = 'auto'; h = e.offsetHeight;
-    }
+    var dw = desk.clientWidth, dh = desk.clientHeight, h = fitHeight(k);
     var minX = phone() ? Math.max(0, Math.min(8, dw - e.offsetWidth)) : 168, maxX = Math.max(minX, dw - e.offsetWidth - 8), maxY = Math.max(8, dh - h - 8);
     var minY = phone() ? Math.min(iconsBottom() + 8, maxY) : 8;
     s.x = Math.round(minX + Math.random() * (maxX - minX));
@@ -160,6 +174,13 @@
       s.x = clamp(Math.round((t.right - dr.left) / Z) - e.offsetWidth, 0, dw - e.offsetWidth); s.y = 0;
     }
     apply(k);
+  }
+  // a window taller than the desk gets shorter and its body scrolls
+  function fitHeight(k) {
+    var e = winEl(k), body = q('.window-body', e), dh = q('.desk-area').clientHeight, over = e.offsetHeight - (dh - 16);
+    if (over > 0 && e.classList.contains('sized')) e.style.height = Math.max(80, e.offsetHeight - 6 - over) + 'px';
+    else if (over > 0) { body.style.maxHeight = Math.max(60, body.offsetHeight - over) + 'px'; body.style.overflow = 'auto'; }
+    return e.offsetHeight;
   }
   // the lowest edge of the icons along the top of a phone's desk
   function iconsBottom() {
@@ -432,8 +453,8 @@
         [['.av1.webm', 'video/webm; codecs=av01.0.08M.08'], ['.mp4', 'video/mp4']].forEach(function (x) {
           var so = document.createElement('source'); so.src = t.file + x[0]; so.type = x[1]; v.appendChild(so);
         });
-        // same trick as YouTube: twice the size, scaled to half, so the browser's controls aren't zoomed
-        v.style.cssText = 'display: block; width: 200%; height: 200%; background: #000; transform: scale(0.5); transform-origin: 0 0';
+        // same trick as YouTube: drawn at the page's zoom and scaled back (.unzoom98), so the browser's controls aren't zoomed
+        v.className = 'unzoom98'; v.style.background = '#000';
         // YouTube's states, so the buttons and the status bar work the same for both
         var states = { play: 1, playing: 1, waiting: 3, pause: 2, ended: 0, emptied: -1 };
         Object.keys(states).forEach(function (ev) {
@@ -458,7 +479,7 @@
         f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
         f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
         // twice the size, scaled to half: cancels .root98's zoom:2 so YouTube draws at its normal size
-        f.style.cssText = 'display: block; width: 200%; height: 200%; border: 0; transform: scale(0.5); transform-origin: 0 0';
+        f.className = 'unzoom98'; f.style.border = '0';
         // keep asking for player events until YouTube answers, like its own iframe API does
         f.addEventListener('load', function () {
           var tries = 0, ask = setInterval(function () {
@@ -489,7 +510,7 @@
       li.appendChild(b); list.appendChild(li);
     });
   }
-  function pickTalk(i) { if (ytPlaying()) talkSend('pauseVideo'); ti = (i + talks.length) % talks.length; ytState = -1; renderTalk(); }
+  function pickTalk(i) { if (ytPlaying()) talkSend('pauseVideo'); ti = (i + talks.length) % talks.length; ytState = -1; renderTalk(); saveWins(); }
   q('#talk-prev').addEventListener('click', function () { pickTalk(ti - 1); });
   q('#talk-next').addEventListener('click', function () { pickTalk(ti + 1); });
   // YouTube player states: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
@@ -536,6 +557,7 @@
     q('#photo-t').textContent = ITEMS[id].name; q('#photo-name').textContent = ITEMS[id].name;
     q('#photo-pos').textContent = (list.indexOf(id) + 1) + '/' + list.length;
     q('#photo-prev').disabled = q('#photo-next').disabled = list.length < 2;
+    saveWins();
   }
   function stepPhoto(n) {
     var list = photoList();
@@ -709,6 +731,8 @@
     else { wrap.style.right = 'auto'; wrap.style.bottom = 'auto'; wrap.style.left = p.x + 'px'; wrap.style.top = p.y + 'px'; }
   }
   function renderDesk() {
+    // the trash shows an empty bin when there's nothing in it
+    root.classList.toggle('trash-empty', !childrenOf('trash').length);
     var spots = layoutDesk();
     iconBox.innerHTML = '';
     var mx = iconBox.clientWidth - 72, my = iconBox.clientHeight - 50;
@@ -769,7 +793,8 @@
 
   // folder windows are made from a template the first time a folder opens
   function folderKey(fid) { return 'f:' + fid; }
-  function openFolder(fid) {
+  function openFolder(fid) { openWin(folderWin(fid)); }
+  function folderWin(fid) {
     var k = folderKey(fid);
     if (!W[k]) {
       var e = q('#folder-tpl').content.firstElementChild.cloneNode(true);
@@ -778,7 +803,7 @@
       W[k] = { w: 300, open: false, x: 0, y: 0, z: 0 };
       setupWin(k); resizable(k);
     }
-    openWin(k);
+    return k;
   }
   function renderFolder(fid) {
     var e = winEl(folderKey(fid)), it = ITEMS[fid];
@@ -902,7 +927,7 @@
   function paste(fid, at) { var id = cut; cut = null; if (!id || !moveItem(id, fid, at)) refreshAll(); }
   function resetDesk() {
     if (!window.confirm('put everything back the way Elio left it?')) return;
-    store.set('fs', null); store.set('icons', null); location.reload();
+    winsReady = false; store.set('fs', null); store.set('icons', null); store.set('wins', null); location.reload();
   }
   renderDesk();
   // on phones About starts under the icons
@@ -911,8 +936,36 @@
     var desk = q('.desk-area'), dw = desk.clientWidth, a = W.about, ae = winEl('about');
     a.x = Math.max(0, Math.round((dw - ae.offsetWidth) / 2)); a.y = iconsBottom() + 8; apply('about');
   }
-  phoneStart();
+  // windows open last time come back straight away, no hourglass; things deleted since stay shut
+  function restoreWins(saved) {
+    var open = saved.open || {};
+    if (talks[saved.talk]) ti = saved.talk;
+    Object.keys(open).sort(function (a, b) { return open[a].z - open[b].z; }).forEach(function (k) {
+      var v = open[k];
+      if (k.indexOf('f:') === 0) {
+        var fid = k.slice(2);
+        if (!ITEMS[fid] || ITEMS[fid].kind !== 'folder' || inTrash(fid)) return;
+        folderWin(fid);
+      }
+      if (!W[k] || k === 'clock') return;
+      if (k === 'photo') {
+        if (!saved.photo || !ITEMS[saved.photo] || inTrash(saved.photo)) return;
+        showPhoto(saved.photo);
+      }
+      var s = W[k], e = winEl(k);
+      s.open = true; s.x = v.x || 0; s.y = v.y || 0; s.z = topZ() + 1;
+      if (!e.classList.contains('fixed98')) { e.style.width = v.w || ''; e.style.height = v.h || ''; e.classList.toggle('sized', !!v.sized); }
+      apply(k);
+      if (k === 'talks') renderTalk();
+      if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
+      if (v.max) maximize(k, true);
+      else { fitHeight(k); keepOnDesk(k); }
+    });
+  }
+  var savedWins = store.get('wins');
+  if (savedWins) restoreWins(savedWins); else phoneStart();
   Object.keys(W).forEach(keepOnDesk);
+  winsReady = true; saveWins();
   // switching between phone and desktop size lays the icons out again
   var phoneMq = window.matchMedia('(max-width: 760px)');
   if (phoneMq.addEventListener) phoneMq.addEventListener('change', function () { renderDesk(); });
@@ -1215,7 +1268,8 @@
     wallpaper = src;
     var show = src || (window.wallpaperNow && window.wallpaperNow());
     document.documentElement.style.backgroundImage = show ? 'url("' + show + '")' : '';
-    document.documentElement.style.backgroundPosition = show ? 'center' : '';
+    // the Ghosts artwork sits on the bottom edge (that's where the good parts are), photos in the middle
+    document.documentElement.style.backgroundPosition = src ? 'center' : show ? 'center bottom' : '';
     store.set('wallpaper', src);
   }
   (function () {
