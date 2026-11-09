@@ -116,7 +116,16 @@ for p in originals:
         stale.append(p.name); continue
     q = urllib.parse.quote
     photos.append({'name': p.name, 'src': 'photos/' + q(view.name), 'thumb': 'photos/thumbs/' + q(thumb.name),
-                   'full': 'photos/originals/' + q(p.name)})
+                   'full': 'photos/originals/' + q(p.name), 'wall': 'photos/' + q(view.name), 'home': 'photos'})
+# the Wallpapers folder: the rotating wallpapers, the desert first (ghosts-00, shipped as assets/wallpaper-ghosts.png)
+for p in [ROOT / 'assets/wallpaper-ghosts.png'] + sorted((ROOT / 'wallpapers').glob('*.png')):
+    stem = 'ghosts-00' if p.parent.name == 'assets' else p.stem
+    view, thumb = ROOT / 'wallpapers/view' / (stem + '.png'), ROOT / 'wallpapers/thumbs' / (stem + '.png')
+    if not (view.exists() and thumb.exists()):
+        stale.append(stem); continue
+    full = p.relative_to(ROOT).as_posix()
+    photos.append({'name': stem + '.png', 'src': 'wallpapers/view/' + view.name, 'thumb': 'wallpapers/thumbs/' + thumb.name,
+                   'full': full, 'wall': full, 'home': 'wallpapers'})
 if stale:
     print('not dithered yet, run python3 tools/dither.py: ' + ', '.join(stale))
 js = 'window.PHOTOS = %s;\n' % json.dumps(photos) + js
@@ -131,7 +140,7 @@ window.wallpaperNow = function () { return WALLPAPERS[Math.floor(Date.now() / 9e
 (function () {
   var w = wallpaperNow(), saved = null;
   try { saved = JSON.parse(localStorage.getItem('elio98:wallpaper')); } catch (e) {}
-  if (w && !saved) { var s = document.documentElement.style; s.backgroundImage = 'url("' + w + '")'; s.backgroundPosition = 'center bottom'; }
+  if (w && !saved) { var s = document.documentElement.style; s.backgroundImage = 'url("' + w + '")'; s.backgroundPosition = 'center'; }
 })();''' % json.dumps(walls)
 
 html = f'''<!doctype html>

@@ -590,6 +590,7 @@
     { id: 'contact', name: 'Help', ico: 'ico-help', kind: 'app' },
     { id: 'radio', name: 'Winamp', ico: 'ico-winamp', kind: 'app' },
     { id: 'photos', name: 'Photos', ico: 'ico-folder', kind: 'folder' },
+    { id: 'wallpapers', name: 'Wallpapers', ico: 'ico-folder', kind: 'folder' },
     { id: 'trash', name: 'Trash', ico: 'ico-trash', kind: 'folder' }
   ].forEach(function (it) { it.home = 'desktop'; addItem(it); });
   // the link icons come from content/links.md, docked bottom right in the file's order; the id is the
@@ -599,7 +600,10 @@
     addItem({ id: l.name.split(/\s+/)[0].toLowerCase().replace(/[^a-z0-9]/g, ''), name: l.name, ico: 'ico-' + (l.icon || 'browser'),
       kind: 'link', href: l.href, dock: links.length - 1 - i, home: 'desktop' });
   });
-  photos.forEach(function (p, i) { addItem({ id: 'photo:' + p.name, name: p.name, ico: 'ico-image', kind: 'photo', photo: i, home: 'photos' }); });
+  photos.forEach(function (p, i) {
+    var home = p.home || 'photos';
+    addItem({ id: (home === 'photos' ? 'photo:' : 'wall:') + p.name, name: p.name, ico: 'ico-image', kind: 'photo', photo: i, home: home });
+  });
   var fs = store.get('fs') || {};
   // folders: visitor-made folders; parent: moves; names: renamed built-in folders;
   // from/fromPos: where something in the trash came from, so it can go back
@@ -1233,7 +1237,7 @@
       if (it.kind === 'photo') {
         var p = photos[it.photo];
         list.push({ label: 'View Full Size', run: function () { window.open(p.full, '_blank', 'noopener'); } },
-                  { label: 'Set as Wallpaper', run: function () { setWallpaper(p.src); } });
+                  { label: 'Set as Wallpaper', run: function () { setWallpaper(p.wall || p.src); } });
       }
       if (it.kind === 'link') list.push({ label: 'Copy Link Address', run: function () {
         if (navigator.clipboard) navigator.clipboard.writeText(it.href).catch(function () {});
@@ -1268,20 +1272,19 @@
     wallpaper = src;
     var show = src || (window.wallpaperNow && window.wallpaperNow());
     document.documentElement.style.backgroundImage = show ? 'url("' + show + '")' : '';
-    // the Ghosts artwork sits on the bottom edge (that's where the good parts are), photos in the middle
-    document.documentElement.style.backgroundPosition = src ? 'center' : show ? 'center bottom' : '';
+    document.documentElement.style.backgroundPosition = show ? 'center' : '';
     store.set('wallpaper', src);
   }
   (function () {
     var w = store.get('wallpaper');
-    if (w && photos.some(function (p) { return p.src === w; })) setWallpaper(w);
+    if (w && photos.some(function (p) { return (p.wall || p.src) === w; })) setWallpaper(w);
   })();
   function viewerMenu(x, y) {
     var p = photos[pi];
     openMenu([
       { label: 'View Full Size', run: function () { window.open(p.full, '_blank', 'noopener'); } },
       '-',
-      { label: 'Set as Wallpaper', run: function () { setWallpaper(p.src); } }
+      { label: 'Set as Wallpaper', run: function () { setWallpaper(p.wall || p.src); } }
     ], x, y, null);
   }
 

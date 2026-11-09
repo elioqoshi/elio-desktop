@@ -21,7 +21,7 @@ a{color:#000080}a:hover{color:#0000FF}
 .root98 .title-bar{touch-action:none;user-select:none}
 .root98 a.btn98{display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:transparent;box-sizing:border-box}
 /* Wallpaper sits on html, outside .root98, so zoom:2 does not scale it a second time */
-html{background:#160507 url(assets/wallpaper-ghosts.png) 60% bottom/cover no-repeat fixed;image-rendering:pixelated}
+html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-repeat fixed;image-rendering:pixelated}
 .menubar{position:sticky;top:0;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 12px;padding:1px 4px;background:silver;box-shadow:inset 0 1px #fff,inset 0 -1px #808080,0 1px #0a0a0a}
 /* No big headings: like Windows 98, structure comes from spacing */
 .root98 :is(h1,h2,h3){font-size:11px;line-height:14px}
@@ -227,7 +227,7 @@ html,body{height:100%;overflow:hidden}
   /* phones get 1.5x: 2x was too big, 1x too small to read and tap. vh/vw aren't zoomed, so divide by 1.5 */
   .root98{zoom:1.5;height:calc(100vh / 1.5);height:calc(100dvh / 1.5);min-height:0}
   .desk-area{min-height:0}
-  html{background-position:60% bottom}
+  html{background-position:60% center}
   /* windows keep their own width, never wider than the screen (about 250px on a phone) */
   .win{max-width:calc(100% - 6px)}
   .dialog98{max-width:calc(100vw / 1.5 - 16px)}

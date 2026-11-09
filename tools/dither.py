@@ -10,7 +10,12 @@ every pixel as a clean 2x2 block:
 
 It does the same for the rotating wallpapers in wallpapers/originals/:
 
-  wallpapers/<name>.png     WALL_W wide, keeping the original's shape
+  wallpapers/<name>.png         WALL_W wide, keeping the original's shape
+  wallpapers/view/<name>.png    for the Wallpapers folder's viewer, like photos
+  wallpapers/thumbs/<name>.png  its folder thumbnail
+
+The inlined desert (assets/wallpaper-ghosts.png) gets a viewer and thumbnail
+copy too, as ghosts-00, so it comes first in the folder.
 
 Only new or changed originals are redone; outputs whose original is gone are
 removed. Needs Pillow (pip install -r requirements.txt).
@@ -71,13 +76,31 @@ def load(path):
     return img.convert('RGB')
 
 
+DESERT = ROOT / 'assets' / 'wallpaper-ghosts.png'
+
+
+def small(src, stem, force):
+    # the viewer and thumbnail copies, like a photo's
+    view, thumb = WALLS / 'view' / (stem + '.png'), WALLS / 'thumbs' / (stem + '.png')
+    if not force and all(p.exists() and p.stat().st_mtime >= src.stat().st_mtime for p in (view, thumb)):
+        return
+    img = load(src)
+    v = img.copy(); v.thumbnail((VIEW_W, VIEW_H), Image.LANCZOS)
+    dither(v).save(view, optimize=True)
+    dither(ImageOps.fit(img, (THUMB_W, THUMB_H), Image.LANCZOS)).save(thumb, optimize=True)
+
+
 def walls(force=False):
     src_dir = WALLS / 'originals'
     if not src_dir.is_dir():
         return
-    stems = set()
+    for d in ('view', 'thumbs'):
+        (WALLS / d).mkdir(exist_ok=True)
+    stems = {'ghosts-00'}
+    small(DESERT, 'ghosts-00', force)
     for src in sorted(p for p in src_dir.iterdir() if p.suffix.lower() in EXT):
         stems.add(src.stem)
+        small(src, src.stem, force)
         out = WALLS / (src.stem + '.png')
         if not force and out.exists() and out.stat().st_mtime >= src.stat().st_mtime:
             continue
@@ -85,9 +108,10 @@ def walls(force=False):
         img = img.resize((WALL_W, round(img.height * WALL_W / img.width)), Image.LANCZOS)
         dither(img).save(out, optimize=True)
         print('dithered wallpaper %s -> %dx%d' % (src.name, img.width, img.height))
-    for p in WALLS.glob('*.png'):
-        if p.stem not in stems:
-            p.unlink(); print('removed %s' % p.relative_to(ROOT))
+    for folder in (WALLS, WALLS / 'view', WALLS / 'thumbs'):
+        for p in folder.glob('*.png'):
+            if p.stem not in stems or (folder == WALLS and p.stem == 'ghosts-00'):
+                p.unlink(); print('removed %s' % p.relative_to(ROOT))
 
 
 def main(force=False):

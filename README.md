@@ -79,7 +79,7 @@ domain, `www` as a CNAME, and the mail records (MX, `mail`) left alone.
 | `vendor/98.css` | 98.css, lightly modified (see below) |
 | `assets/` | Font, icons, wallpaper, cursors, portrait |
 | `photos/` | Photos for the desktop photos folder (see below) |
-| `wallpapers/` | Rotating Ghosts I–IV wallpapers, dithered by `tools/dither.py` |
+| `wallpapers/` | Rotating Ghosts I–IV wallpapers, dithered by `tools/dither.py`, with viewer and thumbnail copies for the Wallpapers folder |
 | `tools/dither.py` | Dithers the photos |
 | `LICENSES/` | License texts for third-party assets |
 | `build.py` | Builds `index.html` |

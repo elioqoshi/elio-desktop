@@ -33,7 +33,7 @@ jobs:
           python3 build.py
           mkdir _site
           cp -r index.html LICENSES photos _site/
-          mkdir _site/wallpapers && cp wallpapers/*.png _site/wallpapers/
+          mkdir -p _site/wallpapers _site/assets && cp -r wallpapers/*.png wallpapers/view wallpapers/thumbs _site/wallpapers/ && cp assets/wallpaper-ghosts.png _site/assets/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
