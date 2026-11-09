@@ -96,6 +96,7 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 /* player buttons sit close together; the "1" of repeat one overlays its corner so the width never changes */
 .root98 .fm-controls{gap:2px}
 .root98 .fm-controls>*+*{margin-left:0}
+.root98 .fm-controls>button{flex:none}
 /* the volume number keeps a fixed width so the slider doesn't jump between 5 and 100 */
 .fm-volnum{flex:none;width:18px;text-align:right;font-variant-numeric:tabular-nums}
 /* toggled-on buttons (shuffle, repeat, playlist): pushed in with the checkered Windows 98 fill */
@@ -152,6 +153,8 @@ html{background:#160507 url(assets/wallpaper-ghosts.png) 60% center/cover no-rep
 /* resized folders and photos fill their window */
 .win.sized[data-folder]>.window-body,.win.sized[data-win=photo]>.window-body{display:flex;flex-direction:column;overflow:hidden}
 .win.sized .folder-grid{flex:1;min-height:0;max-height:none !important;height:auto !important}
+.win.sized[data-win=radio]>.window-body{overflow:hidden}
+.win:is(.sized,.max) #fm-list{flex:1;min-height:0;max-height:none !important}
 .win.sized .photo-panel{aspect-ratio:auto !important;flex:1;min-height:60px}
 .desk-area img{-webkit-touch-callout:none}
 /* files and folders: icons in folder windows, renaming, cut items, drag and drop */
@@ -196,7 +199,8 @@ html,.root98,.root98 *{cursor:url(assets/cursors/arrow.png) 2 2,default;cursor:-
 .root98.busy[data-wf="13"],.root98.busy[data-wf="13"] *{cursor:url(assets/cursors/wait-13.png) 10 10,wait !important;cursor:-webkit-image-set(url(assets/cursors/wait-13@2x.png) 2x) 10 10,wait !important}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:4px;padding:4px}
 .root98 button.pthumb{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;min-width:0;min-height:0;padding:2px;background:transparent;box-shadow:none;color:#000;text-shadow:none}
-.root98 button.pthumb img{display:block;width:56px;height:42px;object-fit:cover;image-rendering:pixelated;box-shadow:0 0 0 1px #808080}
+.root98 button.pthumb :is(img,.pimg){display:block;width:56px;height:42px;object-fit:cover;image-rendering:pixelated;box-shadow:0 0 0 1px #808080}
+.thumb-portrait{background:url(assets/portrait-thumb.png)}
 .root98 button.pthumb .pname{max-width:100%;padding:0 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .root98 button.pthumb:focus,.root98 button.pthumb:not(:disabled):active{outline:none;box-shadow:none;text-shadow:none}
 .root98 button.pthumb.sel .pname,.root98 button.pthumb:focus-visible .pname{background:#000080;color:#fff}
@@ -257,6 +261,8 @@ html,body{height:100%;overflow:hidden}
 .root98 .md98 ul.tree-view a{color:#00f;text-decoration:underline}
 .root98.dark .md98 ul.tree-view a{color:#C9D3FF}
 
+/* Chrome draws the second pair of arrow buttons too (an up arrow under the up arrow); 98's have one at each end */
+::-webkit-scrollbar-button:vertical:start:increment,::-webkit-scrollbar-button:vertical:end:decrement,::-webkit-scrollbar-button:horizontal:start:increment,::-webkit-scrollbar-button:horizontal:end:decrement{display:none}
 /* Windows 98 scrollbars where ::-webkit-scrollbar doesn't work (Firefox): app.js hides the browser's own and
    draws these over the right edge of anything that scrolls, with 98.css's own pictures */
 .root98.sb98-fake *{scrollbar-width:none}

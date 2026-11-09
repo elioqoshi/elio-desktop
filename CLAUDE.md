@@ -98,7 +98,11 @@ My personal page which mixes some of what I do with what I grew up with.
 - Every window resizes from its bottom-right corner only: a folder's size grip,
   or an invisible `.rz98` handle (`resizable()` in app.js), with a grab area a
   little past the corner (bigger on touch screens). A resized window gets
-  `.sized` and its body scrolls. Dialogs (`.fixed98`: About, Help and Clock) don't resize. A resized
+  `.sized` and its body scrolls. Dialogs (`.fixed98`: About, Help and Clock) don't resize. Winamp can't be made
+  smaller than its player (`minSize()`: 232px wide, where no button gets
+  squeezed). With the playlist folded away it only resizes sideways; with
+  it open the playlist takes the extra height, and folding it away drops the
+  window back to the player's height. A resized
   photo viewer lets the photo fill the space; arrow keys and the buttons step
   through the photos in the folder the open photo is in.
 - About opens on a visitor's first visit only (after that the windows they
@@ -106,7 +110,8 @@ My personal page which mixes some of what I do with what I grew up with.
   box (340px wide): the portrait in a sunken frame on the left (`assets/portrait-small.png`,
   104x139, the same 6-grey ordered dither as `portrait-dither.png`), text on the right, an
   etched line and the buttons bottom right. portrait.jpg still opens on its own
-  from the desk. The photo viewer has no full size button (the right-click
+  from the desk; in a folder it shows `assets/portrait-thumb.png` (56x42, same
+  grey dither) like the photos do. The photo viewer has no full size button (the right-click
   menu still has View Full Size).
 - The time in the menu bar opens the Clock window ("Berlin, Germany" and the time above the analog SerenityOS
   clock, the date underneath), dropped down

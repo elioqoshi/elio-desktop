@@ -342,25 +342,38 @@
     if (!h) { h = document.createElement('div'); h.className = 'rz98'; h.setAttribute('data-d', 'se'); h.setAttribute('aria-hidden', 'true'); e.appendChild(h); }
     resizeFrom(k, h, 'se');
   }
+  // the smallest a window can be made; Winamp's player (without the playlist) always fits
+  function minSize(k) {
+    if (k !== 'radio') return [150, 80];
+    var e = winEl(k), L = q('#fm-list'), hs = e.style.height, sized = e.classList.contains('sized'), lh = L.hidden;
+    e.style.height = ''; e.classList.remove('sized'); L.hidden = true;
+    var h = e.offsetHeight - 6;
+    e.style.height = hs; e.classList.toggle('sized', sized); L.hidden = lh;
+    // with the playlist open, room for three of its rows as well
+    // 232px wide: every button at its own width and the volume slider at its 40px minimum
+    return [232, h + (lh ? 0 : 6 + 46)];
+  }
   function resizeFrom(k, h, dir) {
     var e = winEl(k), d = null;
     h.addEventListener('pointerdown', function (ev) {
       if (ev.button !== 0 || W[k].max) return;
       ev.preventDefault(); ev.stopPropagation(); focusWin(k);
       // .window has 3px padding around its content box
-      d = { sx: ev.clientX, sy: ev.clientY, x: W[k].x, y: W[k].y, w: e.offsetWidth - 6, h: e.offsetHeight - 6 };
+      d = { sx: ev.clientX, sy: ev.clientY, x: W[k].x, y: W[k].y, w: e.offsetWidth - 6, h: e.offsetHeight - 6, min: minSize(k),
+        // with its playlist folded away Winamp only gets wider or narrower; with it open, the playlist takes the height
+        wide: k === 'radio' && q('#fm-list').hidden };
       try { h.setPointerCapture(ev.pointerId); } catch (err) {}
     });
     h.addEventListener('pointermove', function (ev) {
       if (!d) return;
       var desk = q('.desk-area'), s = W[k], dx = (ev.clientX - d.sx) / Z, dy = (ev.clientY - d.sy) / Z;
-      var x = d.x, y = d.y, w = d.w, hh = d.h, minW = 150, minH = 80;
+      var x = d.x, y = d.y, w = d.w, hh = d.h, minW = d.min[0], minH = d.min[1];
       if (dir.indexOf('e') >= 0) w = clamp(Math.round(d.w + dx), minW, desk.clientWidth - d.x - 6);
       if (dir.indexOf('w') >= 0) { x = clamp(Math.round(d.x + dx), 0, d.x + d.w - minW); w = d.w + d.x - x; }
       if (dir.indexOf('s') >= 0) hh = clamp(Math.round(d.h + dy), minH, desk.clientHeight - d.y - 6);
       if (dir.indexOf('n') >= 0) { y = clamp(Math.round(d.y + dy), 0, d.y + d.h - minH); hh = d.h + d.y - y; }
       s.x = x; s.y = y; s.w = w; e.style.width = w + 'px';
-      if (/[ns]/.test(dir)) {
+      if (/[ns]/.test(dir) && !d.wide) {
         e.style.height = hh + 'px'; e.classList.add('sized');
         var body = q('.window-body', e); body.style.maxHeight = ''; body.style.overflow = '';
       }
@@ -673,7 +686,7 @@
   var ITEMS = {}, ORDER = [];
   function addItem(it) { ITEMS[it.id] = it; ORDER.push(it.id); }
   [
-    { id: 'portrait', name: 'portrait.jpg', ico: 'ico-image', kind: 'app' },
+    { id: 'portrait', name: 'portrait.jpg', ico: 'ico-image', kind: 'app', thumb: 'thumb-portrait' },
     { id: 'talks', name: 'Talks', ico: 'ico-video', kind: 'app' },
     { id: 'contact', name: 'Help', ico: 'ico-help', kind: 'app' },
     { id: 'radio', name: 'Winamp', ico: 'ico-winamp', kind: 'app' },
@@ -912,6 +925,8 @@
     li.className = 'fitem' + (cut === it.id ? ' cut98' : ''); li.setAttribute('role', 'listitem'); li.setAttribute('data-id', it.id);
     var b = document.createElement('button'); b.type = 'button'; b.className = 'pthumb';
     if (it.kind === 'photo') { b.innerHTML = '<img alt="" loading="lazy"><span class="pname"></span>'; b.firstChild.src = photos[it.photo].thumb; }
+    // portrait.jpg is an app, but in a folder it shows a picture like the photos (its thumbnail is inlined by the CSS)
+    else if (it.thumb) b.innerHTML = '<span class="pimg ' + it.thumb + '" aria-hidden="true"></span><span class="pname"></span>';
     else b.innerHTML = '<span class="pico"><span class="ico ' + it.ico + '" aria-hidden="true"></span></span><span class="pname"></span>';
     b.lastChild.textContent = it.name;
     li.appendChild(b); wireItem(b, it);
@@ -1046,7 +1061,11 @@
       }
       var s = W[k], e = winEl(k);
       s.open = true; s.x = v.x || 0; s.y = v.y || 0; s.z = topZ() + 1;
-      if (!e.classList.contains('fixed98')) { e.style.width = v.w || ''; e.style.height = v.h || ''; e.classList.toggle('sized', !!v.sized); }
+      if (!e.classList.contains('fixed98')) {
+        // Winamp keeps a height only while its playlist is open
+        var tall = !(k === 'radio' && !(store.get('fm') || {}).list);
+        e.style.width = v.w || ''; e.style.height = tall ? v.h || '' : ''; e.classList.toggle('sized', tall && !!v.sized);
+      }
       apply(k);
       if (k === 'talks') renderTalk();
       if (k.indexOf('f:') === 0) renderFolder(k.slice(2));
@@ -1186,7 +1205,18 @@
   q('#fm-repeat').addEventListener('click', function () {
     fm.repeat = { off: 'all', all: 'one', one: 'off' }[fm.repeat]; saveFm(); renderFm();
   });
-  q('#fm-pl').addEventListener('click', function () { fm.list = !fm.list; saveFm(); renderFm(); showCurrent(); });
+  q('#fm-pl').addEventListener('click', function () {
+    fm.list = !fm.list; saveFm(); renderFm();
+    // a resized Winamp goes back to the player's own height when the playlist folds away,
+    // and grows enough to show some of it when it opens
+    var e = winEl('radio');
+    if (e.classList.contains('sized') && !W.radio.max) {
+      if (!fm.list) { e.style.height = ''; e.classList.remove('sized'); }
+      else if (e.offsetHeight - 6 < minSize('radio')[1]) e.style.height = minSize('radio')[1] + 'px';
+      saveWins();
+    }
+    showCurrent();
+  });
   var seek = q('#fm-seek');
   seek.addEventListener('input', function () { fm.seeking = true; q('#fm-time').textContent = fmt(Number(seek.value)); });
   seek.addEventListener('change', function () {
